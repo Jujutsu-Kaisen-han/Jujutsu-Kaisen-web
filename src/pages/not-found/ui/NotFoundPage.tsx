@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { routes } from '@/shared/config/routes';
-import { PageShell } from '@/widgets/layout/ui/PageShell';
+import { Button } from '@/shared/ui/Button';
+import { PageIntro } from '@/shared/ui/PageIntro';
+import { Panel } from '@/shared/ui/Panel';
+import { SiteShell } from '@/widgets/layout/ui/SiteShell';
 
-const Box = styled.div`
-  padding: 32px;
-  border-radius: 28px;
-  background: ${({ theme }) => theme.colors.surface};
-  border: 1px solid rgba(148, 163, 184, 0.14);
+const Box = styled(Panel)`
   text-align: center;
 `;
 
@@ -30,24 +29,31 @@ const Description = styled.p`
   color: ${({ theme }) => theme.colors.muted};
 `;
 
+const ActionRow = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 const HomeLink = styled(Link)`
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 18px;
-  border-radius: 999px;
-  background: ${({ theme }) => theme.colors.primary};
-  color: #111827;
-  font-weight: 700;
 `;
 
 export const NotFoundPage = () => (
-  <PageShell title="Not Found" description="없는 경로로 접근했을 때 보여줄 기본 페이지예요.">
+  <SiteShell>
+    <PageIntro
+      eyebrow="404"
+      title="없는 페이지에 도착했어요."
+      description="경로가 잘못되었거나, 아직 연결하지 않은 화면입니다."
+    />
     <Box>
       <Code>404 error</Code>
       <Title>찾는 페이지가 없어요.</Title>
-      <Description>라우터 연결은 끝났고, 이제 필요한 페이지들을 여기에 계속 추가하면 됩니다.</Description>
-      <HomeLink to={routes.home}>홈으로 돌아가기</HomeLink>
+      <Description>티어표나 캐릭터 목록으로 돌아가서 다른 정보를 확인해보세요.</Description>
+      <ActionRow>
+        <HomeLink to={routes.home}>
+          <Button>홈으로 돌아가기</Button>
+        </HomeLink>
+      </ActionRow>
     </Box>
-  </PageShell>
+  </SiteShell>
 );
