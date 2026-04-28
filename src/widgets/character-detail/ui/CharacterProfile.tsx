@@ -6,12 +6,35 @@ import {
   traitLabels,
   type CharacterDetail,
 } from '@/entities/character/model/types/character';
+import { CharacterArtwork } from '@/entities/character/ui/CharacterArtwork';
 import { TierBadge } from '@/entities/character/ui/TierBadge';
 import { Panel } from '@/shared/ui/Panel';
 
 const Layout = styled.div`
   display: grid;
   gap: 20px;
+`;
+
+const ShowcasePanel = styled(Panel)`
+  padding: 16px;
+  overflow: hidden;
+`;
+
+const Showcase = styled(CharacterArtwork)`
+  width: 100%;
+  border-radius: ${({ theme }) => theme.radius.md};
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center top;
+  background:
+    radial-gradient(circle at top, rgba(255, 122, 69, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(8, 15, 29, 0.82) 0%, rgba(8, 15, 29, 1) 100%);
+
+  &[data-source='fallback'] {
+    padding-top: 28px;
+    object-fit: contain;
+    object-position: center bottom;
+  }
 `;
 
 const Hero = styled.div`
@@ -146,6 +169,14 @@ interface CharacterProfileProps {
 
 export const CharacterProfile = ({ character }: CharacterProfileProps) => (
   <Layout>
+    <ShowcasePanel>
+      <Showcase
+        src={character.variantImage}
+        fallbackSrc={character.image}
+        alt={`${character.name} 변형 이미지`}
+      />
+    </ShowcasePanel>
+
     <Hero>
       <PosterPanel>
         <Poster src={character.image} alt={character.name} />

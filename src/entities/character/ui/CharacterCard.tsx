@@ -7,6 +7,7 @@ import {
   traitLabels,
   type CharacterSummary,
 } from '@/entities/character/model/types/character';
+import { CharacterArtwork } from '@/entities/character/ui/CharacterArtwork';
 import { TierBadge } from '@/entities/character/ui/TierBadge';
 import { routes } from '@/shared/config/routes';
 
@@ -29,23 +30,35 @@ const Card = styled(Link)`
 
 const Poster = styled.div`
   position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  aspect-ratio: 15 / 22;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
-  padding: 14px 12px 0;
   background:
-    radial-gradient(circle at top, rgba(255, 122, 69, 0.18), transparent 42%),
+    radial-gradient(circle at top, rgba(255, 122, 69, 0.2), transparent 44%),
     linear-gradient(180deg, rgba(8, 15, 29, 0.82) 0%, rgba(8, 15, 29, 1) 100%);
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(8, 15, 29, 0.08) 0%, rgba(8, 15, 29, 0.7) 100%),
+      linear-gradient(180deg, rgba(8, 15, 29, 0) 0%, rgba(8, 15, 29, 0.92) 100%);
+    content: '';
+    pointer-events: none;
+  }
 `;
 
-const Image = styled.img`
+const Image = styled(CharacterArtwork)`
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center bottom;
+  object-fit: cover;
+  object-position: center top;
   transition: transform 0.3s ease;
+
+  &[data-source='fallback'] {
+    padding: 14px 12px 0;
+    object-fit: contain;
+    object-position: center bottom;
+  }
 
   ${Card}:hover & {
     transform: scale(1.04);
@@ -56,6 +69,7 @@ const Tier = styled.div`
   position: absolute;
   top: 14px;
   left: 14px;
+  z-index: 1;
 `;
 
 const Body = styled.div`
@@ -114,7 +128,12 @@ interface CharacterCardProps {
 export const CharacterCard = ({ character }: CharacterCardProps) => (
   <Card to={routes.characterDetail(character.id)}>
     <Poster>
-      <Image src={character.image} alt={character.name} loading="lazy" />
+      <Image
+        src={character.variantImage}
+        fallbackSrc={character.image}
+        alt={character.name}
+        loading="lazy"
+      />
       <Tier>
         <TierBadge tier={character.tier} />
       </Tier>
