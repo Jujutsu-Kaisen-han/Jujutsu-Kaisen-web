@@ -13,7 +13,8 @@ export const CharacterListPage = () => {
   const catalogError = useCharacterStore((state) => state.catalogError);
   const loadCatalog = useCharacterStore((state) => state.loadCatalog);
   const setSearchQuery = useCharacterStore((state) => state.setSearchQuery);
-  const setElementFilter = useCharacterStore((state) => state.setElementFilter);
+  const setTraitFilter = useCharacterStore((state) => state.setTraitFilter);
+  const setOfficialCategoryFilter = useCharacterStore((state) => state.setOfficialCategoryFilter);
   const setRoleFilter = useCharacterStore((state) => state.setRoleFilter);
   const setSortBy = useCharacterStore((state) => state.setSortBy);
   const resetFilters = useCharacterStore((state) => state.resetFilters);
@@ -25,7 +26,7 @@ export const CharacterListPage = () => {
       <PageIntro
         eyebrow="Character Dex"
         title="캐릭터 목록과 필터링"
-        description="이름 검색, 속성 필터, 역할 필터, 정렬 옵션을 조합해서 원하는 파티 후보를 빠르게 찾을 수 있습니다."
+        description="이름 검색, 팬파레 특성, 공식 사이트 분류, 역할 필터를 조합해서 원하는 변형 유닛을 빠르게 찾을 수 있습니다."
       />
 
       {catalogStatus === 'loading' && characters.length === 0 ? (
@@ -49,7 +50,8 @@ export const CharacterListPage = () => {
           totalCount={characters.length}
           filters={filters}
           onSearchQueryChange={setSearchQuery}
-          onElementFilterChange={setElementFilter}
+          onTraitFilterChange={setTraitFilter}
+          onOfficialCategoryFilterChange={setOfficialCategoryFilter}
           onRoleFilterChange={setRoleFilter}
           onSortByChange={setSortBy}
           onResetFilters={resetFilters}

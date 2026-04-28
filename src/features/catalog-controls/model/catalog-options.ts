@@ -1,9 +1,24 @@
-import { elementLabels, roleLabels, type CharacterElement, type CharacterRole } from '@/entities/character/model/types/character';
+import {
+  officialCategoryLabels,
+  roleLabels,
+  traitLabels,
+  type CharacterRole,
+  type CharacterTrait,
+  type OfficialCategory,
+} from '@/entities/character/model/types/character';
 
-export const elementFilterOptions: Array<{ value: CharacterElement | 'all'; label: string }> = [
-  { value: 'all', label: '전체 속성' },
-  ...Object.entries(elementLabels).map(([value, label]) => ({
-    value: value as CharacterElement,
+export const traitFilterOptions: Array<{ value: CharacterTrait | 'all'; label: string }> = [
+  { value: 'all', label: '전체 특성' },
+  ...Object.entries(traitLabels).map(([value, label]) => ({
+    value: value as CharacterTrait,
+    label,
+  })),
+];
+
+export const officialCategoryFilterOptions: Array<{ value: OfficialCategory | 'all'; label: string }> = [
+  { value: 'all', label: '전체 분류' },
+  ...Object.entries(officialCategoryLabels).map(([value, label]) => ({
+    value: value as OfficialCategory,
     label,
   })),
 ];

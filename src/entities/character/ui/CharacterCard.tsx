@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { elementLabels, roleLabels, type CharacterSummary } from '@/entities/character/model/types/character';
+import {
+  combatTypeLabels,
+  officialCategoryLabels,
+  roleLabels,
+  traitLabels,
+  type CharacterSummary,
+} from '@/entities/character/model/types/character';
 import { TierBadge } from '@/entities/character/ui/TierBadge';
 import { routes } from '@/shared/config/routes';
 
@@ -23,17 +29,22 @@ const Card = styled(Link)`
 
 const Poster = styled.div`
   position: relative;
-  aspect-ratio: 4 / 5;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  aspect-ratio: 15 / 22;
   overflow: hidden;
+  padding: 14px 12px 0;
   background:
-    linear-gradient(180deg, rgba(4, 6, 18, 0) 40%, rgba(4, 6, 18, 0.86) 100%),
-    linear-gradient(135deg, rgba(103, 232, 249, 0.1), rgba(255, 122, 69, 0.16));
+    radial-gradient(circle at top, rgba(255, 122, 69, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(8, 15, 29, 0.82) 0%, rgba(8, 15, 29, 1) 100%);
 `;
 
 const Image = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center bottom;
   transition: transform 0.3s ease;
 
   ${Card}:hover & {
@@ -56,6 +67,14 @@ const Body = styled.div`
 const Header = styled.div`
   display: grid;
   gap: 6px;
+`;
+
+const Variant = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 `;
 
 const Name = styled.h3`
@@ -102,12 +121,16 @@ export const CharacterCard = ({ character }: CharacterCardProps) => (
     </Poster>
     <Body>
       <Header>
+        <Variant>{character.variantName}</Variant>
         <Name>{character.name}</Name>
-        <Title>{character.title}</Title>
+        <Title>{character.baseName} · {character.title}</Title>
       </Header>
       <Meta>
-        <Chip>{elementLabels[character.element]}</Chip>
+        <Chip>{traitLabels[character.trait]}</Chip>
+        <Chip>{combatTypeLabels[character.combatType]}</Chip>
         <Chip>{roleLabels[character.role]}</Chip>
+        <Chip>{officialCategoryLabels[character.officialCategory]}</Chip>
+        <Chip>{character.rarity}</Chip>
         <Chip>{character.releaseType}</Chip>
       </Meta>
     </Body>

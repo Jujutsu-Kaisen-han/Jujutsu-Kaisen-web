@@ -1,402 +1,516 @@
-import type { CharacterDetail, CharacterSummary, TierGroup } from '@/entities/character/model/types/character';
+import { tierOrder, type CharacterDetail, type CharacterSummary, type TierGroup } from '@/entities/character/model/types/character';
 
-// Official character art downloaded from https://jujutsukaisen.jp/
-const characterImagePaths = {
-  gojo: '/characters/gojo.png',
-  sukuna: '/characters/sukuna.png',
-  yuta: '/characters/yuta.png',
-  toji: '/characters/toji.png',
-  mahito: '/characters/mahito.png',
-  yuji: '/characters/yuji.png',
-  megumi: '/characters/megumi.png',
-  nobara: '/characters/nobara.png',
-  nanami: '/characters/nanami.png',
-  maki: '/characters/maki.png',
-  toge: '/characters/toge.png',
-  panda: '/characters/panda.png',
+type BaseCharacterKey =
+  | 'gojo'
+  | 'sukuna'
+  | 'yuta'
+  | 'toji'
+  | 'mahito'
+  | 'yuji'
+  | 'megumi'
+  | 'nobara'
+  | 'nanami'
+  | 'maki'
+  | 'toge'
+  | 'panda';
+
+const baseCharacters = {
+  gojo: {
+    baseName: '고죠 사토루',
+    image: '/characters/gojo.png',
+    officialCategory: 'sorcerer',
+  },
+  sukuna: {
+    baseName: '료멘 스쿠나',
+    image: '/characters/sukuna.png',
+    officialCategory: 'curse-side',
+  },
+  yuta: {
+    baseName: '옷코츠 유타',
+    image: '/characters/yuta.png',
+    officialCategory: 'tokyo-school',
+  },
+  toji: {
+    baseName: '후시구로 토우지',
+    image: '/characters/toji.png',
+    officialCategory: 'curse-side',
+  },
+  mahito: {
+    baseName: '마히토',
+    image: '/characters/mahito.png',
+    officialCategory: 'curse-side',
+  },
+  yuji: {
+    baseName: '이타도리 유지',
+    image: '/characters/yuji.png',
+    officialCategory: 'tokyo-school',
+  },
+  megumi: {
+    baseName: '후시구로 메구미',
+    image: '/characters/megumi.png',
+    officialCategory: 'tokyo-school',
+  },
+  nobara: {
+    baseName: '쿠기사키 노바라',
+    image: '/characters/nobara.png',
+    officialCategory: 'tokyo-school',
+  },
+  nanami: {
+    baseName: '나나미 켄토',
+    image: '/characters/nanami.png',
+    officialCategory: 'sorcerer',
+  },
+  maki: {
+    baseName: '젠인 마키',
+    image: '/characters/maki.png',
+    officialCategory: 'tokyo-school',
+  },
+  toge: {
+    baseName: '이누마키 토게',
+    image: '/characters/toge.png',
+    officialCategory: 'tokyo-school',
+  },
+  panda: {
+    baseName: '판다',
+    image: '/characters/panda.png',
+    officialCategory: 'tokyo-school',
+  },
 } as const;
 
-const characterSeeds: CharacterDetail[] = [
+interface UnitSeed {
+  id: string;
+  baseKey: BaseCharacterKey;
+  variantName: string;
+  title: string;
+  trait: CharacterDetail['trait'];
+  combatType: CharacterDetail['combatType'];
+  role: CharacterDetail['role'];
+  tier: CharacterDetail['tier'];
+  rarity: CharacterDetail['rarity'];
+  releaseType: string;
+  description: string;
+  passive: string;
+  skills: CharacterDetail['skills'];
+  ultimate: CharacterDetail['ultimate'];
+}
+
+const createCharacter = (unit: UnitSeed): CharacterDetail => {
+  const base = baseCharacters[unit.baseKey];
+
+  return {
+    id: unit.id,
+    name: `${unit.variantName} ${base.baseName}`,
+    baseName: base.baseName,
+    variantName: unit.variantName,
+    title: unit.title,
+    image: base.image,
+    trait: unit.trait,
+    combatType: unit.combatType,
+    role: unit.role,
+    tier: unit.tier,
+    rarity: unit.rarity,
+    releaseType: unit.releaseType,
+    officialCategory: base.officialCategory,
+    description: unit.description,
+    passive: unit.passive,
+    skills: unit.skills,
+    ultimate: unit.ultimate,
+  };
+};
+
+const characterSeeds: UnitSeed[] = [
   {
-    id: 'gojo-infinity',
-    name: '고죠 사토루',
-    title: '무한을 관장하는 최강',
-    image: characterImagePaths.gojo,
-    element: 'light',
+    id: 'gojo-domain',
+    baseKey: 'gojo',
+    variantName: '무량공처',
+    title: '광역 제압과 최고급 마무리 성능을 겸비한 핵심 한정 유닛',
+    trait: 'illusion',
+    combatType: 'hybrid',
     role: 'attacker',
     tier: 'SS',
+    rarity: 'SSR',
     releaseType: '한정',
-    description: '광역 딜링과 생존, 브레이크 압박을 모두 갖춘 최상위 캐리. 스테이지 범용성이 매우 높다.',
-    passive: '체력 70% 이상일 때 치명타 피해가 상승하고, 배리어가 파괴되면 즉시 반격 버프를 얻는다.',
+    description: '리세마라 상위권에서 가장 먼저 언급되는 고죠 변형 중 하나로, 영역 전개 중심의 전투 흐름을 장악하는 카드입니다.',
+    passive: '전투 시작 시 자신의 술식과 체술 위력을 끌어올리고, 영역 전개 후에는 적 전체의 행동 효율을 크게 떨어뜨립니다.',
     skills: [
       {
-        name: '술식 순전 청',
-        description: '전방 범위 적에게 광속성 피해를 주고 방어력 감소를 부여한다.',
+        name: '아오',
+        description: '적 전체의 위치를 무너뜨리며 피해와 행동 억제를 동시에 부여합니다.',
         cooldown: '3턴',
       },
       {
-        name: '허식 자',
-        description: '단일 적을 강하게 압박하며 브레이크 게이지를 크게 감소시킨다.',
+        name: '아카',
+        description: '단일 적을 강하게 압박하고, 다음 필살기의 계수를 끌어올립니다.',
         cooldown: '4턴',
       },
     ],
     ultimate: {
       name: '무량공처',
-      description: '전체 적에게 큰 피해를 입히고 행동 불가 디버프를 부여하는 강력한 필살기.',
+      description: '전장 전체를 장악하는 대표 필살기로, 광역 피해와 강한 구속 효과를 함께 가합니다.',
       cooldown: '궁극기',
     },
   },
   {
-    id: 'sukuna-calamity',
-    name: '료멘 스쿠나',
-    title: '재앙을 찢는 저주의 왕',
-    image: characterImagePaths.sukuna,
-    element: 'dark',
+    id: 'yuji-zone',
+    baseKey: 'yuji',
+    variantName: '존',
+    title: '2회 행동과 폭발적인 피니시를 가진 대표 리세마라 어태커',
+    trait: 'action',
+    combatType: 'physical',
     role: 'attacker',
     tier: 'SS',
+    rarity: 'SSR',
     releaseType: '한정',
-    description: '폭발적인 단일 화력과 출혈 누적 능력을 동시에 제공하는 보스전 특화 딜러.',
-    passive: '출혈 상태의 적을 공격하면 추가 타격이 발생하고, 처치 시 궁극기 게이지를 회복한다.',
+    description: '현재 리세마라와 범용 딜러 추천에서 자주 올라오는 유지 변형으로, 존 진입 이후의 턴 압박이 강력합니다.',
+    passive: '존 상태에 진입하면 행동 게이지와 회심 효율을 끌어올려 연속 공세를 이어갑니다.',
     skills: [
       {
-        name: '해',
-        description: '단일 적에게 연속 베기 피해를 주고 출혈을 2중첩 부여한다.',
+        name: '돌진 연격',
+        description: '빠르게 파고들어 단일 대상에게 체술 피해를 누적합니다.',
         cooldown: '2턴',
       },
       {
-        name: '화염개방',
-        description: '직선 범위 적에게 암속성 폭발 피해를 주며 받는 회복량을 감소시킨다.',
-        cooldown: '4턴',
+        name: '흑섬 태세',
+        description: '다음 공격의 회심 확률과 피해량을 동시에 끌어올립니다.',
+        cooldown: '3턴',
       },
     ],
     ultimate: {
-      name: '복마어주자',
-      description: '전장 전체에 영역을 펼쳐 지속 피해를 남기고, 보스에게는 추가 계수를 적용한다.',
+      name: '존 블랙 플래시',
+      description: '존 상태에서 위력이 크게 상승하는 결정타 필살기입니다.',
       cooldown: '궁극기',
     },
   },
   {
     id: 'yuta-queen',
-    name: '옷코츠 유타',
-    title: '리카와 동행하는 특급',
-    image: characterImagePaths.yuta,
-    element: 'light',
+    baseKey: 'yuta',
+    variantName: '여왕',
+    title: '리카 연계로 공격과 보호를 함께 가져가는 최상위 특급 유닛',
+    trait: 'shadow',
+    combatType: 'hybrid',
     role: 'support',
-    tier: 'S',
+    tier: 'SS',
+    rarity: 'SSR',
     releaseType: '한정',
-    description: '회복, 보호막, 보조 딜까지 수행하는 하이브리드 유닛으로 장기전 안정성이 좋다.',
-    passive: '아군이 체력 50% 이하가 되면 한 번 보호막을 자동 부여하고, 자신의 궁극기 게이지를 획득한다.',
+    description: '리세마라와 장기 운용 가치가 모두 높은 유타 변형으로, 공격과 지원을 동시에 충족시키는 올라운더입니다.',
+    passive: '리카가 동행 중일 때 아군 보호막과 자신의 스킬 위력이 함께 상승합니다.',
     skills: [
       {
-        name: '리카의 가호',
-        description: '아군 전체에게 보호막과 공격력 증가를 부여한다.',
+        name: '리카의 참격',
+        description: '적을 절단하며 동시에 아군 전체의 피해 저항을 강화합니다.',
         cooldown: '3턴',
       },
       {
-        name: '모방 술식',
-        description: '선택한 아군 역할에 따라 추가 보정 효과를 제공한다.',
+        name: '반전 지원',
+        description: '체력이 낮은 아군을 우선 보조하고 디버프를 완화합니다.',
         cooldown: '4턴',
       },
     ],
     ultimate: {
-      name: '사랑의 저주',
-      description: '적 전체를 공격한 뒤 아군 전체를 회복하며 약화 효과를 1개 해제한다.',
+      name: '사랑의 특급 주력',
+      description: '광역 공격 뒤 아군을 회복하며 리카 연계를 강화합니다.',
       cooldown: '궁극기',
     },
   },
   {
-    id: 'toji-shadow',
-    name: '후시구로 토우지',
-    title: '주력 없는 암살자',
-    image: characterImagePaths.toji,
-    element: 'wind',
-    role: 'breaker',
-    tier: 'S',
+    id: 'sukuna-fuga',
+    baseKey: 'sukuna',
+    variantName: '후가',
+    title: '현 메타 상위권 광역 마무리와 지속 압박을 가진 저주의 왕',
+    trait: 'shadow',
+    combatType: 'cursed',
+    role: 'attacker',
+    tier: 'SS',
+    rarity: 'SSR',
     releaseType: '한정',
-    description: '브레이크 게이지 파괴와 후열 진입 능력이 탁월해 고난도 던전에서 평가가 높다.',
-    passive: '브레이크 상태의 적을 공격하면 속도 버프를 얻고, 회피율이 상승한다.',
+    description: '최신 최강 캐릭터 표에서 꾸준히 상단을 차지하는 숙나 변형으로, 스킬 배율과 필살기 마감력이 모두 뛰어납니다.',
+    passive: '영역 전개 계열 스킬 사용 뒤 술식 위력을 누적시키고, 적의 지속 피해를 강화합니다.',
     skills: [
       {
-        name: '천역모',
-        description: '적 한 명에게 강한 풍속성 피해를 가하고 브레이크 효율을 상승시킨다.',
+        name: '해',
+        description: '적을 절단하며 열상 효과를 부여합니다.',
         cooldown: '2턴',
       },
       {
-        name: '도살 본능',
-        description: '자신의 치명타 확률과 행동 게이지를 증가시킨다.',
+        name: '화염 개방',
+        description: '전방 범위를 태워 광역 술식 피해를 가합니다.',
+        cooldown: '4턴',
+      },
+    ],
+    ultimate: {
+      name: '후가',
+      description: '거대한 화염으로 전장을 태우는 숙나의 결정타 필살기입니다.',
+      cooldown: '궁극기',
+    },
+  },
+  {
+    id: 'mahito-soul',
+    baseKey: 'mahito',
+    variantName: '영혼',
+    title: '환 특성 디버프 메타를 여는 광역 약화 핵심 유닛',
+    trait: 'illusion',
+    combatType: 'hybrid',
+    role: 'debuffer',
+    tier: 'S',
+    rarity: 'SSR',
+    releaseType: '한정',
+    description: '최신 지원형 메타에서 상위권으로 평가되는 마히토 변형으로, 환 특성 파티의 딜 증폭 기점이 됩니다.',
+    passive: '적에게 걸린 약화 효과 수만큼 자신의 피해와 디버프 적중률이 상승합니다.',
+    skills: [
+      {
+        name: '무위전변',
+        description: '적 전체에 약화 중첩을 남기고 피해를 증폭시킵니다.',
+        cooldown: '3턴',
+      },
+      {
+        name: '영혼 침식',
+        description: '단일 적의 영혼을 깎아 추가 피해 조건을 만듭니다.',
+        cooldown: '3턴',
+      },
+    ],
+    ultimate: {
+      name: '영혼 파형',
+      description: '광역 디버프와 폭발 피해를 함께 넣는 마히토의 필살기입니다.',
+      cooldown: '궁극기',
+    },
+  },
+  {
+    id: 'toji-sorcerer-killer',
+    baseKey: 'toji',
+    variantName: '술사 살해자',
+    title: '고배율 체술과 무주력 연계가 강한 단일 브레이커',
+    trait: 'illusion',
+    combatType: 'physical',
+    role: 'breaker',
+    tier: 'S',
+    rarity: 'SSR',
+    releaseType: '한정',
+    description: '고난도 보스전에서 높은 타점과 브레이크 압박을 보여주는 토우지의 대표 변형입니다.',
+    passive: '주력 소비 없이 행동할수록 체술 배율과 브레이크 효율이 상승합니다.',
+    skills: [
+      {
+        name: '천역모 일격',
+        description: '방어를 무시하며 강한 단일 체술 피해를 가합니다.',
+        cooldown: '2턴',
+      },
+      {
+        name: '흔적 없는 침투',
+        description: '행동 게이지를 회복하고 다음 타격을 강화합니다.',
         cooldown: '3턴',
       },
     ],
     ultimate: {
       name: '특급 사냥',
-      description: '보스에게 추가 계수를 지닌 일격을 가하고, 방어력 무시 효과를 적용한다.',
+      description: '단일 적을 확실히 마무리하는 고배율 필살기입니다.',
       cooldown: '궁극기',
     },
   },
   {
-    id: 'mahito-idle',
-    name: '마히토',
-    title: '영혼을 가지고 노는 특급 주령',
-    image: characterImagePaths.mahito,
-    element: 'dark',
-    role: 'debuffer',
-    tier: 'S',
-    releaseType: '일반',
-    description: '광역 약화와 지속 피해 누적이 뛰어나 다수전과 장기전에 모두 강하다.',
-    passive: '약화 효과가 걸린 적을 타격하면 영혼 침식 스택을 쌓고, 최대치에서 추가 피해가 발동한다.',
-    skills: [
-      {
-        name: '무위전변',
-        description: '적 전체에게 공격력 감소와 중독을 부여한다.',
-        cooldown: '3턴',
-      },
-      {
-        name: '영혼 압착',
-        description: '단일 적에게 암속성 피해를 주고, 이미 걸린 디버프 수에 따라 추가 타격한다.',
-        cooldown: '3턴',
-      },
-    ],
-    ultimate: {
-      name: '편살살',
-      description: '범위 피해와 함께 적의 버프를 제거하고, 중독 지속 시간을 늘린다.',
-      cooldown: '궁극기',
-    },
-  },
-  {
-    id: 'yuji-black-flash',
-    name: '이타도리 유지',
-    title: '흑섬을 두드리는 돌격수',
-    image: characterImagePaths.yuji,
-    element: 'fire',
-    role: 'attacker',
-    tier: 'A',
-    releaseType: '일반',
-    description: '세팅이 단순하고 즉발 화력이 좋아 초중반 진행이 편한 밸런스형 딜러.',
-    passive: '치명타 발생 시 다음 스킬 피해가 증가하며, 연속 타격 후 행동 게이지를 회복한다.',
-    skills: [
-      {
-        name: '주먹 연격',
-        description: '단일 적에게 연속 타격을 가하고 낮은 확률로 기절을 유발한다.',
-        cooldown: '2턴',
-      },
-      {
-        name: '흑섬 준비',
-        description: '다음 공격의 치명타율과 피해량을 크게 높인다.',
-        cooldown: '3턴',
-      },
-    ],
-    ultimate: {
-      name: '흑섬',
-      description: '고배율 단일 피해를 가하고, 치명타 시 추가 폭발 피해를 준다.',
-      cooldown: '궁극기',
-    },
-  },
-  {
-    id: 'megumi-shikigami',
-    name: '후시구로 메구미',
-    title: '십종영법술의 전략가',
-    image: characterImagePaths.megumi,
-    element: 'water',
+    id: 'megumi-incomplete-domain',
+    baseKey: 'megumi',
+    variantName: '불완전한 영역',
+    title: '식신 전개와 유틸이 강한 범용 서브 캐리',
+    trait: 'shadow',
+    combatType: 'cursed',
     role: 'support',
-    tier: 'A',
-    releaseType: '일반',
-    description: '식신 운용을 통한 유틸이 강점이며, 콘텐츠에 따라 가치가 크게 올라가는 조합형 서포터.',
-    passive: '식신이 남아 있으면 아군 전체의 속도와 명중이 증가한다.',
+    tier: 'S',
+    rarity: 'SSR',
+    releaseType: '한정',
+    description: '식신 운용과 보조 화력을 함께 가져가는 메구미 변형으로, 다양한 편성에 넣기 좋은 유닛입니다.',
+    passive: '식신이 남아있는 동안 아군 속도와 명중 보정을 끌어올립니다.',
     skills: [
       {
-        name: '옥견 소환',
-        description: '아군 전체의 속도를 올리고, 적 하나에게 추격 효과를 부여한다.',
+        name: '옥견 연계',
+        description: '단일 적을 추격하며 아군 전체의 속도를 보조합니다.',
         cooldown: '3턴',
       },
       {
-        name: '누에',
-        description: '적 전체에게 수속성 피해를 주고 감전 디버프를 부여한다.',
+        name: '누에 전개',
+        description: '적 전체에 술식 피해와 감전 계열 약화를 남깁니다.',
         cooldown: '4턴',
       },
     ],
     ultimate: {
-      name: '영역전개 미완성',
-      description: '식신을 다수 전개해 전체 공격과 함께 아군 버프 지속 시간을 연장한다.',
+      name: '불완전한 영역',
+      description: '식신 다수를 동원해 전장 지배력을 높이는 필살기입니다.',
       cooldown: '궁극기',
     },
   },
   {
-    id: 'nobara-resonance',
-    name: '쿠기사키 노바라',
-    title: '공명으로 꿰뚫는 주술사',
-    image: characterImagePaths.nobara,
-    element: 'fire',
-    role: 'debuffer',
+    id: 'nobara-steel',
+    baseKey: 'nobara',
+    variantName: '철골',
+    title: '단일 고점이 높은 못 특화 디버프 어태커',
+    trait: 'action',
+    combatType: 'cursed',
+    role: 'attacker',
     tier: 'A',
+    rarity: 'SSR',
     releaseType: '일반',
-    description: '못 중첩과 방어력 감소를 통해 딜 상승을 보조하는 서브 딜러.',
-    passive: '디버프가 많은 적을 공격할수록 추가 피해가 증가한다.',
+    description: '초중반부터 확실한 단일 타점을 보여주는 노바라 변형으로, 보스전 압박 능력이 좋습니다.',
+    passive: '못 중첩이 쌓일수록 대상이 받는 피해와 자신의 회심 효율이 상승합니다.',
     skills: [
       {
         name: '추령주법',
-        description: '단일 적에게 화속성 피해를 주고 못 스택을 부여한다.',
+        description: '단일 대상에 못 스택과 술식 피해를 부여합니다.',
         cooldown: '2턴',
       },
       {
-        name: '공명',
-        description: '못 스택을 폭발시켜 방어력 감소와 지속 피해를 적용한다.',
+        name: '공명 준비',
+        description: '다음 공명 계열 피해를 크게 증폭시킵니다.',
         cooldown: '3턴',
       },
     ],
     ultimate: {
-      name: '비녀',
-      description: '전체 적의 못 스택을 모두 폭발시키며 큰 피해를 준다.',
+      name: '비녀 공명',
+      description: '중첩된 못을 폭발시켜 큰 단일 피해를 가합니다.',
       cooldown: '궁극기',
     },
   },
   {
     id: 'nanami-overtime',
-    name: '나나미 켄토',
-    title: '초과근무에 들어간 1급 술사',
-    image: characterImagePaths.nanami,
-    element: 'earth',
-    role: 'breaker',
-    tier: 'B',
+    baseKey: 'nanami',
+    variantName: '시간외 노동',
+    title: '안정적인 체술 누적과 후반 고점이 특징인 1급 술사',
+    trait: 'action',
+    combatType: 'hybrid',
+    role: 'attacker',
+    tier: 'A',
+    rarity: 'SSR',
     releaseType: '일반',
-    description: '안정적인 단일 브레이크와 중상위 딜링을 제공하는 실전형 캐릭터.',
-    passive: '전투 시간이 길어질수록 공격력과 브레이크 효율이 점진적으로 상승한다.',
+    description: '꾸준한 브레이크 압박과 후반 폭발력을 갖춘 나나미 변형으로, 무난하게 데려가기 좋은 공격 카드입니다.',
+    passive: '전투가 길어질수록 자신의 피해량과 치명 계수가 증가합니다.',
     skills: [
       {
-        name: '십획주법',
-        description: '약점을 정확히 찌르는 단일 공격으로 브레이크 수치를 크게 깎는다.',
+        name: '십획 베기',
+        description: '약점을 정밀하게 찌르며 브레이크를 유도합니다.',
         cooldown: '2턴',
       },
       {
-        name: '냉정한 판단',
-        description: '자신의 받는 피해를 감소시키고 다음 공격의 안정성을 높인다.',
+        name: '초과근무 선언',
+        description: '다음 턴 동안 자신의 공격 템포를 끌어올립니다.',
         cooldown: '3턴',
       },
     ],
     ultimate: {
-      name: '초과근무',
-      description: '강력한 일격으로 보스에게 추가 피해를 입히며, 자신의 속도를 높인다.',
+      name: '시간외 일격',
+      description: '고배율 일격으로 단일 적을 압박하는 필살기입니다.',
       cooldown: '궁극기',
     },
   },
   {
-    id: 'maki-heavenly',
-    name: '젠인 마키',
-    title: '육체를 단련한 무기술사',
-    image: characterImagePaths.maki,
-    element: 'wind',
-    role: 'tank',
+    id: 'maki-rebellious',
+    baseKey: 'maki',
+    variantName: '반골',
+    title: '무주력 피지컬을 살린 초중반 전투형 어태커',
+    trait: 'illusion',
+    combatType: 'physical',
+    role: 'attacker',
     tier: 'B',
+    rarity: 'SSR',
     releaseType: '일반',
-    description: '전열 유지력과 도발 성능이 좋아 파티 안정성을 담당하기 좋다.',
-    passive: '도발 상태일 때 피해 감소가 증가하고, 반격 시 브레이크 수치를 감소시킨다.',
+    description: '자원 부담이 적고 단순한 운영이 가능한 마키 변형으로, 초반 전개에서 쓰기 편한 카드입니다.',
+    passive: '주력 소모 없이 공격할수록 다음 턴의 체술 위력이 상승합니다.',
     skills: [
       {
-        name: '강타',
-        description: '적 하나를 공격하고 도발을 건다.',
+        name: '장병기 강타',
+        description: '전방 대상에게 묵직한 물리 피해를 줍니다.',
         cooldown: '2턴',
       },
       {
-        name: '무기 전개',
-        description: '자신의 방어력과 반격 확률을 상승시킨다.',
+        name: '거리 압박',
+        description: '적의 체술 저항을 깎고 자신에게 방어 보정을 부여합니다.',
         cooldown: '3턴',
       },
     ],
     ultimate: {
-      name: '전력 타격',
-      description: '전방 범위 적에게 피해를 주고 아군 전체에게 받는 피해 감소를 부여한다.',
+      name: '반골의 전력 베기',
+      description: '중거리에서 강한 일격을 날리는 체술 필살기입니다.',
       cooldown: '궁극기',
     },
   },
   {
-    id: 'toge-cursed-speech',
-    name: '이누마키 토게',
-    title: '주언으로 전장을 묶는 서포터',
-    image: characterImagePaths.toge,
-    element: 'water',
+    id: 'toge-determination',
+    baseKey: 'toge',
+    variantName: '각오',
+    title: '상태 제어와 보조를 동시에 수행하는 주언형 서포터',
+    trait: 'action',
+    combatType: 'cursed',
     role: 'support',
-    tier: 'C',
+    tier: 'B',
+    rarity: 'SSR',
     releaseType: '일반',
-    description: '행동 제어는 좋지만 화력 기여가 낮아 특정 스테이지에서만 선택되는 편.',
-    passive: '행동 불가에 걸린 적이 있으면 아군 전체의 상태이상 적중률이 상승한다.',
+    description: '행동 불가와 아군 보조를 함께 담당하는 토게 변형으로, 특정 기믹 대응에 강합니다.',
+    passive: '상태이상에 걸린 적이 있으면 아군 전체의 술식 효율이 증가합니다.',
     skills: [
       {
         name: '멈춰',
-        description: '적 하나에게 행동 불가를 부여한다.',
+        description: '단일 적의 행동을 봉쇄합니다.',
         cooldown: '3턴',
       },
       {
         name: '도망쳐',
-        description: '아군 전체에게 회피율 증가 버프를 준다.',
+        description: '아군에게 생존 보조 버프를 부여합니다.',
         cooldown: '4턴',
       },
     ],
     ultimate: {
-      name: '폭발해라',
-      description: '전체 적에게 수속성 피해를 주고 확률적으로 침묵을 건다.',
+      name: '부서져라',
+      description: '전체 적을 밀어내며 상태이상 확률을 끌어올리는 필살기입니다.',
       cooldown: '궁극기',
     },
   },
   {
-    id: 'panda-guard',
-    name: '판다',
-    title: '든든하게 버티는 괴이한 선배',
-    image: characterImagePaths.panda,
-    element: 'earth',
-    role: 'tank',
+    id: 'panda-doll',
+    baseKey: 'panda',
+    variantName: '변이 주해',
+    title: '도발과 반격으로 파티 전열을 지켜주는 안정형 방어 카드',
+    trait: 'night',
+    combatType: 'physical',
+    role: 'defender',
     tier: 'C',
+    rarity: 'SSR',
     releaseType: '일반',
-    description: '초반 생존 보조에 유용하지만 후반으로 갈수록 탱커 경쟁력이 떨어진다.',
-    passive: '체력이 낮을수록 방어력과 회복 효율이 증가한다.',
+    description: '초반 탱킹과 반격 운영을 담당하는 판다 변형으로, 버티는 전투에서 장점이 있습니다.',
+    passive: '피격 횟수에 따라 반격률과 방어 계수가 누적 상승합니다.',
     skills: [
       {
         name: '판다 펀치',
-        description: '전방 적에게 피해를 주고 자신에게 보호막을 부여한다.',
+        description: '전방 적을 밀어내며 도발을 유도합니다.',
         cooldown: '2턴',
       },
       {
-        name: '수비 태세',
-        description: '아군 전체의 방어력을 올리고 자신이 도발한다.',
+        name: '수비 전환',
+        description: '자신에게 방어 버프와 약한 회복 효과를 부여합니다.',
         cooldown: '3턴',
       },
     ],
     ultimate: {
       name: '고릴라 모드',
-      description: '자신의 체력을 회복하고 적 전체의 공격력을 낮춘다.',
+      description: '탱킹과 반격을 동시에 강화하는 판다의 필살기입니다.',
       cooldown: '궁극기',
     },
   },
 ];
 
-export const mockCharacterDetails: CharacterDetail[] = characterSeeds;
+export const mockCharacterDetails: CharacterDetail[] = characterSeeds.map(createCharacter);
 
 export const mockCharacters: CharacterSummary[] = mockCharacterDetails.map(
   ({ description: _description, passive: _passive, skills: _skills, ultimate: _ultimate, ...summary }) => summary,
 );
 
-export const mockTiers: TierGroup[] = [
-  {
-    tier: 'SS',
-    headline: '현 메타 최상위. 대부분의 콘텐츠에서 중심이 되는 핵심 픽.',
-    characterIds: ['gojo-infinity', 'sukuna-calamity'],
-  },
-  {
-    tier: 'S',
-    headline: '조합 가치가 높고, 고난도에서 선택률이 매우 높은 우수한 캐릭터.',
-    characterIds: ['yuta-queen', 'toji-shadow', 'mahito-idle'],
-  },
-  {
-    tier: 'A',
-    headline: '범용성이 좋고 육성 효율이 높은 주력 후보군.',
-    characterIds: ['yuji-black-flash', 'megumi-shikigami', 'nobara-resonance'],
-  },
-  {
-    tier: 'B',
-    headline: '상황에 따라 기용되는 실전형 캐릭터.',
-    characterIds: ['nanami-overtime', 'maki-heavenly'],
-  },
-  {
-    tier: 'C',
-    headline: '특정 기믹 대응이나 초반 육성 단계에서 고려할 수 있는 픽.',
-    characterIds: ['toge-cursed-speech', 'panda-guard'],
-  },
-];
+const tierHeadlines: Record<CharacterDetail['tier'], string> = {
+  SS: '최신 리세마라와 메타 상위권에서 최우선으로 거론되는 변형 유닛.',
+  S: '리세마라 상위권이거나 장기 운용 가치가 높은 우수한 핵심 카드.',
+  A: '안정적으로 기용하기 좋은 범용 실전 카드.',
+  B: '상황과 편성에 따라 채용 가치가 올라가는 보조 카드.',
+  C: '초반 운영이나 특정 기믹 대응에 적합한 카드.',
+};
+
+export const mockTiers: TierGroup[] = tierOrder.map((tier) => ({
+  tier,
+  headline: tierHeadlines[tier],
+  characterIds: mockCharacterDetails
+    .filter((character) => character.tier === tier)
+    .map((character) => character.id),
+}));

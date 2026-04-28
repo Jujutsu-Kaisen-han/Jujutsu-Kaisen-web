@@ -1,14 +1,16 @@
 import styled from 'styled-components';
 import type {
   CatalogSortOption,
-  CharacterElement,
   CharacterFilters,
   CharacterRole,
+  CharacterTrait,
+  OfficialCategory,
 } from '@/entities/character/model/types/character';
 import {
-  elementFilterOptions,
+  officialCategoryFilterOptions,
   roleFilterOptions,
   sortOptions,
+  traitFilterOptions,
 } from '@/features/catalog-controls/model/catalog-options';
 import { Button } from '@/shared/ui/Button';
 import { Panel } from '@/shared/ui/Panel';
@@ -22,7 +24,7 @@ const Layout = styled(Panel)`
 
 const FieldGrid = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr));
   gap: 14px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
@@ -51,7 +53,8 @@ const Hint = styled.p`
 interface CatalogControlsProps {
   filters: CharacterFilters;
   onSearchQueryChange: (value: string) => void;
-  onElementFilterChange: (value: CharacterElement | 'all') => void;
+  onTraitFilterChange: (value: CharacterTrait | 'all') => void;
+  onOfficialCategoryFilterChange: (value: OfficialCategory | 'all') => void;
   onRoleFilterChange: (value: CharacterRole | 'all') => void;
   onSortByChange: (value: CatalogSortOption) => void;
   onReset: () => void;
@@ -60,13 +63,15 @@ interface CatalogControlsProps {
 export const CatalogControls = ({
   filters,
   onSearchQueryChange,
-  onElementFilterChange,
+  onTraitFilterChange,
+  onOfficialCategoryFilterChange,
   onRoleFilterChange,
   onSortByChange,
   onReset,
 }: CatalogControlsProps) => {
   const hasActiveFilters = filters.searchQuery.length > 0
-    || filters.element !== 'all'
+    || filters.trait !== 'all'
+    || filters.officialCategory !== 'all'
     || filters.role !== 'all'
     || filters.sortBy !== 'tier-desc';
 
@@ -75,15 +80,21 @@ export const CatalogControls = ({
       <FieldGrid>
         <SearchField
           label="이름 검색"
-          placeholder="고죠, 유타, 마히토..."
+          placeholder="무량공처, 고죠, 유타, 존..."
           value={filters.searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
         />
         <SelectField
-          label="속성"
-          value={filters.element}
-          options={elementFilterOptions}
-          onChange={(event) => onElementFilterChange(event.target.value as CharacterElement | 'all')}
+          label="특성"
+          value={filters.trait}
+          options={traitFilterOptions}
+          onChange={(event) => onTraitFilterChange(event.target.value as CharacterTrait | 'all')}
+        />
+        <SelectField
+          label="공식 분류"
+          value={filters.officialCategory}
+          options={officialCategoryFilterOptions}
+          onChange={(event) => onOfficialCategoryFilterChange(event.target.value as OfficialCategory | 'all')}
         />
         <SelectField
           label="역할"
@@ -99,7 +110,7 @@ export const CatalogControls = ({
         />
       </FieldGrid>
       <Footer>
-        <Hint>속성과 역할 기준으로 조합 후보를 빠르게 좁힐 수 있습니다.</Hint>
+        <Hint>팬파레 특성과 공식 사이트 분류를 함께 걸어 원하는 변형 유닛만 좁힐 수 있습니다.</Hint>
         <Button variant="ghost" onClick={onReset} disabled={!hasActiveFilters}>
           필터 초기화
         </Button>

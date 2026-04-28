@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import {
-  elementLabels,
+  combatTypeLabels,
+  officialCategoryLabels,
   roleLabels,
+  traitLabels,
   type CharacterDetail,
 } from '@/entities/character/model/types/character';
 import { TierBadge } from '@/entities/character/ui/TierBadge';
@@ -29,8 +31,12 @@ const PosterPanel = styled(Panel)`
 const Poster = styled.img`
   width: 100%;
   border-radius: ${({ theme }) => theme.radius.md};
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
+  aspect-ratio: 15 / 22;
+  object-fit: contain;
+  object-position: center bottom;
+  background:
+    radial-gradient(circle at top, rgba(255, 122, 69, 0.16), transparent 38%),
+    linear-gradient(180deg, rgba(8, 15, 29, 0.82) 0%, rgba(8, 15, 29, 1) 100%);
 `;
 
 const Summary = styled(Panel)`
@@ -41,6 +47,14 @@ const Summary = styled(Panel)`
 const Header = styled.div`
   display: grid;
   gap: 10px;
+`;
+
+const Variant = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 `;
 
 const Title = styled.h1`
@@ -139,12 +153,16 @@ export const CharacterProfile = ({ character }: CharacterProfileProps) => (
       <Summary>
         <Header>
           <TierBadge tier={character.tier} />
+          <Variant>{character.variantName}</Variant>
           <Title>{character.name}</Title>
-          <Subtitle>{character.title}</Subtitle>
+          <Subtitle>{character.baseName} · {character.title}</Subtitle>
         </Header>
         <Chips>
-          <Chip>{elementLabels[character.element]}</Chip>
+          <Chip>{traitLabels[character.trait]}</Chip>
+          <Chip>{combatTypeLabels[character.combatType]}</Chip>
           <Chip>{roleLabels[character.role]}</Chip>
+          <Chip>{officialCategoryLabels[character.officialCategory]}</Chip>
+          <Chip>{character.rarity}</Chip>
           <Chip>{character.releaseType}</Chip>
         </Chips>
         <Description>{character.description}</Description>

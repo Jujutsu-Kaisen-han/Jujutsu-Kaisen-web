@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import type {
   CatalogSortOption,
-  CharacterElement,
   CharacterFilters,
   CharacterRole,
+  CharacterTrait,
   CharacterSummary,
+  OfficialCategory,
 } from '@/entities/character/model/types/character';
 import { CharacterCard } from '@/entities/character/ui/CharacterCard';
 import { CatalogControls } from '@/features/catalog-controls/ui/CatalogControls';
@@ -33,7 +34,8 @@ interface CharacterCatalogProps {
   totalCount: number;
   filters: CharacterFilters;
   onSearchQueryChange: (value: string) => void;
-  onElementFilterChange: (value: CharacterElement | 'all') => void;
+  onTraitFilterChange: (value: CharacterTrait | 'all') => void;
+  onOfficialCategoryFilterChange: (value: OfficialCategory | 'all') => void;
   onRoleFilterChange: (value: CharacterRole | 'all') => void;
   onSortByChange: (value: CatalogSortOption) => void;
   onResetFilters: () => void;
@@ -44,7 +46,8 @@ export const CharacterCatalog = ({
   totalCount,
   filters,
   onSearchQueryChange,
-  onElementFilterChange,
+  onTraitFilterChange,
+  onOfficialCategoryFilterChange,
   onRoleFilterChange,
   onSortByChange,
   onResetFilters,
@@ -53,7 +56,8 @@ export const CharacterCatalog = ({
     <CatalogControls
       filters={filters}
       onSearchQueryChange={onSearchQueryChange}
-      onElementFilterChange={onElementFilterChange}
+      onTraitFilterChange={onTraitFilterChange}
+      onOfficialCategoryFilterChange={onOfficialCategoryFilterChange}
       onRoleFilterChange={onRoleFilterChange}
       onSortByChange={onSortByChange}
       onReset={onResetFilters}

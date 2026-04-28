@@ -2,11 +2,13 @@ import { create } from 'zustand';
 import { characterApi } from '@/entities/character/api/characterApi';
 import type {
   CatalogSortOption,
+  CharacterCombatType,
   CharacterDetail,
-  CharacterElement,
   CharacterFilters,
+  CharacterTrait,
   CharacterRole,
   CharacterSummary,
+  OfficialCategory,
   TierGroup,
 } from '@/entities/character/model/types/character';
 
@@ -24,7 +26,8 @@ interface CharacterStoreState {
   loadCatalog: (force?: boolean) => Promise<void>;
   loadCharacterById: (characterId: string, force?: boolean) => Promise<CharacterDetail | null>;
   setSearchQuery: (searchQuery: string) => void;
-  setElementFilter: (element: CharacterElement | 'all') => void;
+  setTraitFilter: (trait: CharacterTrait | 'all') => void;
+  setOfficialCategoryFilter: (officialCategory: OfficialCategory | 'all') => void;
   setRoleFilter: (role: CharacterRole | 'all') => void;
   setSortBy: (sortBy: CatalogSortOption) => void;
   resetFilters: () => void;
@@ -32,7 +35,8 @@ interface CharacterStoreState {
 
 const initialFilters: CharacterFilters = {
   searchQuery: '',
-  element: 'all',
+  trait: 'all',
+  officialCategory: 'all',
   role: 'all',
   sortBy: 'tier-desc',
 };
@@ -155,11 +159,20 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
     }));
   },
 
-  setElementFilter: (element) => {
+  setTraitFilter: (trait) => {
     set((state) => ({
       filters: {
         ...state.filters,
-        element,
+        trait,
+      },
+    }));
+  },
+
+  setOfficialCategoryFilter: (officialCategory) => {
+    set((state) => ({
+      filters: {
+        ...state.filters,
+        officialCategory,
       },
     }));
   },

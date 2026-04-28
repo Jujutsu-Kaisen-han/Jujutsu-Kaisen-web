@@ -25,12 +25,16 @@ export const filterAndSortCharacters = (
     .filter((character) => {
       const matchesSearch = searchQuery.length === 0
         || character.name.toLocaleLowerCase().includes(searchQuery)
+        || character.baseName.toLocaleLowerCase().includes(searchQuery)
+        || character.variantName.toLocaleLowerCase().includes(searchQuery)
         || character.title.toLocaleLowerCase().includes(searchQuery);
 
-      const matchesElement = filters.element === 'all' || character.element === filters.element;
+      const matchesTrait = filters.trait === 'all' || character.trait === filters.trait;
+      const matchesOfficialCategory = filters.officialCategory === 'all'
+        || character.officialCategory === filters.officialCategory;
       const matchesRole = filters.role === 'all' || character.role === filters.role;
 
-      return matchesSearch && matchesElement && matchesRole;
+      return matchesSearch && matchesTrait && matchesOfficialCategory && matchesRole;
     })
     .sort((left, right) => {
       if (filters.sortBy === 'name-asc') {
