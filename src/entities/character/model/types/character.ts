@@ -18,6 +18,23 @@ export interface CharacterSkill {
   cooldown?: string;
 }
 
+export interface CharacterOfficialSource {
+  label: string;
+  url: string;
+}
+
+export interface CharacterOfficialProfile {
+  summary: string;
+  source: CharacterOfficialSource;
+}
+
+export interface CharacterOfficialVideo {
+  title: string;
+  url: string;
+  embedUrl: string;
+  source: CharacterOfficialSource;
+}
+
 export interface CharacterSummary {
   id: string;
   name: string;
@@ -40,6 +57,9 @@ export interface CharacterDetail extends CharacterSummary {
   passive: string;
   skills: CharacterSkill[];
   ultimate: CharacterSkill;
+  officialProfile?: CharacterOfficialProfile;
+  officialVariantSpotlight?: CharacterOfficialProfile;
+  officialVideos?: CharacterOfficialVideo[];
 }
 
 export interface TierGroup {

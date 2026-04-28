@@ -81,6 +81,84 @@ const baseCharacters = {
   },
 } as const;
 
+const animeCharacterSource = (url: string) => ({
+  label: '주술회전 애니 공식 캐릭터',
+  url,
+});
+
+const fanparePortalSource = {
+  label: '팬파레 1주년 특설 포털',
+  url: 'https://jujutsuphanpara.jp/1stanniversary/',
+} as const;
+
+const fanpareGallerySource = {
+  label: '팬파레 1주년 갤러리',
+  url: 'https://jujutsuphanpara.jp/1stanniversary/special/gallery/',
+} as const;
+
+const officialProfiles: Record<BaseCharacterKey, CharacterDetail['officialProfile']> = {
+  gojo: {
+    summary:
+      '도쿄도립 주술고전의 교사이자 자타공인 최강의 특급 술사. 가벼워 보이지만 차세대를 키워 주술계의 미래를 바꾸려는 의지가 강하다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/index_1st.php'),
+  },
+  sukuna: {
+    summary:
+      '천년 전 최강급 재앙으로 군림했던 저주의 왕으로, 손가락을 매개로 유지의 몸에 수육해 인류를 향한 파괴 충동을 드러낸다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/category4.php'),
+  },
+  yuta: {
+    summary:
+      '리카의 저주를 계기로 고전에 편입한 특급 술사로, 극장판 이후 리카를 해주했지만 여전히 최상위 전력으로 활약한다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/'),
+  },
+  toji: {
+    summary:
+      '젠인가 출신의 "술사 살해자"로, 주력이 전혀 없는 대신 천여주박으로 초인적인 신체 능력을 얻은 암살자다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/category4.php'),
+  },
+  mahito: {
+    summary:
+      '인간을 기원으로 태어난 주령으로, 영혼을 만지고 비틀 수 있는 능력 자체에 강한 호기심을 보이며 잔혹한 실험을 반복한다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/category4.php'),
+  },
+  yuji: {
+    summary:
+      '스쿠나의 독을 견딘 천재적인 그릇으로, 잘못된 죽음을 막기 위해 스스로 저주와 맞서는 싸움에 뛰어든다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/index_1st.php'),
+  },
+  megumi: {
+    summary:
+      '선천적인 재능을 지닌 2급 술사로, 젠인가 상전 술식인 십종영법술을 사용하며 소중한 사람을 지키는 신념을 품고 싸운다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/index_1st.php'),
+  },
+  nobara: {
+    summary:
+      '지방에서 상경한 승부욕 강한 주술사로, 폐쇄적인 고향을 떠나 스스로 선택한 길로 위험을 감수하고 주술고전에 들어왔다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/index_1st.php'),
+  },
+  nanami: {
+    summary:
+      '고죠의 후배인 1급 술사로, 일반 사회와 주술계를 모두 겪은 끝에 더 적성 있는 길로 돌아온 냉정한 프로페셔널이다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/index_1st.php'),
+  },
+  maki: {
+    summary:
+      '주력이 없지만 압도적인 신체 능력을 지닌 피지컬 기프티드로, 주구를 들고 젠인가를 넘어서는 실력자가 되려 한다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/index_1st.php'),
+  },
+  toge: {
+    summary:
+      '말에 저주가 실리는 주언사의 후예라서 평소에는 오니기리 재료로만 말하는 신중한 지원형 술사다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/index_1st.php'),
+  },
+  panda: {
+    summary:
+      '야가 학장이 만든 돌연변이 주해로, 인간처럼 말하고 감정이 풍부하며 동료를 먼저 챙기는 타입이다.',
+    source: animeCharacterSource('https://jujutsukaisen.jp/character/index_1st.php'),
+  },
+};
+
 interface UnitSeed {
   id: string;
   baseKey: BaseCharacterKey;
@@ -105,6 +183,8 @@ const skill = (name: string, description: string, cooldown: string): CharacterDe
 });
 
 const buildVariantImage = (articleId: number) => `https://img.gamewith.jp/article/thumbnail/rectangle_l/${articleId}.png`;
+const buildYouTubeEmbedUrl = (videoId: string) => `https://www.youtube-nocookie.com/embed/${videoId}`;
+const buildYouTubeWatchUrl = (videoId: string) => `https://www.youtube.com/watch?v=${videoId}`;
 
 const variantImageArticleIds: Record<string, number> = {
   'gojo-domain': 473281,
@@ -112,7 +192,6 @@ const variantImageArticleIds: Record<string, number> = {
   'gojo-strongest': 426472,
   'gojo-ao': 450192,
   'gojo-hollow-purple': 434786,
-  'gojo-limitless': 473281,
   'gojo-awakened': 497784,
   'yuji-zone': 473282,
   'yuji-maximum-output': 530925,
@@ -148,6 +227,38 @@ const variantImageArticleIds: Record<string, number> = {
   'panda-helping-hand': 446417,
 };
 
+const officialVariantSpotlights: Partial<Record<UnitSeed['id'], CharacterDetail['officialVariantSpotlight']>> = {
+  'yuji-zone': {
+    summary:
+      '팬파레 1주년 GAME 섹션에서 SSR [ゾーン] 虎杖悠仁으로 공개된 대표 한정 변형입니다.',
+    source: fanparePortalSource,
+  },
+  'gojo-domain': {
+    summary:
+      '팬파레 1주년 GAME 섹션에서 SSR [無下限の内側] 五条悟로 소개된 1주년 핵심 변형입니다.',
+    source: fanparePortalSource,
+  },
+};
+
+const officialVideosByUnitId: Partial<Record<UnitSeed['id'], CharacterDetail['officialVideos']>> = {
+  'yuji-zone': [
+    {
+      title: '[ゾーン]虎杖悠仁 - 必殺スキル紹介動画',
+      url: buildYouTubeWatchUrl('VJ0pE8QbP3k'),
+      embedUrl: buildYouTubeEmbedUrl('VJ0pE8QbP3k'),
+      source: fanpareGallerySource,
+    },
+  ],
+  'gojo-domain': [
+    {
+      title: '[無下限の内側]五条悟 - 必殺スキル紹介動画',
+      url: buildYouTubeWatchUrl('DlkjU_14foY'),
+      embedUrl: buildYouTubeEmbedUrl('DlkjU_14foY'),
+      source: fanpareGallerySource,
+    },
+  ],
+};
+
 const createCharacter = (unit: UnitSeed): CharacterDetail => {
   const base = baseCharacters[unit.baseKey];
   const variantImageArticleId = variantImageArticleIds[unit.id];
@@ -171,6 +282,9 @@ const createCharacter = (unit: UnitSeed): CharacterDetail => {
     passive: unit.passive,
     skills: unit.skills,
     ultimate: unit.ultimate,
+    officialProfile: officialProfiles[unit.baseKey],
+    officialVariantSpotlight: officialVariantSpotlights[unit.id],
+    officialVideos: officialVideosByUnitId[unit.id],
   };
 };
 
