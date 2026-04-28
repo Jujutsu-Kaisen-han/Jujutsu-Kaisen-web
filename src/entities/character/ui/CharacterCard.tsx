@@ -47,21 +47,48 @@ const Poster = styled.div`
   }
 `;
 
+const Backdrop = styled(CharacterArtwork)`
+  position: absolute;
+  inset: -8%;
+  width: calc(100% + 16%);
+  height: calc(100% + 16%);
+  object-fit: cover;
+  object-position: center top;
+  filter: blur(22px);
+  opacity: 0.28;
+  transform: scale(1.08);
+`;
+
+const Frame = styled.div`
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 14px 12px;
+`;
+
 const Image = styled(CharacterArtwork)`
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  object-fit: contain;
+  object-position: center center;
   transition: transform 0.3s ease;
 
   &[data-source='fallback'] {
-    padding: 14px 12px 0;
-    object-fit: contain;
     object-position: center bottom;
   }
 
+  &:not([data-source='fallback']) {
+    max-width: calc(100% - 8px);
+    max-height: calc(100% - 8px);
+    object-position: center center;
+  }
+
   ${Card}:hover & {
-    transform: scale(1.04);
+    transform: scale(1.03);
   }
 `;
 
@@ -128,12 +155,21 @@ interface CharacterCardProps {
 export const CharacterCard = ({ character }: CharacterCardProps) => (
   <Card to={routes.characterDetail(character.id)}>
     <Poster>
-      <Image
+      <Backdrop
         src={character.variantImage}
         fallbackSrc={character.image}
-        alt={character.name}
+        alt=""
+        aria-hidden="true"
         loading="lazy"
       />
+      <Frame>
+        <Image
+          src={character.variantImage}
+          fallbackSrc={character.image}
+          alt={character.name}
+          loading="lazy"
+        />
+      </Frame>
       <Tier>
         <TierBadge tier={character.tier} />
       </Tier>

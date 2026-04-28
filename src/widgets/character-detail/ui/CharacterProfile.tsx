@@ -20,19 +20,46 @@ const ShowcasePanel = styled(Panel)`
   overflow: hidden;
 `;
 
-const Showcase = styled(CharacterArtwork)`
-  width: 100%;
-  border-radius: ${({ theme }) => theme.radius.md};
+const ShowcaseStage = styled.div`
+  position: relative;
   aspect-ratio: 16 / 9;
-  object-fit: cover;
-  object-position: center top;
+  overflow: hidden;
+  border-radius: ${({ theme }) => theme.radius.md};
   background:
     radial-gradient(circle at top, rgba(255, 122, 69, 0.18), transparent 42%),
     linear-gradient(180deg, rgba(8, 15, 29, 0.82) 0%, rgba(8, 15, 29, 1) 100%);
+`;
+
+const ShowcaseBackdrop = styled(CharacterArtwork)`
+  position: absolute;
+  inset: -10%;
+  width: calc(100% + 20%);
+  height: calc(100% + 20%);
+  object-fit: cover;
+  object-position: center top;
+  filter: blur(24px);
+  opacity: 0.32;
+  transform: scale(1.06);
+`;
+
+const ShowcaseFrame = styled.div`
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px 24px 0;
+`;
+
+const Showcase = styled(CharacterArtwork)`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
 
   &[data-source='fallback'] {
-    padding-top: 28px;
-    object-fit: contain;
     object-position: center bottom;
   }
 `;
@@ -116,6 +143,32 @@ const Description = styled.p`
   font-size: 16px;
 `;
 
+const SourceList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
+const SourceLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  color: ${({ theme }) => theme.colors.text};
+  background: rgba(15, 23, 42, 0.6);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: ${({ theme }) => theme.colors.borderStrong};
+  }
+`;
+
 const SectionGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -155,6 +208,42 @@ const SkillDescription = styled.p`
   color: ${({ theme }) => theme.colors.muted};
 `;
 
+const VideoGrid = styled.div`
+  display: grid;
+  gap: 16px;
+`;
+
+const VideoCard = styled.div`
+  display: grid;
+  gap: 12px;
+`;
+
+const VideoFrame = styled.div`
+  overflow: hidden;
+  border-radius: ${({ theme }) => theme.radius.md};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  aspect-ratio: 16 / 9;
+  background:
+    radial-gradient(circle at top, rgba(255, 122, 69, 0.16), transparent 40%),
+    rgba(8, 15, 29, 0.9);
+`;
+
+const VideoEmbed = styled.iframe`
+  width: 100%;
+  height: 100%;
+  border: 0;
+`;
+
+const VideoTitle = styled.h3`
+  margin: 0;
+  font-size: 18px;
+`;
+
+const EmptyText = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.muted};
+`;
+
 const Cooldown = styled.span`
   color: ${({ theme }) => theme.colors.primary};
   font-size: 13px;
@@ -170,11 +259,21 @@ interface CharacterProfileProps {
 export const CharacterProfile = ({ character }: CharacterProfileProps) => (
   <Layout>
     <ShowcasePanel>
-      <Showcase
-        src={character.variantImage}
-        fallbackSrc={character.image}
-        alt={`${character.name} 변형 이미지`}
-      />
+      <ShowcaseStage>
+        <ShowcaseBackdrop
+          src={character.variantImage}
+          fallbackSrc={character.image}
+          alt=""
+          aria-hidden="true"
+        />
+        <ShowcaseFrame>
+          <Showcase
+            src={character.variantImage}
+            fallbackSrc={character.image}
+            alt={`${character.name} 변형 이미지`}
+          />
+        </ShowcaseFrame>
+      </ShowcaseStage>
     </ShowcasePanel>
 
     <Hero>
@@ -203,6 +302,78 @@ export const CharacterProfile = ({ character }: CharacterProfileProps) => (
         </SkillCard>
       </Summary>
     </Hero>
+
+    <SectionGrid>
+      <Panel>
+        <SectionTitle>공식 소개</SectionTitle>
+        <SkillList>
+          {character.officialProfile ? (
+            <SkillCard>
+              <SkillName>기본 캐릭터 소개</SkillName>
+              <SkillDescription>{character.officialProfile.summary}</SkillDescription>
+              <SourceList>
+                <SourceLink
+                  href={character.officialProfile.source.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {character.officialProfile.source.label}
+                </SourceLink>
+              </SourceList>
+            </SkillCard>
+          ) : null}
+
+          {character.officialVariantSpotlight ? (
+            <SkillCard>
+              <SkillName>공식 변형 스포트라이트</SkillName>
+              <SkillDescription>{character.officialVariantSpotlight.summary}</SkillDescription>
+              <SourceList>
+                <SourceLink
+                  href={character.officialVariantSpotlight.source.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {character.officialVariantSpotlight.source.label}
+                </SourceLink>
+              </SourceList>
+            </SkillCard>
+          ) : null}
+        </SkillList>
+      </Panel>
+
+      <Panel>
+        <SectionTitle>공식 영상</SectionTitle>
+        {character.officialVideos && character.officialVideos.length > 0 ? (
+          <VideoGrid>
+            {character.officialVideos.map((video) => (
+              <VideoCard key={video.url}>
+                <VideoFrame>
+                  <VideoEmbed
+                    src={video.embedUrl}
+                    title={video.title}
+                    loading="lazy"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </VideoFrame>
+                <VideoTitle>{video.title}</VideoTitle>
+                <SourceList>
+                  <SourceLink href={video.url} target="_blank" rel="noreferrer">
+                    YouTube에서 보기
+                  </SourceLink>
+                  <SourceLink href={video.source.url} target="_blank" rel="noreferrer">
+                    {video.source.label}
+                  </SourceLink>
+                </SourceList>
+              </VideoCard>
+            ))}
+          </VideoGrid>
+        ) : (
+          <EmptyText>현재 연결된 공식 팬파레 스킬 영상이 없습니다.</EmptyText>
+        )}
+      </Panel>
+    </SectionGrid>
 
     <SectionGrid>
       <Panel>
