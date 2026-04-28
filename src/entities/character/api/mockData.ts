@@ -104,8 +104,53 @@ const skill = (name: string, description: string, cooldown: string): CharacterDe
   cooldown,
 });
 
+const buildVariantImage = (articleId: number) => `https://img.gamewith.jp/article/thumbnail/rectangle_l/${articleId}.png`;
+
+const variantImageArticleIds: Record<string, number> = {
+  'gojo-domain': 473281,
+  'gojo-zero-point-two': 536682,
+  'gojo-strongest': 426472,
+  'gojo-ao': 450192,
+  'gojo-hollow-purple': 434786,
+  'gojo-limitless': 473281,
+  'gojo-awakened': 497784,
+  'yuji-zone': 473282,
+  'yuji-maximum-output': 530925,
+  'yuji-cursed-power': 444747,
+  'yuji-lightfooted': 432466,
+  'megumi-incomplete-domain': 431814,
+  'megumi-inherited-technique': 426466,
+  'megumi-bond': 466294,
+  'megumi-rabbit': 517825,
+  'nobara-steel': 426467,
+  'nobara-compatible-nails': 439929,
+  'nobara-drive-it-in': 464685,
+  'nanami-suppression': 553100,
+  'nanami-grade-one': 459862,
+  'nanami-overtime': 449272,
+  'nanami-ratio': 426473,
+  'yuta-executioner': 551337,
+  'yuta-queen': 524949,
+  'yuta-lend-me-your-power': 429934,
+  'toji-sorcerer-killer': 452079,
+  'toji-incarnation': 514073,
+  'mahito-soul': 532415,
+  'mahito-death': 443429,
+  'sukuna-fuga': 531833,
+  'sukuna-true-jujutsu': 479749,
+  'maki-rebellious': 426468,
+  'maki-greatblade': 460220,
+  'maki-early-morning': 491630,
+  'toge-determination': 426469,
+  'toge-crush': 463408,
+  'toge-night-walk': 483330,
+  'panda-mutant-corpse': 426470,
+  'panda-helping-hand': 446417,
+};
+
 const createCharacter = (unit: UnitSeed): CharacterDetail => {
   const base = baseCharacters[unit.baseKey];
+  const variantImageArticleId = variantImageArticleIds[unit.id];
 
   return {
     id: unit.id,
@@ -114,6 +159,7 @@ const createCharacter = (unit: UnitSeed): CharacterDetail => {
     variantName: unit.variantName,
     title: unit.title,
     image: base.image,
+    variantImage: variantImageArticleId ? buildVariantImage(variantImageArticleId) : undefined,
     trait: unit.trait,
     combatType: unit.combatType,
     role: unit.role,

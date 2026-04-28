@@ -25,6 +25,7 @@ export interface CharacterSummary {
   variantName: string;
   title: string;
   image: string;
+  variantImage?: string;
   trait: CharacterTrait;
   combatType: CharacterCombatType;
   role: CharacterRole;
