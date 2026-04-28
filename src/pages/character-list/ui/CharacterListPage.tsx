@@ -26,7 +26,7 @@ export const CharacterListPage = () => {
       <PageIntro
         eyebrow="Character Dex"
         title="캐릭터 목록과 필터링"
-        description="이름 검색, 팬파레 특성, 공식 사이트 분류, 역할 필터를 조합해서 원하는 변형 유닛을 빠르게 찾을 수 있습니다."
+        description="이름 검색, 팬파레 특성, 공식 사이트 분류, 역할 필터를 조합하고 결과를 환·영·야·행 섹션으로 나눠서 원하는 변형 유닛을 빠르게 찾을 수 있습니다."
       />
 
       {catalogStatus === 'loading' && characters.length === 0 ? (

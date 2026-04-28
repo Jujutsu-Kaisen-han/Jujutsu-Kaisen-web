@@ -1,5 +1,6 @@
 import type {
   CharacterFilters,
+  CharacterTrait,
   CharacterSummary,
   CharacterTier,
   TierGroup,
@@ -64,3 +65,13 @@ export const groupCharactersByTier = (
     .map((characterId) => characters.find((character) => character.id === characterId))
     .filter((character): character is CharacterSummary => Boolean(character)),
 }));
+
+export const groupCharactersByTrait = (
+  characters: CharacterSummary[],
+  traits: CharacterTrait[],
+): Array<{ trait: CharacterTrait; characters: CharacterSummary[] }> => traits
+  .map((trait) => ({
+    trait,
+    characters: characters.filter((character) => character.trait === trait),
+  }))
+  .filter((group) => group.characters.length > 0);

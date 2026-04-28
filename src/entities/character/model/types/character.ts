@@ -77,6 +77,7 @@ export interface CharacterFilters {
 }
 
 export const tierOrder: CharacterTier[] = ['SS', 'S', 'A', 'B', 'C'];
+export const traitOrder: CharacterTrait[] = ['illusion', 'shadow', 'night', 'action'];
 
 export const traitLabels: Record<CharacterTrait, string> = {
   action: '행',
