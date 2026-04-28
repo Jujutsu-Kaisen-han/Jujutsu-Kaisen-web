@@ -1,16 +1,27 @@
-import { createCharacterPoster } from '@/entities/character/lib/createCharacterPoster';
 import type { CharacterDetail, CharacterSummary, TierGroup } from '@/entities/character/model/types/character';
 
-interface CharacterSeed extends Omit<CharacterDetail, 'image'> {
-  accent: string;
-  shadow: string;
-}
+// Official character art downloaded from https://jujutsukaisen.jp/
+const characterImagePaths = {
+  gojo: '/characters/gojo.png',
+  sukuna: '/characters/sukuna.png',
+  yuta: '/characters/yuta.png',
+  toji: '/characters/toji.png',
+  mahito: '/characters/mahito.png',
+  yuji: '/characters/yuji.png',
+  megumi: '/characters/megumi.png',
+  nobara: '/characters/nobara.png',
+  nanami: '/characters/nanami.png',
+  maki: '/characters/maki.png',
+  toge: '/characters/toge.png',
+  panda: '/characters/panda.png',
+} as const;
 
-const characterSeeds: CharacterSeed[] = [
+const characterSeeds: CharacterDetail[] = [
   {
     id: 'gojo-infinity',
     name: '고죠 사토루',
     title: '무한을 관장하는 최강',
+    image: characterImagePaths.gojo,
     element: 'light',
     role: 'attacker',
     tier: 'SS',
@@ -34,13 +45,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '전체 적에게 큰 피해를 입히고 행동 불가 디버프를 부여하는 강력한 필살기.',
       cooldown: '궁극기',
     },
-    accent: '#67e8f9',
-    shadow: '#0f3d58',
   },
   {
     id: 'sukuna-calamity',
     name: '료멘 스쿠나',
     title: '재앙을 찢는 저주의 왕',
+    image: characterImagePaths.sukuna,
     element: 'dark',
     role: 'attacker',
     tier: 'SS',
@@ -64,13 +74,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '전장 전체에 영역을 펼쳐 지속 피해를 남기고, 보스에게는 추가 계수를 적용한다.',
       cooldown: '궁극기',
     },
-    accent: '#f97316',
-    shadow: '#431407',
   },
   {
     id: 'yuta-queen',
     name: '옷코츠 유타',
     title: '리카와 동행하는 특급',
+    image: characterImagePaths.yuta,
     element: 'light',
     role: 'support',
     tier: 'S',
@@ -94,13 +103,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '적 전체를 공격한 뒤 아군 전체를 회복하며 약화 효과를 1개 해제한다.',
       cooldown: '궁극기',
     },
-    accent: '#fde68a',
-    shadow: '#1f2937',
   },
   {
     id: 'toji-shadow',
     name: '후시구로 토우지',
     title: '주력 없는 암살자',
+    image: characterImagePaths.toji,
     element: 'wind',
     role: 'breaker',
     tier: 'S',
@@ -124,13 +132,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '보스에게 추가 계수를 지닌 일격을 가하고, 방어력 무시 효과를 적용한다.',
       cooldown: '궁극기',
     },
-    accent: '#22c55e',
-    shadow: '#052e16',
   },
   {
     id: 'mahito-idle',
     name: '마히토',
     title: '영혼을 가지고 노는 특급 주령',
+    image: characterImagePaths.mahito,
     element: 'dark',
     role: 'debuffer',
     tier: 'S',
@@ -154,13 +161,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '범위 피해와 함께 적의 버프를 제거하고, 중독 지속 시간을 늘린다.',
       cooldown: '궁극기',
     },
-    accent: '#a855f7',
-    shadow: '#2e1065',
   },
   {
     id: 'yuji-black-flash',
     name: '이타도리 유지',
     title: '흑섬을 두드리는 돌격수',
+    image: characterImagePaths.yuji,
     element: 'fire',
     role: 'attacker',
     tier: 'A',
@@ -184,13 +190,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '고배율 단일 피해를 가하고, 치명타 시 추가 폭발 피해를 준다.',
       cooldown: '궁극기',
     },
-    accent: '#fb7185',
-    shadow: '#4c0519',
   },
   {
     id: 'megumi-shikigami',
     name: '후시구로 메구미',
     title: '십종영법술의 전략가',
+    image: characterImagePaths.megumi,
     element: 'water',
     role: 'support',
     tier: 'A',
@@ -214,13 +219,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '식신을 다수 전개해 전체 공격과 함께 아군 버프 지속 시간을 연장한다.',
       cooldown: '궁극기',
     },
-    accent: '#60a5fa',
-    shadow: '#0f172a',
   },
   {
     id: 'nobara-resonance',
     name: '쿠기사키 노바라',
     title: '공명으로 꿰뚫는 주술사',
+    image: characterImagePaths.nobara,
     element: 'fire',
     role: 'debuffer',
     tier: 'A',
@@ -244,13 +248,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '전체 적의 못 스택을 모두 폭발시키며 큰 피해를 준다.',
       cooldown: '궁극기',
     },
-    accent: '#f43f5e',
-    shadow: '#3f0d1b',
   },
   {
     id: 'nanami-overtime',
     name: '나나미 켄토',
     title: '초과근무에 들어간 1급 술사',
+    image: characterImagePaths.nanami,
     element: 'earth',
     role: 'breaker',
     tier: 'B',
@@ -274,13 +277,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '강력한 일격으로 보스에게 추가 피해를 입히며, 자신의 속도를 높인다.',
       cooldown: '궁극기',
     },
-    accent: '#facc15',
-    shadow: '#422006',
   },
   {
     id: 'maki-heavenly',
     name: '젠인 마키',
     title: '육체를 단련한 무기술사',
+    image: characterImagePaths.maki,
     element: 'wind',
     role: 'tank',
     tier: 'B',
@@ -304,13 +306,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '전방 범위 적에게 피해를 주고 아군 전체에게 받는 피해 감소를 부여한다.',
       cooldown: '궁극기',
     },
-    accent: '#4ade80',
-    shadow: '#14532d',
   },
   {
     id: 'toge-cursed-speech',
     name: '이누마키 토게',
     title: '주언으로 전장을 묶는 서포터',
+    image: characterImagePaths.toge,
     element: 'water',
     role: 'support',
     tier: 'C',
@@ -334,13 +335,12 @@ const characterSeeds: CharacterSeed[] = [
       description: '전체 적에게 수속성 피해를 주고 확률적으로 침묵을 건다.',
       cooldown: '궁극기',
     },
-    accent: '#38bdf8',
-    shadow: '#082f49',
   },
   {
     id: 'panda-guard',
     name: '판다',
     title: '든든하게 버티는 괴이한 선배',
+    image: characterImagePaths.panda,
     element: 'earth',
     role: 'tank',
     tier: 'C',
@@ -364,22 +364,10 @@ const characterSeeds: CharacterSeed[] = [
       description: '자신의 체력을 회복하고 적 전체의 공격력을 낮춘다.',
       cooldown: '궁극기',
     },
-    accent: '#cbd5e1',
-    shadow: '#334155',
   },
 ];
 
-export const mockCharacterDetails: CharacterDetail[] = characterSeeds.map(
-  ({ accent, shadow, ...character }) => ({
-    ...character,
-    image: createCharacterPoster({
-      name: character.name,
-      title: character.title,
-      accent,
-      shadow,
-    }),
-  }),
-);
+export const mockCharacterDetails: CharacterDetail[] = characterSeeds;
 
 export const mockCharacters: CharacterSummary[] = mockCharacterDetails.map(
   ({ description: _description, passive: _passive, skills: _skills, ultimate: _ultimate, ...summary }) => summary,
