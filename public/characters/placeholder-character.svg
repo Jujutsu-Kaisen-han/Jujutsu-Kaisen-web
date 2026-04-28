@@ -1,0 +1,20 @@
+<svg width="720" height="1040" viewBox="0 0 720 1040" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="1040" fill="#08101D"/>
+  <rect width="720" height="1040" fill="url(#paint0_radial)"/>
+  <rect x="36" y="36" width="648" height="968" rx="40" fill="url(#paint1_linear)" stroke="#2B3647" stroke-width="2"/>
+  <circle cx="360" cy="252" r="116" fill="#15243A"/>
+  <path d="M212 820C212 694.072 314.072 592 440 592H280C405.928 592 508 694.072 508 820V856H212V820Z" fill="#15243A"/>
+  <path d="M292 420C292 382.444 322.444 352 360 352C397.556 352 428 382.444 428 420V568H292V420Z" fill="#15243A"/>
+  <rect x="140" y="900" width="440" height="52" rx="26" fill="#111C2C" stroke="#33435C"/>
+  <text x="360" y="932" text-anchor="middle" fill="#D6DEE8" font-family="Arial, sans-serif" font-size="24" font-weight="700">PHANTOM PARADE UNIT</text>
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(360 180) rotate(90) scale(620 440)">
+      <stop stop-color="#FF7A45" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#08101D" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="paint1_linear" x1="360" y1="36" x2="360" y2="1004" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101B2A"/>
+      <stop offset="1" stop-color="#09111D"/>
+    </linearGradient>
+  </defs>
+</svg>

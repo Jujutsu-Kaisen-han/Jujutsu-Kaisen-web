@@ -16,7 +16,35 @@ type BaseCharacterKey =
   | 'nanami'
   | 'maki'
   | 'toge'
-  | 'panda';
+  | 'panda'
+  | 'todo'
+  | 'jogo'
+  | 'hanami'
+  | 'junpei'
+  | 'geto'
+  | 'momo'
+  | 'kamo'
+  | 'mechamaru'
+  | 'miwa'
+  | 'rindou'
+  | 'yaga'
+  | 'mai'
+  | 'yukiKaito'
+  | 'miguel'
+  | 'kokichi'
+  | 'ieiri'
+  | 'meiMei'
+  | 'ino'
+  | 'choso'
+  | 'dagon'
+  | 'naobito'
+  | 'kusakabe'
+  | 'uraume'
+  | 'gakuganji'
+  | 'eiji'
+  | 'ijichi';
+
+const placeholderCharacterImage = '/characters/placeholder-character.svg';
 
 const baseCharacters = {
   gojo: {
@@ -79,6 +107,136 @@ const baseCharacters = {
     image: '/characters/panda.png',
     officialCategory: 'tokyo-school',
   },
+  todo: {
+    baseName: '토도 아오이',
+    image: placeholderCharacterImage,
+    officialCategory: 'kyoto-school',
+  },
+  jogo: {
+    baseName: '죠고',
+    image: placeholderCharacterImage,
+    officialCategory: 'curse-side',
+  },
+  hanami: {
+    baseName: '하나미',
+    image: placeholderCharacterImage,
+    officialCategory: 'curse-side',
+  },
+  junpei: {
+    baseName: '요시노 준페이',
+    image: placeholderCharacterImage,
+    officialCategory: 'other',
+  },
+  geto: {
+    baseName: '게토 스구루',
+    image: placeholderCharacterImage,
+    officialCategory: 'curse-side',
+  },
+  momo: {
+    baseName: '니시미야 모모',
+    image: placeholderCharacterImage,
+    officialCategory: 'kyoto-school',
+  },
+  kamo: {
+    baseName: '카모 노리토시',
+    image: placeholderCharacterImage,
+    officialCategory: 'kyoto-school',
+  },
+  mechamaru: {
+    baseName: '메카마루',
+    image: placeholderCharacterImage,
+    officialCategory: 'kyoto-school',
+  },
+  miwa: {
+    baseName: '미와 카스미',
+    image: placeholderCharacterImage,
+    officialCategory: 'kyoto-school',
+  },
+  rindou: {
+    baseName: '린도 사키',
+    image: placeholderCharacterImage,
+    officialCategory: 'fanpare-original',
+  },
+  yaga: {
+    baseName: '야가 마사미치',
+    image: placeholderCharacterImage,
+    officialCategory: 'tokyo-school',
+  },
+  mai: {
+    baseName: '젠인 마이',
+    image: placeholderCharacterImage,
+    officialCategory: 'kyoto-school',
+  },
+  yukiKaito: {
+    baseName: '유키 카이토',
+    image: placeholderCharacterImage,
+    officialCategory: 'fanpare-original',
+  },
+  miguel: {
+    baseName: '미겔',
+    image: placeholderCharacterImage,
+    officialCategory: 'other',
+  },
+  kokichi: {
+    baseName: '무타 코키치',
+    image: placeholderCharacterImage,
+    officialCategory: 'kyoto-school',
+  },
+  ieiri: {
+    baseName: '이에이리 쇼코',
+    image: placeholderCharacterImage,
+    officialCategory: 'tokyo-school',
+  },
+  meiMei: {
+    baseName: '메이메이',
+    image: placeholderCharacterImage,
+    officialCategory: 'sorcerer',
+  },
+  ino: {
+    baseName: '이노 타쿠마',
+    image: placeholderCharacterImage,
+    officialCategory: 'sorcerer',
+  },
+  choso: {
+    baseName: '쵸소',
+    image: placeholderCharacterImage,
+    officialCategory: 'curse-side',
+  },
+  dagon: {
+    baseName: '다곤',
+    image: placeholderCharacterImage,
+    officialCategory: 'curse-side',
+  },
+  naobito: {
+    baseName: '젠인 나오비토',
+    image: placeholderCharacterImage,
+    officialCategory: 'sorcerer',
+  },
+  kusakabe: {
+    baseName: '쿠사카베 아츠야',
+    image: placeholderCharacterImage,
+    officialCategory: 'sorcerer',
+  },
+  uraume: {
+    baseName: '우라우메',
+    image: placeholderCharacterImage,
+    officialCategory: 'curse-side',
+  },
+  gakuganji: {
+    baseName: '가쿠간지 요시노부',
+    image: placeholderCharacterImage,
+    officialCategory: 'kyoto-school',
+  },
+  eiji: {
+    baseName: '우루시 에이지',
+    image: placeholderCharacterImage,
+    officialCategory: 'fanpare-original',
+  },
+  ijichi: {
+    baseName: '이지치 키요타카',
+    image: placeholderCharacterImage,
+    officialCategory: 'other',
+  },
 } as const;
 
 const animeCharacterSource = (url: string) => ({
@@ -96,7 +254,7 @@ const fanpareGallerySource = {
   url: 'https://jujutsuphanpara.jp/1stanniversary/special/gallery/',
 } as const;
 
-const officialProfiles: Record<BaseCharacterKey, CharacterDetail['officialProfile']> = {
+const officialProfiles: Partial<Record<BaseCharacterKey, CharacterDetail['officialProfile']>> = {
   gojo: {
     summary:
       '도쿄도립 주술고전의 교사이자 자타공인 최강의 특급 술사. 가벼워 보이지만 차세대를 키워 주술계의 미래를 바꾸려는 의지가 강하다.',
@@ -186,6 +344,28 @@ const buildVariantImage = (articleId: number) => `https://img.gamewith.jp/articl
 const buildYouTubeEmbedUrl = (videoId: string) => `https://www.youtube-nocookie.com/embed/${videoId}`;
 const buildYouTubeWatchUrl = (videoId: string) => `https://www.youtube.com/watch?v=${videoId}`;
 
+const traitCopy: Record<CharacterDetail['trait'], string> = {
+  action: '행 특성의 빠른 전개',
+  illusion: '환 특성의 변칙 운영',
+  shadow: '영 특성의 안정적인 압박',
+  night: '야 특성의 후반 폭발력',
+};
+
+const roleCopy: Record<CharacterDetail['role'], string> = {
+  attacker: '핵심 화력을 책임집니다.',
+  support: '아군 전개와 버프를 보조합니다.',
+  breaker: '브레이크와 진형 붕괴를 노립니다.',
+  defender: '전열 유지와 생존을 맡습니다.',
+  debuffer: '약화 효과를 누적시키며 흐름을 끊습니다.',
+  healer: '회복과 유지력을 담당합니다.',
+};
+
+const combatTypeCopy: Record<CharacterDetail['combatType'], string> = {
+  physical: '체술 중심으로 압박합니다.',
+  cursed: '술식 중심으로 전장을 장악합니다.',
+  hybrid: '체술과 술식을 함께 운용합니다.',
+};
+
 const variantImageArticleIds: Record<string, number> = {
   'gojo-domain': 473281,
   'gojo-zero-point-two': 536682,
@@ -217,6 +397,8 @@ const variantImageArticleIds: Record<string, number> = {
   'mahito-death': 443429,
   'sukuna-fuga': 531833,
   'sukuna-true-jujutsu': 479749,
+  'nanami-promising': 503399,
+  'yuji-entrusted-life': 539782,
   'maki-rebellious': 426468,
   'maki-greatblade': 460220,
   'maki-early-morning': 491630,
@@ -259,13 +441,72 @@ const officialVideosByUnitId: Partial<Record<UnitSeed['id'], CharacterDetail['of
   ],
 };
 
+interface AutoUnitConfig {
+  id: string;
+  baseKey: BaseCharacterKey;
+  variantName: string;
+  trait: CharacterDetail['trait'];
+  combatType: CharacterDetail['combatType'];
+  role: CharacterDetail['role'];
+  tier: CharacterDetail['tier'];
+  rarity: CharacterDetail['rarity'];
+  releaseType: string;
+  title?: string;
+  description?: string;
+  passive?: string;
+}
+
+const createAutoUnit = (config: AutoUnitConfig): UnitSeed => {
+  const base = baseCharacters[config.baseKey];
+  const label = config.variantName === '기본형' ? base.baseName : `${config.variantName} ${base.baseName}`;
+
+  return {
+    id: config.id,
+    baseKey: config.baseKey,
+    variantName: config.variantName,
+    title:
+      config.title
+      ?? `${traitCopy[config.trait]}과 ${combatTypeCopy[config.combatType].replace('.', '')}을 살린 ${base.baseName} 유닛`,
+    trait: config.trait,
+    combatType: config.combatType,
+    role: config.role,
+    tier: config.tier,
+    rarity: config.rarity,
+    releaseType: config.releaseType,
+    description:
+      config.description
+      ?? `${label}은 팬파레 최신 roster 기준 실장된 ${config.rarity} 유닛으로, ${traitCopy[config.trait]}을 활용합니다.`,
+    passive:
+      config.passive
+      ?? `${label}은 전투 중 ${combatTypeCopy[config.combatType].replace('.', '')} ${roleCopy[config.role]}`,
+    skills: [
+      skill(
+        config.variantName === '기본형' ? `${base.baseName} 전개` : `${config.variantName} 전개`,
+        `${label}의 기본 사이클을 담당하는 스킬로, ${combatTypeCopy[config.combatType]}`,
+        '2턴',
+      ),
+      skill(
+        `${base.baseName} 연계`,
+        `${traitCopy[config.trait]}을 살려 ${roleCopy[config.role]}`,
+        '3턴',
+      ),
+    ],
+    ultimate: skill(
+      config.variantName === '기본형' ? `${base.baseName} 필살` : `${config.variantName} 필살`,
+      `${label}의 피니시 기술로, 전투 마무리와 템포 전환에 특화되어 있습니다.`,
+      '궁극기',
+    ),
+  };
+};
+
 const createCharacter = (unit: UnitSeed): CharacterDetail => {
   const base = baseCharacters[unit.baseKey];
   const variantImageArticleId = variantImageArticleIds[unit.id];
+  const isBaseForm = unit.variantName.trim() === '' || unit.variantName === '기본형';
 
   return {
     id: unit.id,
-    name: `${unit.variantName} ${base.baseName}`,
+    name: isBaseForm ? base.baseName : `${unit.variantName} ${base.baseName}`,
     baseName: base.baseName,
     variantName: unit.variantName,
     title: unit.title,
@@ -1032,7 +1273,666 @@ const characterSeeds: UnitSeed[] = [
   },
 ];
 
-export const mockCharacterDetails: CharacterDetail[] = characterSeeds.map(createCharacter);
+const additionalCharacterSeeds: UnitSeed[] = [
+  // Missing SSR units from the latest GameWith roster page (updated March 27, 2026).
+  createAutoUnit({
+    id: 'todo-friendship',
+    baseKey: 'todo',
+    variantName: '우정',
+    trait: 'illusion',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'todo-takada',
+    baseKey: 'todo',
+    variantName: '타카쨩',
+    trait: 'action',
+    combatType: 'physical',
+    role: 'support',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'todo-you',
+    baseKey: 'todo',
+    variantName: '오마에와',
+    trait: 'action',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '한정',
+  }),
+  createAutoUnit({
+    id: 'jogo-pride',
+    baseKey: 'jogo',
+    variantName: '긍지',
+    trait: 'action',
+    combatType: 'cursed',
+    role: 'attacker',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'jogo-fierce',
+    baseKey: 'jogo',
+    variantName: '치열',
+    trait: 'night',
+    combatType: 'cursed',
+    role: 'attacker',
+    tier: 'S',
+    rarity: 'SSR',
+    releaseType: '한정',
+  }),
+  createAutoUnit({
+    id: 'hanami-battle',
+    baseKey: 'hanami',
+    variantName: '싸움',
+    trait: 'shadow',
+    combatType: 'hybrid',
+    role: 'defender',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'junpei-young-fish',
+    baseKey: 'junpei',
+    variantName: '유어',
+    trait: 'night',
+    combatType: 'cursed',
+    role: 'debuffer',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'geto-righteous-cause',
+    baseKey: 'geto',
+    variantName: '대의',
+    trait: 'shadow',
+    combatType: 'cursed',
+    role: 'attacker',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'geto-non-sorcerer',
+    baseKey: 'geto',
+    variantName: '비술사',
+    trait: 'illusion',
+    combatType: 'cursed',
+    role: 'debuffer',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'momo-dont-underestimate',
+    baseKey: 'momo',
+    variantName: '얕보지 마',
+    trait: 'illusion',
+    combatType: 'cursed',
+    role: 'support',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'momo-tsukumogami',
+    baseKey: 'momo',
+    variantName: '부적신',
+    trait: 'night',
+    combatType: 'cursed',
+    role: 'debuffer',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '한정',
+  }),
+  createAutoUnit({
+    id: 'kamo-determination',
+    baseKey: 'kamo',
+    variantName: '결의',
+    trait: 'shadow',
+    combatType: 'hybrid',
+    role: 'attacker',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'mechamaru-blade-source',
+    baseKey: 'mechamaru',
+    variantName: '도원',
+    trait: 'action',
+    combatType: 'hybrid',
+    role: 'breaker',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'miwa-zanshin',
+    baseKey: 'miwa',
+    variantName: '잔심',
+    trait: 'shadow',
+    combatType: 'physical',
+    role: 'defender',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'miwa-dash',
+    baseKey: 'miwa',
+    variantName: '질주',
+    trait: 'action',
+    combatType: 'physical',
+    role: 'support',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '한정',
+  }),
+  createAutoUnit({
+    id: 'rindou-determination',
+    baseKey: 'rindou',
+    variantName: '각오',
+    trait: 'action',
+    combatType: 'hybrid',
+    role: 'attacker',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'yaga-cursed-corpse',
+    baseKey: 'yaga',
+    variantName: '주해',
+    trait: 'illusion',
+    combatType: 'hybrid',
+    role: 'support',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'yaga-guardian',
+    baseKey: 'yaga',
+    variantName: '파수꾼',
+    trait: 'night',
+    combatType: 'hybrid',
+    role: 'defender',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '한정',
+  }),
+  createAutoUnit({
+    id: 'mai-bullet',
+    baseKey: 'mai',
+    variantName: '탄환',
+    trait: 'action',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'yuki-will',
+    baseKey: 'yukiKaito',
+    variantName: '의지',
+    trait: 'action',
+    combatType: 'hybrid',
+    role: 'support',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'miguel-stall',
+    baseKey: 'miguel',
+    variantName: '발 묶기',
+    trait: 'night',
+    combatType: 'physical',
+    role: 'defender',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'kokichi-everything',
+    baseKey: 'kokichi',
+    variantName: '모든 것',
+    trait: 'shadow',
+    combatType: 'hybrid',
+    role: 'attacker',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '한정',
+  }),
+  createAutoUnit({
+    id: 'ieiri-can-save',
+    baseKey: 'ieiri',
+    variantName: '구할 수 있어',
+    trait: 'action',
+    combatType: 'physical',
+    role: 'healer',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'ieiri-hyuu',
+    baseKey: 'ieiri',
+    variantName: '휴',
+    trait: 'night',
+    combatType: 'physical',
+    role: 'support',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '한정',
+  }),
+  createAutoUnit({
+    id: 'meimei-crow',
+    baseKey: 'meiMei',
+    variantName: '까마귀',
+    trait: 'shadow',
+    combatType: 'cursed',
+    role: 'attacker',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'ino-overconfidence',
+    baseKey: 'ino',
+    variantName: '만심',
+    trait: 'action',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'B',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'nanami-promising',
+    baseKey: 'nanami',
+    variantName: '유망주',
+    trait: 'shadow',
+    combatType: 'hybrid',
+    role: 'support',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '한정',
+  }),
+  createAutoUnit({
+    id: 'choso-big-brother',
+    baseKey: 'choso',
+    variantName: '형님',
+    trait: 'shadow',
+    combatType: 'cursed',
+    role: 'attacker',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'dagon-infinite',
+    baseKey: 'dagon',
+    variantName: '무진',
+    trait: 'night',
+    combatType: 'cursed',
+    role: 'debuffer',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'naobito-speed',
+    baseKey: 'naobito',
+    variantName: '속도',
+    trait: 'action',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'kusakabe-sharp',
+    baseKey: 'kusakabe',
+    variantName: '예리한 칼날',
+    trait: 'shadow',
+    combatType: 'physical',
+    role: 'breaker',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'yuji-entrusted-life',
+    baseKey: 'yuji',
+    variantName: '맡겨진 한 목숨',
+    trait: 'illusion',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'SS',
+    rarity: 'SSR',
+    releaseType: '한정',
+  }),
+  createAutoUnit({
+    id: 'uraume-underling',
+    baseKey: 'uraume',
+    variantName: '삼류',
+    trait: 'night',
+    combatType: 'cursed',
+    role: 'debuffer',
+    tier: 'A',
+    rarity: 'SSR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'eiji-full-speed',
+    baseKey: 'eiji',
+    variantName: '전개속',
+    trait: 'action',
+    combatType: 'hybrid',
+    role: 'attacker',
+    tier: 'S',
+    rarity: 'SSR',
+    releaseType: '한정',
+  }),
+
+  // SR units
+  createAutoUnit({
+    id: 'todo-sr-basic',
+    baseKey: 'todo',
+    variantName: '기본형',
+    trait: 'illusion',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'kamo-sr-basic',
+    baseKey: 'kamo',
+    variantName: '기본형',
+    trait: 'shadow',
+    combatType: 'hybrid',
+    role: 'attacker',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'momo-sr-basic',
+    baseKey: 'momo',
+    variantName: '기본형',
+    trait: 'illusion',
+    combatType: 'cursed',
+    role: 'support',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'mai-sr-basic',
+    baseKey: 'mai',
+    variantName: '기본형',
+    trait: 'action',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'miwa-sr-basic',
+    baseKey: 'miwa',
+    variantName: '기본형',
+    trait: 'shadow',
+    combatType: 'physical',
+    role: 'defender',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'mechamaru-sr-basic',
+    baseKey: 'mechamaru',
+    variantName: '기본형',
+    trait: 'action',
+    combatType: 'hybrid',
+    role: 'breaker',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'nanami-sr-basic',
+    baseKey: 'nanami',
+    variantName: '기본형',
+    trait: 'shadow',
+    combatType: 'physical',
+    role: 'support',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'yaga-sr-basic',
+    baseKey: 'yaga',
+    variantName: '기본형',
+    trait: 'illusion',
+    combatType: 'hybrid',
+    role: 'support',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'ieiri-sr-basic',
+    baseKey: 'ieiri',
+    variantName: '기본형',
+    trait: 'action',
+    combatType: 'physical',
+    role: 'healer',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'rindou-sr-basic',
+    baseKey: 'rindou',
+    variantName: '기본형',
+    trait: 'action',
+    combatType: 'hybrid',
+    role: 'attacker',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'yuki-sr-basic',
+    baseKey: 'yukiKaito',
+    variantName: '기본형',
+    trait: 'action',
+    combatType: 'hybrid',
+    role: 'support',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'junpei-sr-basic',
+    baseKey: 'junpei',
+    variantName: '기본형',
+    trait: 'night',
+    combatType: 'cursed',
+    role: 'debuffer',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'panda-zero',
+    baseKey: 'panda',
+    variantName: '주술회전 0',
+    trait: 'night',
+    combatType: 'physical',
+    role: 'defender',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'toge-zero',
+    baseKey: 'toge',
+    variantName: '주술회전 0',
+    trait: 'action',
+    combatType: 'cursed',
+    role: 'support',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'maki-zero',
+    baseKey: 'maki',
+    variantName: '주술회전 0',
+    trait: 'illusion',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'gakuganji-sr-basic',
+    baseKey: 'gakuganji',
+    variantName: '기본형',
+    trait: 'shadow',
+    combatType: 'cursed',
+    role: 'debuffer',
+    tier: 'C',
+    rarity: 'SR',
+    releaseType: '일반',
+  }),
+
+  // R units
+  createAutoUnit({
+    id: 'toge-r-basic',
+    baseKey: 'toge',
+    variantName: '기본형',
+    trait: 'action',
+    combatType: 'cursed',
+    role: 'support',
+    tier: 'C',
+    rarity: 'R',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'yuki-r-basic',
+    baseKey: 'yukiKaito',
+    variantName: '기본형',
+    trait: 'action',
+    combatType: 'hybrid',
+    role: 'support',
+    tier: 'C',
+    rarity: 'R',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'rindou-r-basic',
+    baseKey: 'rindou',
+    variantName: '기본형',
+    trait: 'action',
+    combatType: 'hybrid',
+    role: 'attacker',
+    tier: 'C',
+    rarity: 'R',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'ijichi-r-basic',
+    baseKey: 'ijichi',
+    variantName: '기본형',
+    trait: 'shadow',
+    combatType: 'physical',
+    role: 'support',
+    tier: 'C',
+    rarity: 'R',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'yuji-r-basic',
+    baseKey: 'yuji',
+    variantName: '기본형',
+    trait: 'action',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'C',
+    rarity: 'R',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'megumi-r-basic',
+    baseKey: 'megumi',
+    variantName: '기본형',
+    trait: 'shadow',
+    combatType: 'cursed',
+    role: 'support',
+    tier: 'C',
+    rarity: 'R',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'nobara-r-basic',
+    baseKey: 'nobara',
+    variantName: '기본형',
+    trait: 'action',
+    combatType: 'cursed',
+    role: 'attacker',
+    tier: 'C',
+    rarity: 'R',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'maki-r-basic',
+    baseKey: 'maki',
+    variantName: '기본형',
+    trait: 'illusion',
+    combatType: 'physical',
+    role: 'attacker',
+    tier: 'C',
+    rarity: 'R',
+    releaseType: '일반',
+  }),
+  createAutoUnit({
+    id: 'panda-r-basic',
+    baseKey: 'panda',
+    variantName: '기본형',
+    trait: 'night',
+    combatType: 'physical',
+    role: 'defender',
+    tier: 'C',
+    rarity: 'R',
+    releaseType: '일반',
+  }),
+];
+
+const allCharacterSeeds = [...characterSeeds, ...additionalCharacterSeeds];
+
+export const mockCharacterDetails: CharacterDetail[] = allCharacterSeeds.map(createCharacter);
 
 export const mockCharacters: CharacterSummary[] = mockCharacterDetails.map(
   ({ description: _description, passive: _passive, skills: _skills, ultimate: _ultimate, ...summary }) => summary,
