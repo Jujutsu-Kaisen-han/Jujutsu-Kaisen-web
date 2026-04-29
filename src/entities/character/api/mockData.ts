@@ -1234,7 +1234,7 @@ const createCharacter = (unit: UnitSeed): CharacterDetail => {
 
   return {
     id: unit.id,
-    name: isBaseForm ? base.baseName : `${unit.variantName} ${base.baseName}`,
+    name: base.baseName,
     baseName: base.baseName,
     variantName: unit.variantName,
     title: unit.title,

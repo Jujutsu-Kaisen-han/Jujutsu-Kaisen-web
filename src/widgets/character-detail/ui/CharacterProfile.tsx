@@ -267,6 +267,8 @@ const getOfficialSkillVideoLabel = (character: CharacterDetail) => `${character.
 export const CharacterProfile = ({ character }: CharacterProfileProps) => {
   const officialSkillVideo = selectOfficialSkillVideo(character);
   const officialSkillVideoLabel = officialSkillVideo ? getOfficialSkillVideoLabel(character) : '';
+  const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
+  const subtitle = hasVariant ? `${character.variantName} · ${character.title}` : character.title;
 
   return (
     <Layout>
@@ -295,9 +297,9 @@ export const CharacterProfile = ({ character }: CharacterProfileProps) => {
         <Summary>
           <Header>
             <TierBadge tier={character.tier} />
-            <Variant>{character.variantName}</Variant>
+            {hasVariant ? <Variant>{character.variantName}</Variant> : null}
             <Title>{character.name}</Title>
-            <Subtitle>{character.baseName} · {character.title}</Subtitle>
+            <Subtitle>{subtitle}</Subtitle>
           </Header>
           <Chips>
             <Chip>{traitLabels[character.trait]}</Chip>

@@ -152,42 +152,47 @@ interface CharacterCardProps {
   character: CharacterSummary;
 }
 
-export const CharacterCard = ({ character }: CharacterCardProps) => (
-  <Card to={routes.characterDetail(character.id)}>
-    <Poster>
-      <Backdrop
-        src={character.variantImage}
-        fallbackSrc={character.image}
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-      />
-      <Frame>
-        <Image
+export const CharacterCard = ({ character }: CharacterCardProps) => {
+  const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
+  const subtitle = hasVariant ? `${character.variantName} · ${character.title}` : character.title;
+
+  return (
+    <Card to={routes.characterDetail(character.id)}>
+      <Poster>
+        <Backdrop
           src={character.variantImage}
           fallbackSrc={character.image}
-          alt={character.name}
+          alt=""
+          aria-hidden="true"
           loading="lazy"
         />
-      </Frame>
-      <Tier>
-        <TierBadge tier={character.tier} />
-      </Tier>
-    </Poster>
-    <Body>
-      <Header>
-        <Variant>{character.variantName}</Variant>
-        <Name>{character.name}</Name>
-        <Title>{character.baseName} · {character.title}</Title>
-      </Header>
-      <Meta>
-        <Chip>{traitLabels[character.trait]}</Chip>
-        <Chip>{combatTypeLabels[character.combatType]}</Chip>
-        <Chip>{roleLabels[character.role]}</Chip>
-        <Chip>{officialCategoryLabels[character.officialCategory]}</Chip>
-        <Chip>{character.rarity}</Chip>
-        <Chip>{character.releaseType}</Chip>
-      </Meta>
-    </Body>
-  </Card>
-);
+        <Frame>
+          <Image
+            src={character.variantImage}
+            fallbackSrc={character.image}
+            alt={character.name}
+            loading="lazy"
+          />
+        </Frame>
+        <Tier>
+          <TierBadge tier={character.tier} />
+        </Tier>
+      </Poster>
+      <Body>
+        <Header>
+          {hasVariant ? <Variant>{character.variantName}</Variant> : null}
+          <Name>{character.name}</Name>
+          <Title>{subtitle}</Title>
+        </Header>
+        <Meta>
+          <Chip>{traitLabels[character.trait]}</Chip>
+          <Chip>{combatTypeLabels[character.combatType]}</Chip>
+          <Chip>{roleLabels[character.role]}</Chip>
+          <Chip>{officialCategoryLabels[character.officialCategory]}</Chip>
+          <Chip>{character.rarity}</Chip>
+          <Chip>{character.releaseType}</Chip>
+        </Meta>
+      </Body>
+    </Card>
+  );
+};
