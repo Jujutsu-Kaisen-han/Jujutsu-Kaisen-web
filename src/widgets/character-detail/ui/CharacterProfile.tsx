@@ -262,8 +262,11 @@ const selectOfficialSkillVideo = (character: CharacterDetail) => (
   character.officialVideos?.find((video) => skillVideoPatterns.some((pattern) => pattern.test(video.title)))
 );
 
+const getOfficialSkillVideoLabel = (character: CharacterDetail) => `${character.name} 공식 스킬 소개 영상`;
+
 export const CharacterProfile = ({ character }: CharacterProfileProps) => {
   const officialSkillVideo = selectOfficialSkillVideo(character);
+  const officialSkillVideoLabel = officialSkillVideo ? getOfficialSkillVideoLabel(character) : '';
 
   return (
     <Layout>
@@ -358,14 +361,14 @@ export const CharacterProfile = ({ character }: CharacterProfileProps) => {
                 <VideoFrame>
                   <VideoEmbed
                     src={officialSkillVideo.embedUrl}
-                    title={officialSkillVideo.title}
+                    title={officialSkillVideoLabel}
                     loading="lazy"
                     referrerPolicy="strict-origin-when-cross-origin"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                   />
                 </VideoFrame>
-                <VideoTitle>{officialSkillVideo.title}</VideoTitle>
+                <VideoTitle>{officialSkillVideoLabel}</VideoTitle>
                 <SourceList>
                   <SourceLink href={officialSkillVideo.url} target="_blank" rel="noreferrer">
                     YouTube에서 보기
