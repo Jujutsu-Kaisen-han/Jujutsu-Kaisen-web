@@ -456,6 +456,8 @@ interface AutoUnitConfig {
   passive?: string;
 }
 
+type VerifiedUnitOverride = Partial<Pick<CharacterDetail, 'trait' | 'combatType' | 'role'>>;
+
 const createAutoUnit = (config: AutoUnitConfig): UnitSeed => {
   const base = baseCharacters[config.baseKey];
   const label = config.variantName === '기본형' ? base.baseName : `${config.variantName} ${base.baseName}`;
@@ -499,10 +501,101 @@ const createAutoUnit = (config: AutoUnitConfig): UnitSeed => {
   };
 };
 
+// Verified against GameWith's trait list pages (updated February 20, 2026) and
+// individual unit evaluation pages crawled on April 29, 2026.
+const verifiedUnitOverrides: Partial<Record<UnitSeed['id'], VerifiedUnitOverride>> = {
+  'gojo-domain': { trait: 'illusion', combatType: 'hybrid', role: 'attacker' },
+  'gojo-zero-point-two': { trait: 'shadow', combatType: 'physical', role: 'attacker' },
+  'gojo-strongest': { trait: 'shadow', combatType: 'hybrid', role: 'attacker' },
+  'gojo-ao': { trait: 'action', combatType: 'hybrid', role: 'attacker' },
+  'gojo-hollow-purple': { trait: 'night', combatType: 'hybrid', role: 'debuffer' },
+  'gojo-awakened': { trait: 'night', combatType: 'cursed', role: 'attacker' },
+  'yuji-maximum-output': { trait: 'illusion', combatType: 'physical', role: 'attacker' },
+  'yuji-cursed-power': { trait: 'shadow', combatType: 'physical', role: 'attacker' },
+  'yuji-lightfooted': { trait: 'shadow' },
+  'yuji-zone': { trait: 'action', combatType: 'physical', role: 'attacker' },
+  'yuji-entrusted-life': { trait: 'night', combatType: 'physical', role: 'support' },
+  'megumi-incomplete-domain': { trait: 'action', combatType: 'hybrid', role: 'attacker' },
+  'megumi-bond': { trait: 'night' },
+  'megumi-rabbit': { trait: 'illusion', combatType: 'hybrid', role: 'debuffer' },
+  'nobara-steel': { trait: 'action', combatType: 'cursed', role: 'attacker' },
+  'nobara-compatible-nails': { trait: 'illusion', combatType: 'cursed', role: 'attacker' },
+  'nobara-drive-it-in': { trait: 'night', combatType: 'hybrid', role: 'attacker' },
+  'nanami-suppression': { trait: 'night', combatType: 'hybrid', role: 'attacker' },
+  'nanami-grade-one': { trait: 'shadow', combatType: 'hybrid', role: 'attacker' },
+  'nanami-overtime': { trait: 'action', combatType: 'hybrid', role: 'attacker' },
+  'nanami-ratio': { trait: 'night', combatType: 'hybrid', role: 'attacker' },
+  'nanami-promising': { trait: 'illusion', combatType: 'hybrid', role: 'support' },
+  'yuta-executioner': { trait: 'action', combatType: 'hybrid', role: 'attacker' },
+  'yuta-queen': { trait: 'shadow', combatType: 'hybrid', role: 'attacker' },
+  'yuta-lend-me-your-power': { trait: 'illusion', combatType: 'hybrid', role: 'attacker' },
+  'toji-sorcerer-killer': { trait: 'illusion' },
+  'toji-incarnation': { trait: 'action', combatType: 'physical', role: 'attacker' },
+  'mahito-soul': { trait: 'illusion', combatType: 'hybrid', role: 'debuffer' },
+  'mahito-death': { trait: 'night', role: 'attacker' },
+  'sukuna-fuga': { trait: 'action', combatType: 'cursed', role: 'attacker' },
+  'maki-greatblade': { trait: 'night', combatType: 'physical', role: 'attacker' },
+  'maki-early-morning': { trait: 'shadow', combatType: 'physical', role: 'attacker' },
+  'toge-crush': { trait: 'shadow' },
+  'toge-night-walk': { trait: 'illusion' },
+  'panda-helping-hand': { trait: 'illusion', combatType: 'physical', role: 'defender' },
+
+  'todo-friendship': { trait: 'illusion', combatType: 'physical', role: 'attacker' },
+  'todo-takada': { trait: 'shadow' },
+  'jogo-pride': { trait: 'shadow' },
+  'jogo-fierce': { trait: 'illusion' },
+  'hanami-battle': { trait: 'illusion' },
+  'junpei-young-fish': { trait: 'action' },
+  'geto-righteous-cause': { trait: 'shadow' },
+  'geto-non-sorcerer': { trait: 'night', combatType: 'hybrid', role: 'debuffer' },
+  'momo-dont-underestimate': { trait: 'shadow' },
+  'momo-tsukumogami': { trait: 'illusion' },
+  'kamo-determination': { trait: 'shadow' },
+  'mechamaru-blade-source': { trait: 'action', combatType: 'hybrid', role: 'attacker' },
+  'miwa-dash': { trait: 'night' },
+  'rindou-determination': { trait: 'night' },
+  'yaga-cursed-corpse': { trait: 'action' },
+  'mai-bullet': { trait: 'illusion' },
+  'yuki-will': { trait: 'action' },
+  'miguel-stall': { trait: 'shadow' },
+  'kokichi-everything': { trait: 'night' },
+  'ieiri-can-save': { trait: 'action' },
+  'meimei-crow': { trait: 'illusion' },
+  'ino-overconfidence': { trait: 'shadow' },
+  'choso-big-brother': { trait: 'night' },
+  'dagon-infinite': { trait: 'action', combatType: 'cursed', role: 'attacker' },
+  'naobito-speed': { trait: 'shadow' },
+  'kusakabe-sharp': { trait: 'action' },
+  'uraume-underling': { trait: 'action' },
+
+  'todo-sr-basic': { trait: 'action' },
+  'momo-sr-basic': { trait: 'night' },
+  'mai-sr-basic': { trait: 'action' },
+  'miwa-sr-basic': { trait: 'illusion' },
+  'mechamaru-sr-basic': { trait: 'night' },
+  'nanami-sr-basic': { trait: 'illusion', combatType: 'hybrid', role: 'support' },
+  'yaga-sr-basic': { trait: 'illusion' },
+  'rindou-sr-basic': { trait: 'action' },
+  'yuki-sr-basic': { trait: 'night' },
+  'gakuganji-sr-basic': { trait: 'night' },
+
+  'toge-r-basic': { trait: 'illusion' },
+  'yuki-r-basic': { trait: 'action' },
+  'rindou-r-basic': { trait: 'night' },
+  'ijichi-r-basic': { trait: 'night' },
+  'megumi-r-basic': { trait: 'night' },
+  'maki-r-basic': { trait: 'illusion' },
+  'panda-r-basic': { trait: 'action' },
+};
+
 const createCharacter = (unit: UnitSeed): CharacterDetail => {
   const base = baseCharacters[unit.baseKey];
   const variantImageArticleId = variantImageArticleIds[unit.id];
   const isBaseForm = unit.variantName.trim() === '' || unit.variantName === '기본형';
+  const verifiedOverride = verifiedUnitOverrides[unit.id];
+  const trait = verifiedOverride?.trait ?? unit.trait;
+  const combatType = verifiedOverride?.combatType ?? unit.combatType;
+  const role = verifiedOverride?.role ?? unit.role;
 
   return {
     id: unit.id,
@@ -512,9 +605,9 @@ const createCharacter = (unit: UnitSeed): CharacterDetail => {
     title: unit.title,
     image: base.image,
     variantImage: variantImageArticleId ? buildVariantImage(variantImageArticleId) : undefined,
-    trait: unit.trait,
-    combatType: unit.combatType,
-    role: unit.role,
+    trait,
+    combatType,
+    role,
     tier: unit.tier,
     rarity: unit.rarity,
     releaseType: unit.releaseType,
