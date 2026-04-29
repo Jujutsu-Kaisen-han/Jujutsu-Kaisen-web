@@ -1,4 +1,10 @@
-import { tierOrder, type CharacterDetail, type CharacterSummary, type TierGroup } from '@/entities/character/model/types/character';
+import {
+  tierOrder,
+  type CharacterDetail,
+  type CharacterOfficialVideo,
+  type CharacterSummary,
+  type TierGroup,
+} from '@/entities/character/model/types/character';
 
 // Variant naming and relative mock tiering were seeded from current Phantom Parade
 // reroll/meta references checked on April 28, 2026. Base character art is from
@@ -254,6 +260,21 @@ const fanpareGallerySource = {
   url: 'https://jujutsuphanpara.jp/1stanniversary/special/gallery/',
 } as const;
 
+const fanpareOfficialSiteSource = {
+  label: '팬파레 공식 사이트',
+  url: 'https://jujutsuphanpara.jp/',
+} as const;
+
+const fanpareHalfAnniversarySource = {
+  label: '팬파레 하프 애니버서리 포털',
+  url: 'https://jujutsuphanpara.jp/halfanniversary/',
+} as const;
+
+const fanpareOnePointFiveAnniversarySource = {
+  label: '팬파레 1.5주년 포털',
+  url: 'https://jujutsuphanpara.jp/1.5thanniversary/',
+} as const;
+
 const officialProfiles: Partial<Record<BaseCharacterKey, CharacterDetail['officialProfile']>> = {
   gojo: {
     summary:
@@ -344,6 +365,26 @@ const buildVariantImage = (articleId: number) => `https://img.gamewith.jp/articl
 const buildYouTubeEmbedUrl = (videoId: string) => `https://www.youtube-nocookie.com/embed/${videoId}`;
 const buildYouTubeWatchUrl = (videoId: string) => `https://www.youtube.com/watch?v=${videoId}`;
 
+const createOfficialVideo = (
+  title: string,
+  videoId: string,
+  source: CharacterOfficialVideo['source'],
+): CharacterOfficialVideo => ({
+  title,
+  url: buildYouTubeWatchUrl(videoId),
+  embedUrl: buildYouTubeEmbedUrl(videoId),
+  source,
+});
+
+const mergeOfficialVideos = (
+  ...groups: Array<CharacterOfficialVideo[] | undefined>
+): CharacterOfficialVideo[] | undefined => {
+  const merged = groups.flatMap((group) => group ?? []);
+  const unique = merged.filter((video, index) => merged.findIndex((entry) => entry.url === video.url) === index);
+
+  return unique.length > 0 ? unique : undefined;
+};
+
 const traitCopy: Record<CharacterDetail['trait'], string> = {
   action: '행 특성의 빠른 전개',
   illusion: '환 특성의 변칙 운영',
@@ -422,22 +463,129 @@ const officialVariantSpotlights: Partial<Record<UnitSeed['id'], CharacterDetail[
   },
 };
 
-const officialVideosByUnitId: Partial<Record<UnitSeed['id'], CharacterDetail['officialVideos']>> = {
+const officialVideoCatalog = {
+  gojoIntro: createOfficialVideo(
+    '『呪術廻戦 ファントムパレード』五条 悟の『ファンパレ』紹介動画',
+    '9qIh02SGHAg',
+    fanpareOfficialSiteSource,
+  ),
+  officialPv2: createOfficialVideo(
+    '『呪術廻戦 ファントムパレード』公式PV第2弾 ＜ファンパレ＞',
+    'ZY32jnvpHQA',
+    fanpareOfficialSiteSource,
+  ),
+  officialPv1: createOfficialVideo(
+    '『呪術廻戦 ファントムパレード』公式PV第1弾 ＜ファンパレ＞',
+    'UmJDNcq3HgQ',
+    fanpareOfficialSiteSource,
+  ),
+  hiddenInventoryTrailer: createOfficialVideo(
+    '「懐玉・玉折」イベントトレーラーPV',
+    'nEvEjPwUrxs',
+    fanpareHalfAnniversarySource,
+  ),
+  hiddenInventorySpecial: createOfficialVideo(
+    '『呪術廻戦』アニメ＆ゲーム連合特番',
+    'kbzxfKH9PqE',
+    fanpareHalfAnniversarySource,
+  ),
+  blueAndHundredApparitionsPv: createOfficialVideo(
+    'ストーリーイベント「青と百の怪異」公式PV【呪術廻戦 ファントムパレード】',
+    'eJo5kmhM8pQ',
+    fanpareOnePointFiveAnniversarySource,
+  ),
+  onePointFiveKaigyokuPv: createOfficialVideo(
+    '『ファンパレ』1.5thアニバーサリー「懐玉・玉折」PV【呪術廻戦 ファントムパレード】',
+    'fb9F7vfmvMk',
+    fanpareOnePointFiveAnniversarySource,
+  ),
+  onePointFiveBroadcast: createOfficialVideo(
+    '1.5thアニバーサリー公式放送',
+    'nqKB7PR1p2s',
+    fanpareOnePointFiveAnniversarySource,
+  ),
+  glamorousCruisePv: createOfficialVideo(
+    'ストーリーイベント「華麗なる幽覧船」PV',
+    '0uBy5FHfTSM',
+    fanpareGallerySource,
+  ),
+  yujiZoneSkill: createOfficialVideo(
+    '[ゾーン]虎杖悠仁－必殺スキル紹介動画',
+    'VJ0pE8QbP3k',
+    fanpareGallerySource,
+  ),
+  gojoDomainSkill: createOfficialVideo(
+    '[無下限の内側]五条悟－必殺スキル紹介動画',
+    'DlkjU_14foY',
+    fanpareGallerySource,
+  ),
+} as const;
+
+const defaultOfficialVideos: CharacterOfficialVideo[] = [
+  officialVideoCatalog.officialPv2,
+  officialVideoCatalog.officialPv1,
+];
+
+const officialVideosByBaseKey: Partial<Record<BaseCharacterKey, CharacterOfficialVideo[]>> = {
+  gojo: [
+    officialVideoCatalog.gojoIntro,
+    officialVideoCatalog.onePointFiveKaigyokuPv,
+  ],
+  yuji: [officialVideoCatalog.glamorousCruisePv],
+  megumi: [officialVideoCatalog.glamorousCruisePv],
+  nobara: [officialVideoCatalog.glamorousCruisePv],
+  geto: [
+    officialVideoCatalog.hiddenInventoryTrailer,
+    officialVideoCatalog.onePointFiveKaigyokuPv,
+  ],
+  toji: [
+    officialVideoCatalog.hiddenInventoryTrailer,
+    officialVideoCatalog.onePointFiveKaigyokuPv,
+  ],
+  ieiri: [
+    officialVideoCatalog.blueAndHundredApparitionsPv,
+    officialVideoCatalog.onePointFiveKaigyokuPv,
+    officialVideoCatalog.onePointFiveBroadcast,
+  ],
+};
+
+const officialVideosByUnitId: Partial<Record<UnitSeed['id'], CharacterOfficialVideo[]>> = {
   'yuji-zone': [
-    {
-      title: '[ゾーン]虎杖悠仁 - 必殺スキル紹介動画',
-      url: buildYouTubeWatchUrl('VJ0pE8QbP3k'),
-      embedUrl: buildYouTubeEmbedUrl('VJ0pE8QbP3k'),
-      source: fanpareGallerySource,
-    },
+    officialVideoCatalog.yujiZoneSkill,
   ],
   'gojo-domain': [
-    {
-      title: '[無下限の内側]五条悟 - 必殺スキル紹介動画',
-      url: buildYouTubeWatchUrl('DlkjU_14foY'),
-      embedUrl: buildYouTubeEmbedUrl('DlkjU_14foY'),
-      source: fanpareGallerySource,
-    },
+    officialVideoCatalog.gojoDomainSkill,
+  ],
+  'gojo-ao': [
+    officialVideoCatalog.hiddenInventoryTrailer,
+    officialVideoCatalog.hiddenInventorySpecial,
+  ],
+  'gojo-strongest': [
+    officialVideoCatalog.hiddenInventoryTrailer,
+    officialVideoCatalog.hiddenInventorySpecial,
+  ],
+  'gojo-awakened': [
+    officialVideoCatalog.blueAndHundredApparitionsPv,
+    officialVideoCatalog.onePointFiveKaigyokuPv,
+    officialVideoCatalog.onePointFiveBroadcast,
+  ],
+  'geto-righteous-cause': [
+    officialVideoCatalog.hiddenInventoryTrailer,
+    officialVideoCatalog.hiddenInventorySpecial,
+  ],
+  'toji-sorcerer-killer': [
+    officialVideoCatalog.hiddenInventoryTrailer,
+    officialVideoCatalog.hiddenInventorySpecial,
+  ],
+  'ieiri-can-save': [
+    officialVideoCatalog.blueAndHundredApparitionsPv,
+    officialVideoCatalog.onePointFiveKaigyokuPv,
+    officialVideoCatalog.onePointFiveBroadcast,
+  ],
+  'ieiri-hyuu': [
+    officialVideoCatalog.blueAndHundredApparitionsPv,
+    officialVideoCatalog.onePointFiveKaigyokuPv,
+    officialVideoCatalog.onePointFiveBroadcast,
   ],
 };
 
@@ -596,6 +744,11 @@ const createCharacter = (unit: UnitSeed): CharacterDetail => {
   const trait = verifiedOverride?.trait ?? unit.trait;
   const combatType = verifiedOverride?.combatType ?? unit.combatType;
   const role = verifiedOverride?.role ?? unit.role;
+  const officialVideos = mergeOfficialVideos(
+    officialVideosByUnitId[unit.id],
+    officialVideosByBaseKey[unit.baseKey],
+    defaultOfficialVideos,
+  );
 
   return {
     id: unit.id,
@@ -618,7 +771,7 @@ const createCharacter = (unit: UnitSeed): CharacterDetail => {
     ultimate: unit.ultimate,
     officialProfile: officialProfiles[unit.baseKey],
     officialVariantSpotlight: officialVariantSpotlights[unit.id],
-    officialVideos: officialVideosByUnitId[unit.id],
+    officialVideos,
   };
 };
 
