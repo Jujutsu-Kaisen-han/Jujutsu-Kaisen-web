@@ -256,147 +256,155 @@ interface CharacterProfileProps {
   character: CharacterDetail;
 }
 
-export const CharacterProfile = ({ character }: CharacterProfileProps) => (
-  <Layout>
-    <ShowcasePanel>
-      <ShowcaseStage>
-        <ShowcaseBackdrop
-          src={character.variantImage}
-          fallbackSrc={character.image}
-          alt=""
-          aria-hidden="true"
-        />
-        <ShowcaseFrame>
-          <Showcase
+const skillVideoPatterns = [/スキル紹介/u, /必殺スキル紹介動画/u];
+
+const selectOfficialSkillVideo = (character: CharacterDetail) => (
+  character.officialVideos?.find((video) => skillVideoPatterns.some((pattern) => pattern.test(video.title)))
+);
+
+export const CharacterProfile = ({ character }: CharacterProfileProps) => {
+  const officialSkillVideo = selectOfficialSkillVideo(character);
+
+  return (
+    <Layout>
+      <ShowcasePanel>
+        <ShowcaseStage>
+          <ShowcaseBackdrop
             src={character.variantImage}
             fallbackSrc={character.image}
-            alt={`${character.name} 변형 이미지`}
+            alt=""
+            aria-hidden="true"
           />
-        </ShowcaseFrame>
-      </ShowcaseStage>
-    </ShowcasePanel>
+          <ShowcaseFrame>
+            <Showcase
+              src={character.variantImage}
+              fallbackSrc={character.image}
+              alt={`${character.name} 변형 이미지`}
+            />
+          </ShowcaseFrame>
+        </ShowcaseStage>
+      </ShowcasePanel>
 
-    <Hero>
-      <PosterPanel>
-        <Poster src={character.image} alt={character.name} />
-      </PosterPanel>
-      <Summary>
-        <Header>
-          <TierBadge tier={character.tier} />
-          <Variant>{character.variantName}</Variant>
-          <Title>{character.name}</Title>
-          <Subtitle>{character.baseName} · {character.title}</Subtitle>
-        </Header>
-        <Chips>
-          <Chip>{traitLabels[character.trait]}</Chip>
-          <Chip>{combatTypeLabels[character.combatType]}</Chip>
-          <Chip>{roleLabels[character.role]}</Chip>
-          <Chip>{officialCategoryLabels[character.officialCategory]}</Chip>
-          <Chip>{character.rarity}</Chip>
-          <Chip>{character.releaseType}</Chip>
-        </Chips>
-        <Description>{character.description}</Description>
-        <SkillCard>
-          <SkillName>패시브</SkillName>
-          <SkillDescription>{character.passive}</SkillDescription>
-        </SkillCard>
-      </Summary>
-    </Hero>
+      <Hero>
+        <PosterPanel>
+          <Poster src={character.image} alt={character.name} />
+        </PosterPanel>
+        <Summary>
+          <Header>
+            <TierBadge tier={character.tier} />
+            <Variant>{character.variantName}</Variant>
+            <Title>{character.name}</Title>
+            <Subtitle>{character.baseName} · {character.title}</Subtitle>
+          </Header>
+          <Chips>
+            <Chip>{traitLabels[character.trait]}</Chip>
+            <Chip>{combatTypeLabels[character.combatType]}</Chip>
+            <Chip>{roleLabels[character.role]}</Chip>
+            <Chip>{officialCategoryLabels[character.officialCategory]}</Chip>
+            <Chip>{character.rarity}</Chip>
+            <Chip>{character.releaseType}</Chip>
+          </Chips>
+          <Description>{character.description}</Description>
+          <SkillCard>
+            <SkillName>패시브</SkillName>
+            <SkillDescription>{character.passive}</SkillDescription>
+          </SkillCard>
+        </Summary>
+      </Hero>
 
-    <SectionGrid>
-      <Panel>
-        <SectionTitle>공식 소개</SectionTitle>
-        <SkillList>
-          {character.officialProfile ? (
-            <SkillCard>
-              <SkillName>기본 캐릭터 소개</SkillName>
-              <SkillDescription>{character.officialProfile.summary}</SkillDescription>
-              <SourceList>
-                <SourceLink
-                  href={character.officialProfile.source.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {character.officialProfile.source.label}
-                </SourceLink>
-              </SourceList>
-            </SkillCard>
-          ) : null}
+      <SectionGrid>
+        <Panel>
+          <SectionTitle>공식 소개</SectionTitle>
+          <SkillList>
+            {character.officialProfile ? (
+              <SkillCard>
+                <SkillName>기본 캐릭터 소개</SkillName>
+                <SkillDescription>{character.officialProfile.summary}</SkillDescription>
+                <SourceList>
+                  <SourceLink
+                    href={character.officialProfile.source.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {character.officialProfile.source.label}
+                  </SourceLink>
+                </SourceList>
+              </SkillCard>
+            ) : null}
 
-          {character.officialVariantSpotlight ? (
-            <SkillCard>
-              <SkillName>공식 변형 스포트라이트</SkillName>
-              <SkillDescription>{character.officialVariantSpotlight.summary}</SkillDescription>
-              <SourceList>
-                <SourceLink
-                  href={character.officialVariantSpotlight.source.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {character.officialVariantSpotlight.source.label}
-                </SourceLink>
-              </SourceList>
-            </SkillCard>
-          ) : null}
-        </SkillList>
-      </Panel>
+            {character.officialVariantSpotlight ? (
+              <SkillCard>
+                <SkillName>공식 변형 스포트라이트</SkillName>
+                <SkillDescription>{character.officialVariantSpotlight.summary}</SkillDescription>
+                <SourceList>
+                  <SourceLink
+                    href={character.officialVariantSpotlight.source.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {character.officialVariantSpotlight.source.label}
+                  </SourceLink>
+                </SourceList>
+              </SkillCard>
+            ) : null}
+          </SkillList>
+        </Panel>
 
-      <Panel>
-        <SectionTitle>공식 영상</SectionTitle>
-        {character.officialVideos && character.officialVideos.length > 0 ? (
-          <VideoGrid>
-            {character.officialVideos.map((video) => (
-              <VideoCard key={video.url}>
+        <Panel>
+          <SectionTitle>공식 스킬 영상</SectionTitle>
+          {officialSkillVideo ? (
+            <VideoGrid>
+              <VideoCard>
                 <VideoFrame>
                   <VideoEmbed
-                    src={video.embedUrl}
-                    title={video.title}
+                    src={officialSkillVideo.embedUrl}
+                    title={officialSkillVideo.title}
                     loading="lazy"
                     referrerPolicy="strict-origin-when-cross-origin"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                   />
                 </VideoFrame>
-                <VideoTitle>{video.title}</VideoTitle>
+                <VideoTitle>{officialSkillVideo.title}</VideoTitle>
                 <SourceList>
-                  <SourceLink href={video.url} target="_blank" rel="noreferrer">
+                  <SourceLink href={officialSkillVideo.url} target="_blank" rel="noreferrer">
                     YouTube에서 보기
                   </SourceLink>
-                  <SourceLink href={video.source.url} target="_blank" rel="noreferrer">
-                    {video.source.label}
+                  <SourceLink href={officialSkillVideo.source.url} target="_blank" rel="noreferrer">
+                    {officialSkillVideo.source.label}
                   </SourceLink>
                 </SourceList>
               </VideoCard>
+            </VideoGrid>
+          ) : (
+            <EmptyText>현재 연결된 공식 스킬 소개 영상이 없습니다.</EmptyText>
+          )}
+        </Panel>
+      </SectionGrid>
+
+      <SectionGrid>
+        <Panel>
+          <SectionTitle>스킬</SectionTitle>
+          <SkillList>
+            {character.skills.map((skill) => (
+              <SkillCard key={skill.name}>
+                <SkillName>{skill.name}</SkillName>
+                {skill.cooldown ? <Cooldown>{skill.cooldown}</Cooldown> : null}
+                <SkillDescription>{skill.description}</SkillDescription>
+              </SkillCard>
             ))}
-          </VideoGrid>
-        ) : (
-          <EmptyText>현재 연결된 공식 팬파레 스킬 영상이 없습니다.</EmptyText>
-        )}
-      </Panel>
-    </SectionGrid>
+          </SkillList>
+        </Panel>
 
-    <SectionGrid>
-      <Panel>
-        <SectionTitle>스킬</SectionTitle>
-        <SkillList>
-          {character.skills.map((skill) => (
-            <SkillCard key={skill.name}>
-              <SkillName>{skill.name}</SkillName>
-              {skill.cooldown ? <Cooldown>{skill.cooldown}</Cooldown> : null}
-              <SkillDescription>{skill.description}</SkillDescription>
-            </SkillCard>
-          ))}
-        </SkillList>
-      </Panel>
-
-      <Panel>
-        <SectionTitle>필살기</SectionTitle>
-        <SkillCard>
-          <SkillName>{character.ultimate.name}</SkillName>
-          {character.ultimate.cooldown ? <Cooldown>{character.ultimate.cooldown}</Cooldown> : null}
-          <SkillDescription>{character.ultimate.description}</SkillDescription>
-        </SkillCard>
-      </Panel>
-    </SectionGrid>
-  </Layout>
-);
+        <Panel>
+          <SectionTitle>필살기</SectionTitle>
+          <SkillCard>
+            <SkillName>{character.ultimate.name}</SkillName>
+            {character.ultimate.cooldown ? <Cooldown>{character.ultimate.cooldown}</Cooldown> : null}
+            <SkillDescription>{character.ultimate.description}</SkillDescription>
+          </SkillCard>
+        </Panel>
+      </SectionGrid>
+    </Layout>
+  );
+};
