@@ -265,6 +265,11 @@ const fanpareOfficialSiteSource = {
   url: 'https://jujutsuphanpara.jp/',
 } as const;
 
+const fanpareOfficialChannelSource = {
+  label: '팬파레 공식 유튜브',
+  url: 'https://www.youtube.com/@%E5%91%AA%E8%A1%93%E5%BB%BB%E6%88%A6%E3%83%95%E3%82%A1%E3%83%B3%E3%83%88%E3%83%A0%E3%83%91%E3%83%AC%E3%83%BC%E3%83%89%E5%85%AC',
+} as const;
+
 const fanpareHalfAnniversarySource = {
   label: '팬파레 하프 애니버서리 포털',
   url: 'https://jujutsuphanpara.jp/halfanniversary/',
@@ -467,17 +472,402 @@ const officialVideoCatalog = {
   gojoIntro: createOfficialVideo(
     '『呪術廻戦 ファントムパレード』五条 悟の『ファンパレ』紹介動画',
     '9qIh02SGHAg',
-    fanpareOfficialSiteSource,
+    fanpareOfficialChannelSource,
+  ),
+  gojoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #五条悟 」',
+    '8g1lgXdHZ9Y',
+    fanpareOfficialChannelSource,
+  ),
+  gojoFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #五条悟 」',
+    '8Lhwf0DOdCk',
+    fanpareOfficialChannelSource,
+  ),
+  gojoZeroPointTwoPv: createOfficialVideo(
+    'SSR[0.2秒の領域展開]五条悟 告知PV【呪術廻戦 ファントムパレード】',
+    'ojoAaGXV9mI',
+    fanpareOfficialChannelSource,
+  ),
+  gojoZeroPointTwoSkill: createOfficialVideo(
+    'SSR[0.2秒の領域展開]五条悟 スキル紹介【呪術廻戦 ファントムパレード】',
+    '32jcr-C0uIQ',
+    fanpareOfficialChannelSource,
+  ),
+  gojoAwakenedCm: createOfficialVideo(
+    '1.5thアニバーサリー記念CM「[覚醒]五条悟」編 15秒【呪術廻戦 ファントムパレード】',
+    'Pufm_Yc1lHM',
+    fanpareOfficialChannelSource,
+  ),
+  sukunaPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #両面宿儺 」',
+    'OLJ0jO9qTo0',
+    fanpareOfficialChannelSource,
+  ),
+  sukunaSkill: createOfficialVideo(
+    'SSR[火力勝負]両面宿儺 スキル紹介【呪術廻戦 ファントムパレード】',
+    'Q5Mlw1F0Skc',
+    fanpareOfficialChannelSource,
+  ),
+  sukunaCm: createOfficialVideo(
+    '2ndアニバーサリー記念CM「[火力勝負]両面宿儺」編 15秒【呪術廻戦 ファントムパレード】',
+    '-Xg5p5M8WLs',
+    fanpareOfficialChannelSource,
+  ),
+  yutaPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #乙骨憂太 」',
+    '68U58ssI5D0',
+    fanpareOfficialChannelSource,
+  ),
+  yutaFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #乙骨憂太 」',
+    'IX68LF4mfVo',
+    fanpareOfficialChannelSource,
+  ),
+  yutaExecutionerPv: createOfficialVideo(
+    'SSR[死刑執行人]乙骨憂太 告知PV【呪術廻戦 ファントムパレード】',
+    'AyLV2sPcBA4',
+    fanpareOfficialChannelSource,
+  ),
+  yutaExecutionerSkill: createOfficialVideo(
+    'SSR[死刑執行人]乙骨憂太 スキル紹介【呪術廻戦 ファントムパレード】',
+    'GKVS3MJXkZs',
+    fanpareOfficialChannelSource,
+  ),
+  yutaQueenPv: createOfficialVideo(
+    'SSR[呪いの女王]乙骨憂太 告知PV【呪術廻戦 ファントムパレード】',
+    'f1VVcjkzP4Q',
+    fanpareOfficialChannelSource,
+  ),
+  yutaQueenSkill: createOfficialVideo(
+    'SSR[呪いの女王]乙骨憂太 スキル紹介【呪術廻戦 ファントムパレード】',
+    'Rv4u_rkfCjk',
+    fanpareOfficialChannelSource,
+  ),
+  tojiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #伏黒甚爾 」',
+    'D8BgO-TZH4A',
+    fanpareOfficialChannelSource,
+  ),
+  mahitoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #真人 」',
+    '67raAv8eJQg',
+    fanpareOfficialChannelSource,
+  ),
+  mahitoSoulSkill: createOfficialVideo(
+    'SSR[剥き出しの魂]真人 スキル紹介【呪術廻戦 ファントムパレード】',
+    'egBYiAEqo3k',
+    fanpareOfficialChannelSource,
+  ),
+  yujiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #虎杖悠仁 」',
+    '3MG1VDq62so',
+    fanpareOfficialChannelSource,
+  ),
+  yujiFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #虎杖悠仁 」',
+    '_4X9KkD21RM',
+    fanpareOfficialChannelSource,
+  ),
+  yujiMaximumOutputSkill: createOfficialVideo(
+    'SSR[最大呪力出力]虎杖悠仁 スキル紹介【呪術廻戦 ファントムパレード】',
+    'xhk6pCy2J34',
+    fanpareOfficialChannelSource,
+  ),
+  yujiMaximumOutputCm: createOfficialVideo(
+    '2ndアニバーサリー記念CM「[最大呪力出力]虎杖悠仁」編 15秒【呪術廻戦 ファントムパレード】',
+    '4NRJuflT9z0',
+    fanpareOfficialChannelSource,
+  ),
+  yujiEntrustedLifeSkill: createOfficialVideo(
+    'SSR[託された一命]虎杖悠仁 スキル紹介【呪術廻戦 ファントムパレード】',
+    '5AdV0paCPfI',
+    fanpareOfficialChannelSource,
+  ),
+  yujiEntrustedLifeCm: createOfficialVideo(
+    'CM「[託された一命]虎杖悠仁」編 30秒【呪術廻戦 ファントムパレード】',
+    '_lSG-hB_kSw',
+    fanpareOfficialChannelSource,
+  ),
+  megumiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #伏黒恵 」',
+    'YW8VD_TVkQE',
+    fanpareOfficialChannelSource,
+  ),
+  megumiFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #伏黒恵 」',
+    '6H5UB057McQ',
+    fanpareOfficialChannelSource,
+  ),
+  nobaraPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #釘崎野薔薇 」',
+    '7qJqe4WI-6Y',
+    fanpareOfficialChannelSource,
+  ),
+  nobaraFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #釘崎野薔薇 」',
+    'TrAlWezUOHs',
+    fanpareOfficialChannelSource,
+  ),
+  nanamiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #七海建人 」',
+    'a7K9C5ov2Ec',
+    fanpareOfficialChannelSource,
+  ),
+  nanamiFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #七海建人 」',
+    'Ch6kY0xkj9Q',
+    fanpareOfficialChannelSource,
+  ),
+  nanamiSuppressionSkill: createOfficialVideo(
+    'SSR[無言の制圧]七海建人 スキル紹介【呪術廻戦 ファントムパレード】',
+    'hItLDM6I3YQ',
+    fanpareOfficialChannelSource,
+  ),
+  makiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #禪院真希 」',
+    '3oew2mPn_J8',
+    fanpareOfficialChannelSource,
+  ),
+  makiFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #禪院真希 」',
+    'SisDj3tWYcM',
+    fanpareOfficialChannelSource,
+  ),
+  togePlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #狗巻棘 」',
+    '-UL-IlUYiY4',
+    fanpareOfficialChannelSource,
+  ),
+  togeFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #狗巻棘 」',
+    'XeRWB9II-w0',
+    fanpareOfficialChannelSource,
+  ),
+  pandaPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #パンダ 」',
+    'pSOQw9qSd10',
+    fanpareOfficialChannelSource,
+  ),
+  pandaFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #パンダ 」',
+    'yoibASkP6xc',
+    fanpareOfficialChannelSource,
+  ),
+  todoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #東堂葵 」',
+    'hmtLglPzzAw',
+    fanpareOfficialChannelSource,
+  ),
+  todoFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #東堂葵 」',
+    '8GmLtxLP1RU',
+    fanpareOfficialChannelSource,
+  ),
+  todoYouSkill: createOfficialVideo(
+    'SSR[オマエはそれでいいのか？]東堂葵 スキル紹介【呪術廻戦 ファントムパレード】',
+    'khj-S5czbYY',
+    fanpareOfficialChannelSource,
+  ),
+  todoYouCm: createOfficialVideo(
+    '2ndアニバーサリー記念CM「[オマエはそれでいいのか？]東堂葵」編 15秒【呪術廻戦 ファントムパレード】',
+    'OA_AgOnd7aU',
+    fanpareOfficialChannelSource,
+  ),
+  jogoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #漏瑚 」',
+    'FN7blpK5TR4',
+    fanpareOfficialChannelSource,
+  ),
+  jogoFiercePv: createOfficialVideo(
+    'SSR[熾烈なる火球]漏瑚 告知PV【呪術廻戦 ファントムパレード】',
+    'RsogDDHH03o',
+    fanpareOfficialChannelSource,
+  ),
+  hanamiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #花御 」',
+    '_ErieQd6ECY',
+    fanpareOfficialChannelSource,
+  ),
+  junpeiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #吉野順平 」',
+    'r8xxzkxWvnA',
+    fanpareOfficialChannelSource,
+  ),
+  getoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #夏油傑 」',
+    '4Y9G8kldf-w',
+    fanpareOfficialChannelSource,
+  ),
+  momoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #西宮桃 」',
+    'w1RYRqSLz9w',
+    fanpareOfficialChannelSource,
+  ),
+  momoFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #西宮桃 」',
+    '5uIRgIQviUI',
+    fanpareOfficialChannelSource,
+  ),
+  momoTsukumogamiSkill: createOfficialVideo(
+    'SSR[付喪操術]西宮桃 スキル紹介【呪術廻戦 ファントムパレード】',
+    'zvMdsmJol1I',
+    fanpareOfficialChannelSource,
+  ),
+  kamoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #加茂憲紀 」',
+    'T3n7P_n6vms',
+    fanpareOfficialChannelSource,
+  ),
+  kamoFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #加茂憲紀 」',
+    'QVT0NZykHhY',
+    fanpareOfficialChannelSource,
+  ),
+  mechamaruPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #究極メカ丸 」',
+    'MIXN-Unfy08',
+    fanpareOfficialChannelSource,
+  ),
+  mechamaruFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #究極メカ丸 」',
+    'k2rcgh1F3sc',
+    fanpareOfficialChannelSource,
+  ),
+  miwaPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #三輪霞 」',
+    'ebkAY5nRrq4',
+    fanpareOfficialChannelSource,
+  ),
+  miwaFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #三輪霞 」',
+    'jYpnv_WrvTU',
+    fanpareOfficialChannelSource,
+  ),
+  rindouPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #竜胆サキ 」',
+    'doLIuwZu2ug',
+    fanpareOfficialChannelSource,
+  ),
+  yagaPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #夜蛾正道 」',
+    'ebYuVjtj-B0',
+    fanpareOfficialChannelSource,
+  ),
+  yagaGuardianSkill: createOfficialVideo(
+    'SSR[枢要の番人]夜蛾正道 スキル紹介【呪術廻戦 ファントムパレード】',
+    'akR-XZZZoMI',
+    fanpareOfficialChannelSource,
+  ),
+  maiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #禪院真依 」',
+    'hDBiub2HaPc',
+    fanpareOfficialChannelSource,
+  ),
+  maiFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #禪院真依 」',
+    'Mz5VOcN9c3I',
+    fanpareOfficialChannelSource,
+  ),
+  yukiKaitoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #結木海斗 」',
+    '-ZJr5BD-7gU',
+    fanpareOfficialChannelSource,
+  ),
+  miguelPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #ミゲル 」',
+    '3CyHidSDEkI',
+    fanpareOfficialChannelSource,
+  ),
+  ieiriPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #家入硝子 」',
+    'g-viwXaXxH8',
+    fanpareOfficialChannelSource,
+  ),
+  ieiriHyuuCm: createOfficialVideo(
+    '1.5thアニバーサリー記念CM「[ひゅーひょいっ]家入硝子」編 15秒【呪術廻戦 ファントムパレード】',
+    'Qd-oZ3IKGm4',
+    fanpareOfficialChannelSource,
+  ),
+  meiMeiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #冥冥 」',
+    'vskP0y6hozg',
+    fanpareOfficialChannelSource,
+  ),
+  inoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #猪野琢真 」',
+    '_N7IZgpaWAc',
+    fanpareOfficialChannelSource,
+  ),
+  chosoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #脹相 」',
+    'fXoEPHlL3lI',
+    fanpareOfficialChannelSource,
+  ),
+  dagonPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #陀艮 」',
+    'cLVyq60KFYE',
+    fanpareOfficialChannelSource,
+  ),
+  naobitoPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #禪院直毘人 」',
+    'PtrP1_ZE74w',
+    fanpareOfficialChannelSource,
+  ),
+  kusakabePlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #日下部篤也 」',
+    'CD15Iy8xfJ8',
+    fanpareOfficialChannelSource,
+  ),
+  uraumePlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #裏梅 」',
+    'XiOjZx1uf9o',
+    fanpareOfficialChannelSource,
+  ),
+  uraumeUnderlingSkill: createOfficialVideo(
+    'SSR[引っ込め三下]裏梅 スキル紹介【呪術廻戦 ファントムパレード】',
+    '1tL1Btf2w6U',
+    fanpareOfficialChannelSource,
+  ),
+  uraumeUnderlingCm: createOfficialVideo(
+    'CM「[引っ込め三下]裏梅」編 15秒【呪術廻戦 ファントムパレード】',
+    'Iaknli6wvBU',
+    fanpareOfficialChannelSource,
+  ),
+  gakuganjiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #楽巌寺嘉伸 」',
+    'laOgkhfqA0A',
+    fanpareOfficialChannelSource,
+  ),
+  eijiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #漆英司 」',
+    'IEA7Yzxo7OU',
+    fanpareOfficialChannelSource,
+  ),
+  eijiFullSpeedSkill: createOfficialVideo(
+    'SSR[連鎖紋「全開速」]漆英司 スキル紹介【呪術廻戦 ファントムパレード】',
+    'Xx-7R973P2s',
+    fanpareOfficialChannelSource,
+  ),
+  ijichiPlayable: createOfficialVideo(
+    '【ファンパレ】プレイアブルキャラクター紹介PV「 #伊地知潔高 」',
+    'J83UjA7sPz0',
+    fanpareOfficialChannelSource,
+  ),
+  ijichiFifteenSeconds: createOfficialVideo(
+    '【ファンパレ】15秒でわかるファンパレ！「 #伊地知潔高 」',
+    'A0MuAjyH8HA',
+    fanpareOfficialChannelSource,
   ),
   officialPv2: createOfficialVideo(
     '『呪術廻戦 ファントムパレード』公式PV第2弾 ＜ファンパレ＞',
     'ZY32jnvpHQA',
-    fanpareOfficialSiteSource,
+    fanpareOfficialChannelSource,
   ),
   officialPv1: createOfficialVideo(
     '『呪術廻戦 ファントムパレード』公式PV第1弾 ＜ファンパレ＞',
     'UmJDNcq3HgQ',
-    fanpareOfficialSiteSource,
+    fanpareOfficialChannelSource,
   ),
   hiddenInventoryTrailer: createOfficialVideo(
     '「懐玉・玉折」イベントトレーラーPV',
@@ -521,31 +911,103 @@ const officialVideoCatalog = {
   ),
 } as const;
 
-const defaultOfficialVideos: CharacterOfficialVideo[] = [
-  officialVideoCatalog.officialPv2,
-  officialVideoCatalog.officialPv1,
-];
-
 const officialVideosByBaseKey: Partial<Record<BaseCharacterKey, CharacterOfficialVideo[]>> = {
   gojo: [
     officialVideoCatalog.gojoIntro,
-    officialVideoCatalog.onePointFiveKaigyokuPv,
+    officialVideoCatalog.gojoPlayable,
+    officialVideoCatalog.gojoFifteenSeconds,
   ],
-  yuji: [officialVideoCatalog.glamorousCruisePv],
-  megumi: [officialVideoCatalog.glamorousCruisePv],
-  nobara: [officialVideoCatalog.glamorousCruisePv],
-  geto: [
-    officialVideoCatalog.hiddenInventoryTrailer,
-    officialVideoCatalog.onePointFiveKaigyokuPv,
+  sukuna: [
+    officialVideoCatalog.sukunaPlayable,
+    officialVideoCatalog.sukunaSkill,
+    officialVideoCatalog.sukunaCm,
   ],
-  toji: [
-    officialVideoCatalog.hiddenInventoryTrailer,
-    officialVideoCatalog.onePointFiveKaigyokuPv,
+  yuta: [
+    officialVideoCatalog.yutaPlayable,
+    officialVideoCatalog.yutaFifteenSeconds,
   ],
-  ieiri: [
-    officialVideoCatalog.blueAndHundredApparitionsPv,
-    officialVideoCatalog.onePointFiveKaigyokuPv,
-    officialVideoCatalog.onePointFiveBroadcast,
+  toji: [officialVideoCatalog.tojiPlayable],
+  mahito: [
+    officialVideoCatalog.mahitoPlayable,
+    officialVideoCatalog.mahitoSoulSkill,
+  ],
+  yuji: [
+    officialVideoCatalog.yujiPlayable,
+    officialVideoCatalog.yujiFifteenSeconds,
+  ],
+  megumi: [
+    officialVideoCatalog.megumiPlayable,
+    officialVideoCatalog.megumiFifteenSeconds,
+  ],
+  nobara: [
+    officialVideoCatalog.nobaraPlayable,
+    officialVideoCatalog.nobaraFifteenSeconds,
+  ],
+  nanami: [
+    officialVideoCatalog.nanamiPlayable,
+    officialVideoCatalog.nanamiFifteenSeconds,
+  ],
+  maki: [
+    officialVideoCatalog.makiPlayable,
+    officialVideoCatalog.makiFifteenSeconds,
+  ],
+  toge: [
+    officialVideoCatalog.togePlayable,
+    officialVideoCatalog.togeFifteenSeconds,
+  ],
+  panda: [
+    officialVideoCatalog.pandaPlayable,
+    officialVideoCatalog.pandaFifteenSeconds,
+  ],
+  todo: [
+    officialVideoCatalog.todoPlayable,
+    officialVideoCatalog.todoFifteenSeconds,
+  ],
+  jogo: [officialVideoCatalog.jogoPlayable],
+  hanami: [officialVideoCatalog.hanamiPlayable],
+  junpei: [officialVideoCatalog.junpeiPlayable],
+  geto: [officialVideoCatalog.getoPlayable],
+  momo: [
+    officialVideoCatalog.momoPlayable,
+    officialVideoCatalog.momoFifteenSeconds,
+  ],
+  kamo: [
+    officialVideoCatalog.kamoPlayable,
+    officialVideoCatalog.kamoFifteenSeconds,
+  ],
+  mechamaru: [
+    officialVideoCatalog.mechamaruPlayable,
+    officialVideoCatalog.mechamaruFifteenSeconds,
+  ],
+  miwa: [
+    officialVideoCatalog.miwaPlayable,
+    officialVideoCatalog.miwaFifteenSeconds,
+  ],
+  rindou: [officialVideoCatalog.rindouPlayable],
+  yaga: [officialVideoCatalog.yagaPlayable],
+  mai: [
+    officialVideoCatalog.maiPlayable,
+    officialVideoCatalog.maiFifteenSeconds,
+  ],
+  yukiKaito: [officialVideoCatalog.yukiKaitoPlayable],
+  miguel: [officialVideoCatalog.miguelPlayable],
+  kokichi: [
+    officialVideoCatalog.mechamaruPlayable,
+    officialVideoCatalog.mechamaruFifteenSeconds,
+  ],
+  ieiri: [officialVideoCatalog.ieiriPlayable],
+  meiMei: [officialVideoCatalog.meiMeiPlayable],
+  ino: [officialVideoCatalog.inoPlayable],
+  choso: [officialVideoCatalog.chosoPlayable],
+  dagon: [officialVideoCatalog.dagonPlayable],
+  naobito: [officialVideoCatalog.naobitoPlayable],
+  kusakabe: [officialVideoCatalog.kusakabePlayable],
+  uraume: [officialVideoCatalog.uraumePlayable],
+  gakuganji: [officialVideoCatalog.gakuganjiPlayable],
+  eiji: [officialVideoCatalog.eijiPlayable],
+  ijichi: [
+    officialVideoCatalog.ijichiPlayable,
+    officialVideoCatalog.ijichiFifteenSeconds,
   ],
 };
 
@@ -556,36 +1018,57 @@ const officialVideosByUnitId: Partial<Record<UnitSeed['id'], CharacterOfficialVi
   'gojo-domain': [
     officialVideoCatalog.gojoDomainSkill,
   ],
-  'gojo-ao': [
-    officialVideoCatalog.hiddenInventoryTrailer,
-    officialVideoCatalog.hiddenInventorySpecial,
-  ],
-  'gojo-strongest': [
-    officialVideoCatalog.hiddenInventoryTrailer,
-    officialVideoCatalog.hiddenInventorySpecial,
+  'gojo-zero-point-two': [
+    officialVideoCatalog.gojoZeroPointTwoPv,
+    officialVideoCatalog.gojoZeroPointTwoSkill,
   ],
   'gojo-awakened': [
-    officialVideoCatalog.blueAndHundredApparitionsPv,
-    officialVideoCatalog.onePointFiveKaigyokuPv,
-    officialVideoCatalog.onePointFiveBroadcast,
+    officialVideoCatalog.gojoAwakenedCm,
   ],
-  'geto-righteous-cause': [
-    officialVideoCatalog.hiddenInventoryTrailer,
-    officialVideoCatalog.hiddenInventorySpecial,
+  'yuji-maximum-output': [
+    officialVideoCatalog.yujiMaximumOutputCm,
+    officialVideoCatalog.yujiMaximumOutputSkill,
   ],
-  'toji-sorcerer-killer': [
-    officialVideoCatalog.hiddenInventoryTrailer,
-    officialVideoCatalog.hiddenInventorySpecial,
+  'yuji-entrusted-life': [
+    officialVideoCatalog.yujiEntrustedLifeCm,
+    officialVideoCatalog.yujiEntrustedLifeSkill,
   ],
-  'ieiri-can-save': [
-    officialVideoCatalog.blueAndHundredApparitionsPv,
-    officialVideoCatalog.onePointFiveKaigyokuPv,
-    officialVideoCatalog.onePointFiveBroadcast,
+  'nanami-suppression': [
+    officialVideoCatalog.nanamiSuppressionSkill,
+  ],
+  'yuta-executioner': [
+    officialVideoCatalog.yutaExecutionerPv,
+    officialVideoCatalog.yutaExecutionerSkill,
+  ],
+  'yuta-queen': [
+    officialVideoCatalog.yutaQueenPv,
+    officialVideoCatalog.yutaQueenSkill,
+  ],
+  'mahito-soul': [
+    officialVideoCatalog.mahitoSoulSkill,
+  ],
+  'todo-you': [
+    officialVideoCatalog.todoYouCm,
+    officialVideoCatalog.todoYouSkill,
+  ],
+  'jogo-fierce': [
+    officialVideoCatalog.jogoFiercePv,
+  ],
+  'momo-tsukumogami': [
+    officialVideoCatalog.momoTsukumogamiSkill,
+  ],
+  'yaga-guardian': [
+    officialVideoCatalog.yagaGuardianSkill,
   ],
   'ieiri-hyuu': [
-    officialVideoCatalog.blueAndHundredApparitionsPv,
-    officialVideoCatalog.onePointFiveKaigyokuPv,
-    officialVideoCatalog.onePointFiveBroadcast,
+    officialVideoCatalog.ieiriHyuuCm,
+  ],
+  'uraume-underling': [
+    officialVideoCatalog.uraumeUnderlingCm,
+    officialVideoCatalog.uraumeUnderlingSkill,
+  ],
+  'eiji-full-speed': [
+    officialVideoCatalog.eijiFullSpeedSkill,
   ],
 };
 
@@ -747,7 +1230,6 @@ const createCharacter = (unit: UnitSeed): CharacterDetail => {
   const officialVideos = mergeOfficialVideos(
     officialVideosByUnitId[unit.id],
     officialVideosByBaseKey[unit.baseKey],
-    defaultOfficialVideos,
   );
 
   return {
