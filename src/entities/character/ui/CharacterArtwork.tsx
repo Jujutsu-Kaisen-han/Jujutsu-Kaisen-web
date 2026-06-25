@@ -4,7 +4,7 @@ interface CharacterArtworkProps extends ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc: string;
 }
 
-export const CharacterArtwork = ({ fallbackSrc, src, ...props }: CharacterArtworkProps) => {
+export const CharacterArtwork = ({ fallbackSrc, src, onError, ...props }: CharacterArtworkProps) => {
   const primarySrc = src || fallbackSrc;
   const [activeSrc, setActiveSrc] = useState(primarySrc);
 
@@ -18,10 +18,12 @@ export const CharacterArtwork = ({ fallbackSrc, src, ...props }: CharacterArtwor
       data-source={activeSrc === fallbackSrc ? 'fallback' : 'variant'}
       referrerPolicy={activeSrc === fallbackSrc ? undefined : 'no-referrer'}
       src={activeSrc}
-      onError={() => {
+      onError={(event) => {
         if (activeSrc !== fallbackSrc) {
           setActiveSrc(fallbackSrc);
         }
+
+        onError?.(event);
       }}
     />
   );
