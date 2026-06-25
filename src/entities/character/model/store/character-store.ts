@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { characterApi } from '@/entities/character/api/characterApi';
+import { isResourceNotFoundError } from '@/shared/api/http';
 import type {
   CatalogSortOption,
   CharacterCombatType,
@@ -12,7 +13,7 @@ import type {
   TierGroup,
 } from '@/entities/character/model/types/character';
 
-type AsyncStatus = 'idle' | 'loading' | 'success' | 'error';
+type AsyncStatus = 'idle' | 'loading' | 'success' | 'error' | 'not-found';
 
 interface CharacterStoreState {
   characters: CharacterSummary[];
@@ -131,6 +132,21 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
 
       return character;
     } catch (error) {
+      if (isResourceNotFoundError(error)) {
+        set((state) => ({
+          detailStatusById: {
+            ...state.detailStatusById,
+            [characterId]: 'not-found',
+          },
+          detailErrorById: {
+            ...state.detailErrorById,
+            [characterId]: null,
+          },
+        }));
+
+        return null;
+      }
+
       const message = error instanceof Error
         ? error.message
         : '캐릭터 상세 정보를 불러오지 못했습니다.';

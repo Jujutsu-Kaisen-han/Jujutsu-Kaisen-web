@@ -67,7 +67,7 @@ export const CharacterDetailPage = () => {
         />
       ) : null}
 
-      {!character && detailStatus === 'success' ? (
+      {!character && detailStatus === 'not-found' ? (
         <ErrorState
           title="캐릭터를 찾을 수 없어요."
           description="목록으로 돌아가 다른 캐릭터를 선택해보세요."

@@ -1,5 +1,5 @@
 import type { CharacterDetail, CharacterSummary, TierGroup } from '@/entities/character/model/types/character';
-import { fetchJson } from '@/shared/api/http';
+import { fetchJson, ResourceNotFoundError } from '@/shared/api/http';
 import { API_BASE_URL, USE_MOCK_API } from '@/shared/config/env';
 
 const delay = (ms: number) => new Promise((resolve) => {
@@ -43,7 +43,7 @@ export const characterApi = {
       const character = mockCharacterDetails.find((item) => item.id === characterId);
 
       if (!character) {
-        throw new Error('요청한 캐릭터 정보를 찾지 못했습니다.');
+        throw new ResourceNotFoundError('요청한 캐릭터 정보를 찾지 못했습니다.');
       }
 
       return withMockLatency(character);
