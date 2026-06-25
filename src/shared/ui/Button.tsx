@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes } from 'react';
+import { Link, type LinkProps } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 type ButtonVariant = 'primary' | 'ghost';
@@ -7,15 +8,22 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
 }
 
-const StyledButton = styled.button<{ $variant: ButtonVariant }>`
+interface ButtonLinkProps extends LinkProps {
+  variant?: ButtonVariant;
+}
+
+const buttonStyles = css<{ $variant: ButtonVariant }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   min-height: 46px;
   padding: 12px 18px;
+  border: 0;
   border-radius: 999px;
+  text-decoration: none;
   font-weight: 700;
+  cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
 
   ${({ $variant, theme }) => $variant === 'primary'
@@ -41,8 +49,21 @@ const StyledButton = styled.button<{ $variant: ButtonVariant }>`
   }
 `;
 
+const StyledButton = styled.button<{ $variant: ButtonVariant }>`
+  ${buttonStyles}
+`;
+
+const StyledButtonLink = styled(Link)<{ $variant: ButtonVariant }>`
+  ${buttonStyles}
+`;
+
 export const Button = ({
   variant = 'primary',
   type = 'button',
   ...props
 }: ButtonProps) => <StyledButton $variant={variant} type={type} {...props} />;
+
+export const ButtonLink = ({
+  variant = 'primary',
+  ...props
+}: ButtonLinkProps) => <StyledButtonLink $variant={variant} {...props} />;

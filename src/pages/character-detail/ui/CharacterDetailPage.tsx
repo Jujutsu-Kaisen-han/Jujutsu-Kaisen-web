@@ -1,19 +1,13 @@
 import { useEffect } from 'react';
-import styled from 'styled-components';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCharacterStore } from '@/entities/character/model/store/character-store';
-import { Button } from '@/shared/ui/Button';
+import { ButtonLink } from '@/shared/ui/Button';
 import { ErrorState } from '@/shared/ui/ErrorState';
 import { LoadingState } from '@/shared/ui/LoadingState';
 import { PageIntro } from '@/shared/ui/PageIntro';
 import { routes } from '@/shared/config/routes';
 import { SiteShell } from '@/widgets/layout/ui/SiteShell';
 import { CharacterProfile } from '@/widgets/character-detail/ui/CharacterProfile';
-
-const BackLink = styled(Link)`
-  display: inline-flex;
-  width: fit-content;
-`;
 
 export const CharacterDetailPage = () => {
   const { characterId } = useParams<{ characterId: string }>();
@@ -43,9 +37,9 @@ export const CharacterDetailPage = () => {
 
   return (
     <SiteShell>
-      <BackLink to={routes.characters}>
-        <Button variant="ghost">캐릭터 목록으로</Button>
-      </BackLink>
+      <ButtonLink to={routes.characters} variant="ghost">
+        캐릭터 목록으로
+      </ButtonLink>
 
       {character ? (
         <CharacterProfile character={character} />

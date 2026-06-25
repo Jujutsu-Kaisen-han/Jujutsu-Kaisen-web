@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { groupCharactersByTier } from '@/entities/character/lib/character-selectors';
 import { useCharacterStore } from '@/entities/character/model/store/character-store';
-import { Button } from '@/shared/ui/Button';
+import { ButtonLink } from '@/shared/ui/Button';
 import { ErrorState } from '@/shared/ui/ErrorState';
 import { LoadingState } from '@/shared/ui/LoadingState';
 import { PageIntro } from '@/shared/ui/PageIntro';
@@ -15,10 +14,6 @@ const Meta = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-`;
-
-const ActionLink = styled(Link)`
-  display: inline-flex;
 `;
 
 export const TierListPage = () => {
@@ -42,11 +37,7 @@ export const TierListPage = () => {
             <StatPill label="티어 구간" value={`${tiers.length}단계`} />
           </Meta>
         )}
-        actions={(
-          <ActionLink to={routes.characters}>
-            <Button>캐릭터 도감 보기</Button>
-          </ActionLink>
-        )}
+        actions={<ButtonLink to={routes.characters}>캐릭터 도감 보기</ButtonLink>}
       />
 
       {catalogStatus === 'loading' && characters.length === 0 ? (

@@ -1,7 +1,6 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { routes } from '@/shared/config/routes';
-import { Button } from '@/shared/ui/Button';
+import { ButtonLink } from '@/shared/ui/Button';
 import { PageIntro } from '@/shared/ui/PageIntro';
 import { Panel } from '@/shared/ui/Panel';
 import { SiteShell } from '@/widgets/layout/ui/SiteShell';
@@ -34,10 +33,6 @@ const ActionRow = styled.div`
   justify-content: center;
 `;
 
-const HomeLink = styled(Link)`
-  display: inline-flex;
-`;
-
 export const NotFoundPage = () => (
   <SiteShell>
     <PageIntro
@@ -50,9 +45,7 @@ export const NotFoundPage = () => (
       <Title>찾는 페이지가 없어요.</Title>
       <Description>티어표나 캐릭터 목록으로 돌아가서 다른 정보를 확인해보세요.</Description>
       <ActionRow>
-        <HomeLink to={routes.home}>
-          <Button>홈으로 돌아가기</Button>
-        </HomeLink>
+        <ButtonLink to={routes.home}>홈으로 돌아가기</ButtonLink>
       </ActionRow>
     </Box>
   </SiteShell>
