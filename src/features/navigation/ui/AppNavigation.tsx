@@ -78,7 +78,9 @@ export const AppNavigation = () => (
       <BrandDescription>캐릭터 검색, 티어 비교, 역할별 분석을 한 화면에서.</BrandDescription>
     </BrandBlock>
     <Menu>
-      <MenuLink to={routes.home}>티어표</MenuLink>
+      <MenuLink to={routes.home} end>
+        티어표
+      </MenuLink>
       <MenuLink to={routes.characters}>캐릭터 도감</MenuLink>
     </Menu>
   </Nav>
