@@ -1,4 +1,3 @@
-import { mockCharacterDetails, mockCharacters, mockTiers } from '@/entities/character/api/mockData';
 import type { CharacterDetail, CharacterSummary, TierGroup } from '@/entities/character/model/types/character';
 import { fetchJson } from '@/shared/api/http';
 import { API_BASE_URL, USE_MOCK_API } from '@/shared/config/env';
@@ -13,11 +12,25 @@ const withMockLatency = async <T,>(data: T): Promise<T> => {
   return JSON.parse(JSON.stringify(data)) as T;
 };
 
+type MockDataModule = typeof import('./mockData');
+
+let mockDataModulePromise: Promise<MockDataModule> | null = null;
+
+const loadMockDataModule = async (): Promise<MockDataModule> => {
+  if (!mockDataModulePromise) {
+    mockDataModulePromise = import('./mockData');
+  }
+
+  return mockDataModulePromise;
+};
+
 const createEndpoint = (path: string) => `${API_BASE_URL}${path}`;
 
 export const characterApi = {
   async getCharacters(): Promise<CharacterSummary[]> {
     if (USE_MOCK_API) {
+      const { mockCharacters } = await loadMockDataModule();
+
       return withMockLatency(mockCharacters);
     }
 
@@ -26,6 +39,7 @@ export const characterApi = {
 
   async getCharacterById(characterId: string): Promise<CharacterDetail> {
     if (USE_MOCK_API) {
+      const { mockCharacterDetails } = await loadMockDataModule();
       const character = mockCharacterDetails.find((item) => item.id === characterId);
 
       if (!character) {
@@ -40,6 +54,8 @@ export const characterApi = {
 
   async getTiers(): Promise<TierGroup[]> {
     if (USE_MOCK_API) {
+      const { mockTiers } = await loadMockDataModule();
+
       return withMockLatency(mockTiers);
     }
 
