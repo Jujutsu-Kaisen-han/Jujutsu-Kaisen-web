@@ -2,6 +2,7 @@ import {
   officialCategoryLabels,
   roleLabels,
   traitLabels,
+  traitOrder,
   type CharacterRole,
   type CharacterTrait,
   type OfficialCategory,
@@ -9,9 +10,9 @@ import {
 
 export const traitFilterOptions: Array<{ value: CharacterTrait | 'all'; label: string }> = [
   { value: 'all', label: '전체 특성' },
-  ...Object.entries(traitLabels).map(([value, label]) => ({
-    value: value as CharacterTrait,
-    label,
+  ...traitOrder.map((trait) => ({
+    value: trait,
+    label: traitLabels[trait],
   })),
 ];
 
