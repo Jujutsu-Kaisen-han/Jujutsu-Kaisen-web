@@ -28,12 +28,13 @@ export const GlobalStyle = createGlobalStyle`
       radial-gradient(circle at 85% 20%, rgba(103, 232, 249, 0.14), transparent 28%),
       linear-gradient(180deg, #040612 0%, #08101f 48%, #040813 100%);
     color: ${({ theme }) => theme.colors.text};
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
   }
 
   body,
   button,
   input,
+  select,
   textarea {
     font: inherit;
   }
@@ -48,6 +49,15 @@ export const GlobalStyle = createGlobalStyle`
   select {
     border: 0;
     outline: 0;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid rgba(103, 232, 249, 0.72);
+    outline-offset: 3px;
   }
 
   button {
