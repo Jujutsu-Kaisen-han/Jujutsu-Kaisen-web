@@ -256,17 +256,33 @@ interface CharacterProfileProps {
   character: CharacterDetail;
 }
 
-const skillVideoPatterns = [/スキル紹介/u, /必殺スキル紹介動画/u];
+const introVideoMatchers = [
+  /プレイアブルキャラクター紹介PV/u,
+  /15秒でわかるファンパレ/u,
+  /ファンパレ.?紹介動画/u,
+];
 
-const selectOfficialSkillVideo = (character: CharacterDetail) => (
-  character.officialVideos?.find((video) => skillVideoPatterns.some((pattern) => pattern.test(video.title)))
-);
+const selectOfficialIntroVideo = (character: CharacterDetail) => {
+  if (!character.officialVideos) {
+    return undefined;
+  }
 
-const getOfficialSkillVideoLabel = (character: CharacterDetail) => `${character.name} 공식 스킬 소개 영상`;
+  for (const matcher of introVideoMatchers) {
+    const matchedVideo = character.officialVideos.find((video) => matcher.test(video.title));
+
+    if (matchedVideo) {
+      return matchedVideo;
+    }
+  }
+
+  return undefined;
+};
+
+const getOfficialIntroVideoLabel = (character: CharacterDetail) => `${character.name} 공식 캐릭터 소개 영상`;
 
 export const CharacterProfile = ({ character }: CharacterProfileProps) => {
-  const officialSkillVideo = selectOfficialSkillVideo(character);
-  const officialSkillVideoLabel = officialSkillVideo ? getOfficialSkillVideoLabel(character) : '';
+  const officialIntroVideo = selectOfficialIntroVideo(character);
+  const officialIntroVideoLabel = officialIntroVideo ? getOfficialIntroVideoLabel(character) : '';
   const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
   const subtitle = hasVariant ? `${character.variantName} · ${character.title}` : character.title;
 
@@ -356,33 +372,33 @@ export const CharacterProfile = ({ character }: CharacterProfileProps) => {
         </Panel>
 
         <Panel>
-          <SectionTitle>공식 스킬 영상</SectionTitle>
-          {officialSkillVideo ? (
+          <SectionTitle>공식 캐릭터 소개 영상</SectionTitle>
+          {officialIntroVideo ? (
             <VideoGrid>
               <VideoCard>
                 <VideoFrame>
                   <VideoEmbed
-                    src={officialSkillVideo.embedUrl}
-                    title={officialSkillVideoLabel}
+                    src={officialIntroVideo.embedUrl}
+                    title={officialIntroVideoLabel}
                     loading="lazy"
                     referrerPolicy="strict-origin-when-cross-origin"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                   />
                 </VideoFrame>
-                <VideoTitle>{officialSkillVideoLabel}</VideoTitle>
+                <VideoTitle>{officialIntroVideoLabel}</VideoTitle>
                 <SourceList>
-                  <SourceLink href={officialSkillVideo.url} target="_blank" rel="noreferrer">
+                  <SourceLink href={officialIntroVideo.url} target="_blank" rel="noreferrer">
                     YouTube에서 보기
                   </SourceLink>
-                  <SourceLink href={officialSkillVideo.source.url} target="_blank" rel="noreferrer">
-                    {officialSkillVideo.source.label}
+                  <SourceLink href={officialIntroVideo.source.url} target="_blank" rel="noreferrer">
+                    {officialIntroVideo.source.label}
                   </SourceLink>
                 </SourceList>
               </VideoCard>
             </VideoGrid>
           ) : (
-            <EmptyText>현재 연결된 공식 스킬 소개 영상이 없습니다.</EmptyText>
+            <EmptyText>현재 연결된 공식 캐릭터 소개 영상이 없습니다.</EmptyText>
           )}
         </Panel>
       </SectionGrid>
