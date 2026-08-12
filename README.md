@@ -1,33 +1,58 @@
-# Jujutsu-Kaisen
+# Jujutsu Kaisen Fan Archive
 
-React + Vite 기반의 주술회전 팬텀 퍼레이드 팬 사이트입니다. 티어표, 캐릭터 도감, 상세 프로필을 `styled-components`, `react-router-dom`, FSD 스타일 폴더 구조로 구성합니다.
+React + TypeScript + Vite로 만든 주술회전 팬 웹 서비스입니다. 팬텀 퍼레이드 캐릭터 티어표, 캐릭터 도감, 상세 프로필, 검색/필터링, 작품 정보 페이지를 반응형 UI로 제공합니다.
 
-## Start
+## 주요 기능
+
+- 티어별 캐릭터 보드
+- 캐릭터 목록, 이름 검색, 특성/분류/역할 필터
+- 캐릭터 상세 페이지와 스킬/필살기/공식 소개 영상
+- 원작, 애니메이션, 팬텀 퍼레이드 정보를 정리한 작품 정보 페이지
+- `react-router-dom` 기반 네비게이션과 404 페이지
+- `styled-components` 기반 다크 테마 반응형 레이아웃
+
+## 실행 방법
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Scripts
+개발 서버 기본 주소는 Vite 기본값인 `http://localhost:5173`입니다.
+
+## 스크립트
 
 ```bash
-npm run build
-npm test
-npm run typecheck
+npm run build      # TypeScript 검사 후 Vite 프로덕션 빌드
+npm run typecheck  # TypeScript 검사
+npm test           # Node 기반 HTTP 유틸 테스트
+npm run preview    # 빌드 결과 미리보기
 ```
 
-## Structure
+## 라우트
+
+- `/` - 팬텀 퍼레이드 티어표
+- `/characters` - 캐릭터 도감과 검색/필터
+- `/characters/:characterId` - 캐릭터 상세
+- `/series` - 작품 정보
+
+## 프로젝트 구조
 
 ```text
 src
-├── app
-│   ├── providers
-│   ├── router
-│   └── styles
-├── entities
-├── features
-├── pages
-├── shared
-└── widgets
+├── app          # 앱 프로바이더, 라우터, 전역 스타일
+├── entities     # 캐릭터 타입, mock API, 카드 UI
+├── features     # 검색/필터 컨트롤, 네비게이션
+├── pages        # 라우트 단위 페이지
+├── shared       # 공통 설정, API 유틸, UI 컴포넌트, 테마
+└── widgets      # 페이지 조립용 복합 UI
 ```
+
+## 데이터와 출처
+
+현재 데이터는 mock API로 동작하며 `src/entities/character/api/mockData.ts`에 정의되어 있습니다. 작품 정보와 공식 링크는 아래 공식 사이트를 기준으로 요약했습니다.
+
+- 소년점프 공식 작품 페이지: https://www.shonenjump.com/j/rensai/jujutsu/
+- TV 애니메이션 공식 사이트: https://jujutsukaisen.jp/
+- VIZ 공식 주술회전 페이지: https://www.viz.com/jujutsu-kaisen
+- 팬텀 퍼레이드 공식 사이트: https://jujutsuphanpara.jp/
