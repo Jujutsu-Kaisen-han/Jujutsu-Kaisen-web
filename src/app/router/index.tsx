@@ -21,6 +21,12 @@ const CharacterDetailPage = lazy(async () => {
   return { default: module.CharacterDetailPage };
 });
 
+const WorkInfoPage = lazy(async () => {
+  const module = await import('@/pages/work-info/ui/WorkInfoPage');
+
+  return { default: module.WorkInfoPage };
+});
+
 const NotFoundPage = lazy(async () => {
   const module = await import('@/pages/not-found/ui/NotFoundPage');
 
@@ -45,6 +51,10 @@ export const router = createBrowserRouter([
   {
     path: routePatterns.characterDetail,
     element: withPageLoader(CharacterDetailPage),
+  },
+  {
+    path: routes.series,
+    element: withPageLoader(WorkInfoPage),
   },
   {
     path: '*',

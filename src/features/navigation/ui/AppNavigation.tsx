@@ -74,14 +74,15 @@ export const AppNavigation = () => (
   <Nav>
     <BrandBlock>
       <Brand>Jujutsu Kaisen</Brand>
-      <BrandTitle>팬텀 퍼레이드 티어 보드</BrandTitle>
-      <BrandDescription>캐릭터 검색, 티어 비교, 역할별 분석을 한 화면에서.</BrandDescription>
+      <BrandTitle>주술회전 팬 아카이브</BrandTitle>
+      <BrandDescription>캐릭터 검색, 티어 비교, 작품 정보를 한 화면 흐름으로.</BrandDescription>
     </BrandBlock>
     <Menu>
       <MenuLink to={routes.home} end>
         티어표
       </MenuLink>
       <MenuLink to={routes.characters}>캐릭터 도감</MenuLink>
+      <MenuLink to={routes.series}>작품 정보</MenuLink>
     </Menu>
   </Nav>
 );
