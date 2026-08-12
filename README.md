@@ -1,6 +1,6 @@
 # Jujutsu-Kaisen
 
-React + Vite 기반으로 `styled-components`, `react-router-dom`, FSD 스타일 폴더 구조를 세팅한 스타터입니다.
+React + Vite 기반의 주술회전 팬텀 퍼레이드 팬 사이트입니다. 티어표, 캐릭터 도감, 상세 프로필을 `styled-components`, `react-router-dom`, FSD 스타일 폴더 구조로 구성합니다.
 
 ## Start
 
@@ -9,10 +9,12 @@ npm install
 npm run dev
 ```
 
-## Build
+## Scripts
 
 ```bash
 npm run build
+npm test
+npm run typecheck
 ```
 
 ## Structure
@@ -26,9 +28,6 @@ src
 ├── entities
 ├── features
 ├── pages
-├── processes
 ├── shared
 └── widgets
 ```
-
-`processes` 레이어는 지금은 비워두고, 사용자 플로우 단위가 필요해질 때 확장하면 됩니다.
