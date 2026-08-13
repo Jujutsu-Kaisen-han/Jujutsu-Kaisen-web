@@ -80,7 +80,7 @@ export const CatalogControls = ({
       <FieldGrid>
         <SearchField
           label="이름 검색"
-          placeholder="무량공처, 고죠, 유타, 존..."
+          placeholder="gojo, 고죠, ㄱㅈ, hollow purple..."
           value={filters.searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
         />

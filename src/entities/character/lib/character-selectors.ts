@@ -14,6 +14,87 @@ const tierRankMap: Record<CharacterTier, number> = {
   C: 1,
 };
 
+const hangulInitials = [
+  'ㄱ',
+  'ㄲ',
+  'ㄴ',
+  'ㄷ',
+  'ㄸ',
+  'ㄹ',
+  'ㅁ',
+  'ㅂ',
+  'ㅃ',
+  'ㅅ',
+  'ㅆ',
+  'ㅇ',
+  'ㅈ',
+  'ㅉ',
+  'ㅊ',
+  'ㅋ',
+  'ㅌ',
+  'ㅍ',
+  'ㅎ',
+] as const;
+
+const hangulSyllableStartCode = '가'.charCodeAt(0);
+const hangulSyllableEndCode = '힣'.charCodeAt(0);
+const hangulInitialPattern = /[ㄱ-ㅎ]/u;
+const searchSeparatorPattern = /[\s\-_.:/]+/gu;
+
+const normalizeSearchValue = (value: string): string => value
+  .normalize('NFC')
+  .toLocaleLowerCase('ko-KR')
+  .replace(searchSeparatorPattern, ' ')
+  .trim();
+
+const compactSearchValue = (value: string): string => value.replace(/\s+/gu, '');
+
+const getHangulInitials = (value: string): string => Array.from(value)
+  .map((character) => {
+    const code = character.charCodeAt(0);
+
+    if (code < hangulSyllableStartCode || code > hangulSyllableEndCode) {
+      return character;
+    }
+
+    const initialIndex = Math.floor((code - hangulSyllableStartCode) / 588);
+
+    return hangulInitials[initialIndex] ?? character;
+  })
+  .join('');
+
+const getSearchCandidates = (character: CharacterSummary): string[] => [
+  character.id,
+  character.id.replaceAll('-', ' '),
+  character.name,
+  character.baseName,
+  character.variantName,
+  character.title,
+];
+
+const matchesCharacterSearch = (character: CharacterSummary, rawSearchQuery: string): boolean => {
+  const searchQuery = normalizeSearchValue(rawSearchQuery);
+
+  if (searchQuery.length === 0) {
+    return true;
+  }
+
+  const compactSearchQuery = compactSearchValue(searchQuery);
+  const shouldMatchHangulInitials = hangulInitialPattern.test(compactSearchQuery);
+
+  return getSearchCandidates(character).some((candidate) => {
+    const normalizedCandidate = normalizeSearchValue(candidate);
+    const compactCandidate = compactSearchValue(normalizedCandidate);
+
+    return normalizedCandidate.includes(searchQuery)
+      || compactCandidate.includes(compactSearchQuery)
+      || (
+        shouldMatchHangulInitials
+        && compactSearchValue(getHangulInitials(normalizedCandidate)).includes(compactSearchQuery)
+      );
+  });
+};
+
 export const getTierRank = (tier: CharacterTier): number => tierRankMap[tier];
 
 export interface CharacterNeighbors {
@@ -48,16 +129,9 @@ export const filterAndSortCharacters = (
   characters: CharacterSummary[],
   filters: CharacterFilters,
 ): CharacterSummary[] => {
-  const searchQuery = filters.searchQuery.trim().toLocaleLowerCase();
-
   return [...characters]
     .filter((character) => {
-      const matchesSearch = searchQuery.length === 0
-        || character.name.toLocaleLowerCase().includes(searchQuery)
-        || character.baseName.toLocaleLowerCase().includes(searchQuery)
-        || character.variantName.toLocaleLowerCase().includes(searchQuery)
-        || character.title.toLocaleLowerCase().includes(searchQuery);
-
+      const matchesSearch = matchesCharacterSearch(character, filters.searchQuery);
       const matchesTrait = filters.trait === 'all' || character.trait === filters.trait;
       const matchesOfficialCategory = filters.officialCategory === 'all'
         || character.officialCategory === filters.officialCategory;
