@@ -74,6 +74,7 @@ export interface CharacterFilters {
   officialCategory: OfficialCategory | 'all';
   role: CharacterRole | 'all';
   sortBy: CatalogSortOption;
+  favoritesOnly: boolean;
 }
 
 export const tierOrder: CharacterTier[] = ['SS', 'S', 'A', 'B', 'C'];

@@ -17,6 +17,7 @@ const searchParamKeys = {
   officialCategory: 'category',
   role: 'role',
   sortBy: 'sort',
+  favoritesOnly: 'favorites',
 } as const;
 
 const officialCategoryValues = Object.keys(officialCategoryLabels) as OfficialCategory[];
@@ -39,6 +40,7 @@ export const getCatalogFiltersFromSearchParams = (
   const officialCategory = searchParams.get(searchParamKeys.officialCategory);
   const role = searchParams.get(searchParamKeys.role);
   const sortBy = searchParams.get(searchParamKeys.sortBy);
+  const favoritesOnly = searchParams.get(searchParamKeys.favoritesOnly);
 
   return {
     searchQuery: getSearchQuery(searchParams),
@@ -48,6 +50,7 @@ export const getCatalogFiltersFromSearchParams = (
       : defaultCharacterFilters.officialCategory,
     role: isAllowedValue(role, roleValues) ? role : defaultCharacterFilters.role,
     sortBy: isAllowedValue(sortBy, sortValues) ? sortBy : defaultCharacterFilters.sortBy,
+    favoritesOnly: favoritesOnly === '1',
   };
 };
 
@@ -75,6 +78,10 @@ export const createCatalogSearchParams = (filters: CharacterFilters): URLSearchP
     searchParams.set(searchParamKeys.sortBy, filters.sortBy);
   }
 
+  if (filters.favoritesOnly) {
+    searchParams.set(searchParamKeys.favoritesOnly, '1');
+  }
+
   return searchParams;
 };
 
@@ -87,4 +94,5 @@ export const areCatalogFiltersEqual = (
   && left.officialCategory === right.officialCategory
   && left.role === right.role
   && left.sortBy === right.sortBy
+  && left.favoritesOnly === right.favoritesOnly
 );

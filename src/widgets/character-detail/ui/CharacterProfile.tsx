@@ -8,6 +8,7 @@ import {
 } from '@/entities/character/model/types/character';
 import { CharacterArtwork } from '@/entities/character/ui/CharacterArtwork';
 import { TierBadge } from '@/entities/character/ui/TierBadge';
+import { Button } from '@/shared/ui/Button';
 import { Panel } from '@/shared/ui/Panel';
 
 const Layout = styled.div`
@@ -97,6 +98,20 @@ const Summary = styled(Panel)`
 const Header = styled.div`
   display: grid;
   gap: 10px;
+`;
+
+const HeaderTop = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+`;
+
+const FavoriteIcon = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 16px;
+  line-height: 1;
 `;
 
 const Variant = styled.span`
@@ -254,6 +269,8 @@ const Cooldown = styled.span`
 
 interface CharacterProfileProps {
   character: CharacterDetail;
+  isFavorite: boolean;
+  onToggleFavorite: () => void;
 }
 
 const introVideoMatchers = [
@@ -280,7 +297,11 @@ const selectOfficialIntroVideo = (character: CharacterDetail) => {
 
 const getOfficialIntroVideoLabel = (character: CharacterDetail) => `${character.name} 공식 캐릭터 소개 영상`;
 
-export const CharacterProfile = ({ character }: CharacterProfileProps) => {
+export const CharacterProfile = ({
+  character,
+  isFavorite,
+  onToggleFavorite,
+}: CharacterProfileProps) => {
   const officialIntroVideo = selectOfficialIntroVideo(character);
   const officialIntroVideoLabel = officialIntroVideo ? getOfficialIntroVideoLabel(character) : '';
   const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
@@ -312,7 +333,18 @@ export const CharacterProfile = ({ character }: CharacterProfileProps) => {
         </PosterPanel>
         <Summary>
           <Header>
-            <TierBadge tier={character.tier} />
+            <HeaderTop>
+              <TierBadge tier={character.tier} />
+              <Button
+                variant="ghost"
+                aria-pressed={isFavorite}
+                onClick={onToggleFavorite}
+                title={isFavorite ? '즐겨찾기에서 제거' : '즐겨찾기에 추가'}
+              >
+                <FavoriteIcon aria-hidden="true">{isFavorite ? '★' : '☆'}</FavoriteIcon>
+                {isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+              </Button>
+            </HeaderTop>
             {hasVariant ? <Variant>{character.variantName}</Variant> : null}
             <Title>{character.name}</Title>
             <Subtitle>{subtitle}</Subtitle>

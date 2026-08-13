@@ -19,6 +19,7 @@ interface CharacterStoreState {
   characters: CharacterSummary[];
   characterDetails: Record<string, CharacterDetail>;
   tiers: TierGroup[];
+  favoriteCharacterIds: string[];
   catalogStatus: AsyncStatus;
   catalogError: string | null;
   detailStatusById: Record<string, AsyncStatus>;
@@ -32,6 +33,7 @@ interface CharacterStoreState {
   setRoleFilter: (role: CharacterRole | 'all') => void;
   setSortBy: (sortBy: CatalogSortOption) => void;
   setFilters: (filters: CharacterFilters) => void;
+  toggleFavoriteCharacter: (characterId: string) => void;
   resetFilters: () => void;
 }
 
@@ -41,12 +43,77 @@ export const defaultCharacterFilters: CharacterFilters = {
   officialCategory: 'all',
   role: 'all',
   sortBy: 'tier-desc',
+  favoritesOnly: false,
+};
+
+const favoriteStorageKey = 'jujutsu-fan-archive:favorites';
+
+const getLocalStorage = (): Storage | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+};
+
+const normalizeFavoriteIds = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const favoriteIds = value
+    .filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+    .map((item) => item.trim());
+
+  return Array.from(new Set(favoriteIds));
+};
+
+const readStoredFavoriteCharacterIds = (): string[] => {
+  const storage = getLocalStorage();
+
+  if (!storage) {
+    return [];
+  }
+
+  try {
+    return normalizeFavoriteIds(JSON.parse(storage.getItem(favoriteStorageKey) ?? '[]'));
+  } catch {
+    return [];
+  }
+};
+
+const writeStoredFavoriteCharacterIds = (favoriteCharacterIds: string[]) => {
+  const storage = getLocalStorage();
+
+  if (!storage) {
+    return;
+  }
+
+  try {
+    storage.setItem(favoriteStorageKey, JSON.stringify(favoriteCharacterIds));
+  } catch {
+    // Ignore storage failures so favorites remain an optional enhancement.
+  }
+};
+
+const pruneFavoriteCharacterIds = (
+  favoriteCharacterIds: string[],
+  characters: CharacterSummary[],
+): string[] => {
+  const knownCharacterIds = new Set(characters.map((character) => character.id));
+
+  return favoriteCharacterIds.filter((characterId) => knownCharacterIds.has(characterId));
 };
 
 export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
   characters: [],
   characterDetails: {},
   tiers: [],
+  favoriteCharacterIds: readStoredFavoriteCharacterIds(),
   catalogStatus: 'idle',
   catalogError: null,
   detailStatusById: {},
@@ -74,10 +141,16 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
         characterApi.getCharacters(),
         characterApi.getTiers(),
       ]);
+      const favoriteCharacterIds = pruneFavoriteCharacterIds(get().favoriteCharacterIds, characters);
+
+      if (favoriteCharacterIds.length !== get().favoriteCharacterIds.length) {
+        writeStoredFavoriteCharacterIds(favoriteCharacterIds);
+      }
 
       set({
         characters,
         tiers,
+        favoriteCharacterIds,
         catalogStatus: 'success',
         catalogError: null,
       });
@@ -214,6 +287,19 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
 
   setFilters: (filters) => {
     set({ filters });
+  },
+
+  toggleFavoriteCharacter: (characterId) => {
+    set((state) => {
+      const hasFavorite = state.favoriteCharacterIds.includes(characterId);
+      const favoriteCharacterIds = hasFavorite
+        ? state.favoriteCharacterIds.filter((favoriteCharacterId) => favoriteCharacterId !== characterId)
+        : [...state.favoriteCharacterIds, characterId];
+
+      writeStoredFavoriteCharacterIds(favoriteCharacterIds);
+
+      return { favoriteCharacterIds };
+    });
   },
 
   resetFilters: () => {

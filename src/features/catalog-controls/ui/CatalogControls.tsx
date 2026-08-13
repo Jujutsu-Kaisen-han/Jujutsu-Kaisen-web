@@ -44,10 +44,46 @@ const Footer = styled.div`
   gap: 14px;
 `;
 
+const Actions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
 const Hint = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.colors.muted};
   font-size: 14px;
+`;
+
+const FavoriteToggle = styled.button<{ $active: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid ${({ $active, theme }) => (
+    $active ? theme.colors.borderStrong : theme.colors.border
+  )};
+  background: ${({ $active, theme }) => (
+    $active ? theme.colors.primarySoft : 'rgba(15, 23, 42, 0.82)'
+  )};
+  color: ${({ theme }) => theme.colors.text};
+  font-weight: 700;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: ${({ theme }) => theme.colors.borderStrong};
+  }
+`;
+
+const FavoriteIcon = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 16px;
+  line-height: 1;
 `;
 
 interface CatalogControlsProps {
@@ -57,6 +93,7 @@ interface CatalogControlsProps {
   onOfficialCategoryFilterChange: (value: OfficialCategory | 'all') => void;
   onRoleFilterChange: (value: CharacterRole | 'all') => void;
   onSortByChange: (value: CatalogSortOption) => void;
+  onFavoritesOnlyChange: (value: boolean) => void;
   onReset: () => void;
 }
 
@@ -67,13 +104,15 @@ export const CatalogControls = ({
   onOfficialCategoryFilterChange,
   onRoleFilterChange,
   onSortByChange,
+  onFavoritesOnlyChange,
   onReset,
 }: CatalogControlsProps) => {
   const hasActiveFilters = filters.searchQuery.length > 0
     || filters.trait !== 'all'
     || filters.officialCategory !== 'all'
     || filters.role !== 'all'
-    || filters.sortBy !== 'tier-desc';
+    || filters.sortBy !== 'tier-desc'
+    || filters.favoritesOnly;
 
   return (
     <Layout>
@@ -111,9 +150,20 @@ export const CatalogControls = ({
       </FieldGrid>
       <Footer>
         <Hint>팬파레 특성과 공식 사이트 분류를 함께 걸어 원하는 변형 유닛만 좁힐 수 있습니다.</Hint>
-        <Button variant="ghost" onClick={onReset} disabled={!hasActiveFilters}>
-          필터 초기화
-        </Button>
+        <Actions>
+          <FavoriteToggle
+            type="button"
+            $active={filters.favoritesOnly}
+            aria-pressed={filters.favoritesOnly}
+            onClick={() => onFavoritesOnlyChange(!filters.favoritesOnly)}
+          >
+            <FavoriteIcon aria-hidden="true">{filters.favoritesOnly ? '★' : '☆'}</FavoriteIcon>
+            즐겨찾기만 보기
+          </FavoriteToggle>
+          <Button variant="ghost" onClick={onReset} disabled={!hasActiveFilters}>
+            필터 초기화
+          </Button>
+        </Actions>
       </Footer>
     </Layout>
   );

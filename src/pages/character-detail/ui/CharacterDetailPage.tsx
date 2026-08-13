@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
-  filterAndSortCharacters,
+  filterAndSortCatalogCharacters,
   getCharacterNeighbors,
 } from '@/entities/character/lib/character-selectors';
 import {
@@ -27,10 +27,12 @@ export const CharacterDetailPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const characters = useCharacterStore((state) => state.characters);
+  const favoriteCharacterIds = useCharacterStore((state) => state.favoriteCharacterIds);
   const characterDetails = useCharacterStore((state) => state.characterDetails);
   const detailStatusById = useCharacterStore((state) => state.detailStatusById);
   const detailErrorById = useCharacterStore((state) => state.detailErrorById);
   const loadCharacterById = useCharacterStore((state) => state.loadCharacterById);
+  const toggleFavoriteCharacter = useCharacterStore((state) => state.toggleFavoriteCharacter);
   const catalogFilters = useMemo(
     () => getCatalogFiltersFromSearchParams(searchParams),
     [searchParams],
@@ -56,8 +58,13 @@ export const CharacterDetailPage = () => {
   const summary = characters.find((item) => item.id === characterId);
   const detailStatus = detailStatusById[characterId] ?? 'idle';
   const detailError = detailErrorById[characterId] ?? null;
+  const isFavorite = favoriteCharacterIds.includes(characterId);
   const hasCatalogContext = !areCatalogFiltersEqual(catalogFilters, defaultCharacterFilters);
-  const neighborCharacters = filterAndSortCharacters(characters, catalogFilters);
+  const neighborCharacters = filterAndSortCatalogCharacters(
+    characters,
+    catalogFilters,
+    favoriteCharacterIds,
+  );
   const neighbors = getCharacterNeighbors(neighborCharacters, characterId);
   const canNavigateBetweenDetails = neighbors.currentIndex >= 0 && neighbors.totalCount > 1;
   const characterListTo = hasCatalogContext
@@ -72,7 +79,11 @@ export const CharacterDetailPage = () => {
 
       {character ? (
         <>
-          <CharacterProfile character={character} />
+          <CharacterProfile
+            character={character}
+            isFavorite={isFavorite}
+            onToggleFavorite={() => toggleFavoriteCharacter(character.id)}
+          />
           {canNavigateBetweenDetails ? (
             <CharacterDetailNavigator
               previousCharacter={neighbors.previousCharacter}

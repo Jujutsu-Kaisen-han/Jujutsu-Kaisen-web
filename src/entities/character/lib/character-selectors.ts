@@ -158,6 +158,22 @@ export const filterAndSortCharacters = (
     });
 };
 
+export const filterAndSortCatalogCharacters = (
+  characters: CharacterSummary[],
+  filters: CharacterFilters,
+  favoriteCharacterIds: string[],
+): CharacterSummary[] => {
+  const sortedCharacters = filterAndSortCharacters(characters, filters);
+
+  if (!filters.favoritesOnly) {
+    return sortedCharacters;
+  }
+
+  const favoriteCharacterIdSet = new Set(favoriteCharacterIds);
+
+  return sortedCharacters.filter((character) => favoriteCharacterIdSet.has(character.id));
+};
+
 export const groupCharactersByTier = (
   tiers: TierGroup[],
   characters: CharacterSummary[],

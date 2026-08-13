@@ -103,6 +103,7 @@ const TraitDescription = styled.p`
 interface CharacterCatalogProps {
   characters: CharacterSummary[];
   totalCount: number;
+  favoriteCharacterIds: string[];
   filters: CharacterFilters;
   detailLinkSearch?: string;
   onSearchQueryChange: (value: string) => void;
@@ -110,12 +111,14 @@ interface CharacterCatalogProps {
   onOfficialCategoryFilterChange: (value: OfficialCategory | 'all') => void;
   onRoleFilterChange: (value: CharacterRole | 'all') => void;
   onSortByChange: (value: CatalogSortOption) => void;
+  onFavoritesOnlyChange: (value: boolean) => void;
   onResetFilters: () => void;
 }
 
 export const CharacterCatalog = ({
   characters,
   totalCount,
+  favoriteCharacterIds,
   filters,
   detailLinkSearch,
   onSearchQueryChange,
@@ -123,9 +126,15 @@ export const CharacterCatalog = ({
   onOfficialCategoryFilterChange,
   onRoleFilterChange,
   onSortByChange,
+  onFavoritesOnlyChange,
   onResetFilters,
 }: CharacterCatalogProps) => {
   const traitSections = groupCharactersByTrait(characters, traitOrder);
+  const favoriteCharacterIdSet = new Set(favoriteCharacterIds);
+  const favoriteCount = favoriteCharacterIds.length;
+  const emptyDescription = filters.favoritesOnly && favoriteCount === 0
+    ? '캐릭터 상세 페이지에서 즐겨찾기를 추가하면 이곳에서 모아볼 수 있습니다.'
+    : '검색어를 바꾸거나 필터를 초기화해서 다른 조합을 확인해보세요.';
 
   return (
     <Layout>
@@ -136,16 +145,18 @@ export const CharacterCatalog = ({
         onOfficialCategoryFilterChange={onOfficialCategoryFilterChange}
         onRoleFilterChange={onRoleFilterChange}
         onSortByChange={onSortByChange}
+        onFavoritesOnlyChange={onFavoritesOnlyChange}
         onReset={onResetFilters}
       />
       <ResultBar>
         <StatPill label="검색 결과" value={`${characters.length}명`} />
         <StatPill label="전체 캐릭터" value={`${totalCount}명`} />
+        <StatPill label="즐겨찾기" value={`${favoriteCount}명`} />
       </ResultBar>
       {characters.length === 0 ? (
         <EmptyState
           title="조건에 맞는 캐릭터가 없어요."
-          description="검색어를 바꾸거나 필터를 초기화해서 다른 조합을 확인해보세요."
+          description={emptyDescription}
         />
       ) : (
         <>
@@ -177,6 +188,7 @@ export const CharacterCatalog = ({
                       key={character.id}
                       character={character}
                       detailLinkSearch={detailLinkSearch}
+                      isFavorite={favoriteCharacterIdSet.has(character.id)}
                     />
                   ))}
                 </Grid>

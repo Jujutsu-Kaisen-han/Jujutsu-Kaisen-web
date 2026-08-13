@@ -99,6 +99,25 @@ const Tier = styled.div`
   z-index: 1;
 `;
 
+const FavoriteMark = styled.span`
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid ${({ theme }) => theme.colors.borderStrong};
+  background: ${({ theme }) => theme.colors.primarySoft};
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+`;
+
 const Body = styled.div`
   display: grid;
   gap: 14px;
@@ -151,9 +170,14 @@ const Chip = styled.span`
 interface CharacterCardProps {
   character: CharacterSummary;
   detailLinkSearch?: string;
+  isFavorite?: boolean;
 }
 
-export const CharacterCard = ({ character, detailLinkSearch }: CharacterCardProps) => {
+export const CharacterCard = ({
+  character,
+  detailLinkSearch,
+  isFavorite = false,
+}: CharacterCardProps) => {
   const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
   const subtitle = hasVariant ? `${character.variantName} · ${character.title}` : character.title;
   const detailPath = routes.characterDetail(character.id);
@@ -162,7 +186,10 @@ export const CharacterCard = ({ character, detailLinkSearch }: CharacterCardProp
     : detailPath;
 
   return (
-    <Card to={detailTo}>
+    <Card
+      to={detailTo}
+      aria-label={`${character.name} ${subtitle} 상세 보기${isFavorite ? ', 즐겨찾기됨' : ''}`}
+    >
       <Poster>
         <Backdrop
           src={character.variantImage}
@@ -182,6 +209,7 @@ export const CharacterCard = ({ character, detailLinkSearch }: CharacterCardProp
         <Tier>
           <TierBadge tier={character.tier} />
         </Tier>
+        {isFavorite ? <FavoriteMark aria-hidden="true">★</FavoriteMark> : null}
       </Poster>
       <Body>
         <Header>

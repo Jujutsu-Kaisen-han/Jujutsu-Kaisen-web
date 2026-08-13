@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { filterAndSortCharacters } from '@/entities/character/lib/character-selectors';
+import { filterAndSortCatalogCharacters } from '@/entities/character/lib/character-selectors';
 import {
   defaultCharacterFilters,
   useCharacterStore,
@@ -26,6 +26,7 @@ import { CharacterCatalog } from '@/widgets/character-catalog/ui/CharacterCatalo
 export const CharacterListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const characters = useCharacterStore((state) => state.characters);
+  const favoriteCharacterIds = useCharacterStore((state) => state.favoriteCharacterIds);
   const storeFilters = useCharacterStore((state) => state.filters);
   const catalogStatus = useCharacterStore((state) => state.catalogStatus);
   const catalogError = useCharacterStore((state) => state.catalogError);
@@ -40,7 +41,11 @@ export const CharacterListPage = () => {
     () => createCatalogSearchParams(catalogFilters).toString(),
     [catalogFilters],
   );
-  const filteredCharacters = filterAndSortCharacters(characters, catalogFilters);
+  const filteredCharacters = filterAndSortCatalogCharacters(
+    characters,
+    catalogFilters,
+    favoriteCharacterIds,
+  );
 
   useEffect(() => {
     if (!areCatalogFiltersEqual(storeFilters, catalogFilters)) {
@@ -79,6 +84,7 @@ export const CharacterListPage = () => {
         <CharacterCatalog
           characters={filteredCharacters}
           totalCount={characters.length}
+          favoriteCharacterIds={favoriteCharacterIds}
           filters={catalogFilters}
           detailLinkSearch={detailLinkSearch}
           onSearchQueryChange={(searchQuery) => {
@@ -95,6 +101,9 @@ export const CharacterListPage = () => {
           }}
           onSortByChange={(sortBy: CatalogSortOption) => {
             updateCatalogFilters({ ...catalogFilters, sortBy });
+          }}
+          onFavoritesOnlyChange={(favoritesOnly) => {
+            updateCatalogFilters({ ...catalogFilters, favoritesOnly });
           }}
           onResetFilters={() => {
             updateCatalogFilters(defaultCharacterFilters);
