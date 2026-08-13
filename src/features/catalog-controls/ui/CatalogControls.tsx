@@ -7,6 +7,11 @@ import type {
   OfficialCategory,
 } from '@/entities/character/model/types/character';
 import {
+  officialCategoryLabels,
+  roleLabels,
+  traitLabels,
+} from '@/entities/character/model/types/character';
+import {
   officialCategoryFilterOptions,
   roleFilterOptions,
   sortOptions,
@@ -56,6 +61,66 @@ const Hint = styled.p`
   font-size: 14px;
 `;
 
+const ActiveFilterPanel = styled.div`
+  display: grid;
+  gap: 10px;
+  padding-top: 2px;
+`;
+
+const ActiveFilterHeader = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+`;
+
+const ActiveFilterTitle = styled.span`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+`;
+
+const ActiveFilterList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+const ActiveFilterChip = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  max-width: 100%;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid ${({ theme }) => theme.colors.borderStrong};
+  background: ${({ theme }) => theme.colors.primarySoft};
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform 0.2s ease, background 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 122, 69, 0.22);
+  }
+`;
+
+const ActiveFilterLabel = styled.span`
+  min-width: 0;
+  overflow-wrap: anywhere;
+`;
+
+const RemoveIcon = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 16px;
+  line-height: 1;
+`;
+
 const FavoriteToggle = styled.button<{ $active: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -97,6 +162,12 @@ interface CatalogControlsProps {
   onReset: () => void;
 }
 
+interface ActiveFilterItem {
+  id: string;
+  label: string;
+  onRemove: () => void;
+}
+
 export const CatalogControls = ({
   filters,
   onSearchQueryChange,
@@ -113,6 +184,56 @@ export const CatalogControls = ({
     || filters.role !== 'all'
     || filters.sortBy !== 'tier-desc'
     || filters.favoritesOnly;
+  const selectedSortOption = sortOptions.find((option) => option.value === filters.sortBy);
+  const activeFilters: ActiveFilterItem[] = [];
+
+  if (filters.searchQuery.trim().length > 0) {
+    activeFilters.push({
+      id: 'searchQuery',
+      label: `검색: ${filters.searchQuery.trim()}`,
+      onRemove: () => onSearchQueryChange(''),
+    });
+  }
+
+  if (filters.trait !== 'all') {
+    activeFilters.push({
+      id: 'trait',
+      label: `특성: ${traitLabels[filters.trait]}`,
+      onRemove: () => onTraitFilterChange('all'),
+    });
+  }
+
+  if (filters.officialCategory !== 'all') {
+    activeFilters.push({
+      id: 'officialCategory',
+      label: `분류: ${officialCategoryLabels[filters.officialCategory]}`,
+      onRemove: () => onOfficialCategoryFilterChange('all'),
+    });
+  }
+
+  if (filters.role !== 'all') {
+    activeFilters.push({
+      id: 'role',
+      label: `역할: ${roleLabels[filters.role]}`,
+      onRemove: () => onRoleFilterChange('all'),
+    });
+  }
+
+  if (filters.sortBy !== 'tier-desc') {
+    activeFilters.push({
+      id: 'sortBy',
+      label: `정렬: ${selectedSortOption?.label ?? filters.sortBy}`,
+      onRemove: () => onSortByChange('tier-desc'),
+    });
+  }
+
+  if (filters.favoritesOnly) {
+    activeFilters.push({
+      id: 'favoritesOnly',
+      label: '즐겨찾기만 보기',
+      onRemove: () => onFavoritesOnlyChange(false),
+    });
+  }
 
   return (
     <Layout>
@@ -148,6 +269,26 @@ export const CatalogControls = ({
           onChange={(event) => onSortByChange(event.target.value as CatalogSortOption)}
         />
       </FieldGrid>
+      {activeFilters.length > 0 ? (
+        <ActiveFilterPanel role="group" aria-label="활성 필터">
+          <ActiveFilterHeader>
+            <ActiveFilterTitle>활성 필터</ActiveFilterTitle>
+          </ActiveFilterHeader>
+          <ActiveFilterList>
+            {activeFilters.map((filter) => (
+              <ActiveFilterChip
+                key={filter.id}
+                type="button"
+                aria-label={`${filter.label} 해제`}
+                onClick={filter.onRemove}
+              >
+                <ActiveFilterLabel>{filter.label}</ActiveFilterLabel>
+                <RemoveIcon aria-hidden="true">×</RemoveIcon>
+              </ActiveFilterChip>
+            ))}
+          </ActiveFilterList>
+        </ActiveFilterPanel>
+      ) : null}
       <Footer>
         <Hint>팬파레 특성과 공식 사이트 분류를 함께 걸어 원하는 변형 유닛만 좁힐 수 있습니다.</Hint>
         <Actions>
