@@ -16,6 +16,34 @@ const tierRankMap: Record<CharacterTier, number> = {
 
 export const getTierRank = (tier: CharacterTier): number => tierRankMap[tier];
 
+export interface CharacterNeighbors {
+  previousCharacter?: CharacterSummary;
+  nextCharacter?: CharacterSummary;
+  currentIndex: number;
+  totalCount: number;
+}
+
+export const getCharacterNeighbors = (
+  characters: CharacterSummary[],
+  characterId: string,
+): CharacterNeighbors => {
+  const currentIndex = characters.findIndex((character) => character.id === characterId);
+
+  if (currentIndex === -1) {
+    return {
+      currentIndex,
+      totalCount: characters.length,
+    };
+  }
+
+  return {
+    previousCharacter: characters[currentIndex - 1],
+    nextCharacter: characters[currentIndex + 1],
+    currentIndex,
+    totalCount: characters.length,
+  };
+};
+
 export const filterAndSortCharacters = (
   characters: CharacterSummary[],
   filters: CharacterFilters,

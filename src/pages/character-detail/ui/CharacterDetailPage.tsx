@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getCharacterNeighbors } from '@/entities/character/lib/character-selectors';
 import { useCharacterStore } from '@/entities/character/model/store/character-store';
 import { ButtonLink } from '@/shared/ui/Button';
 import { ErrorState } from '@/shared/ui/ErrorState';
@@ -7,6 +8,7 @@ import { LoadingState } from '@/shared/ui/LoadingState';
 import { PageIntro } from '@/shared/ui/PageIntro';
 import { routes } from '@/shared/config/routes';
 import { SiteShell } from '@/widgets/layout/ui/SiteShell';
+import { CharacterDetailNavigator } from '@/widgets/character-detail/ui/CharacterDetailNavigator';
 import { CharacterProfile } from '@/widgets/character-detail/ui/CharacterProfile';
 
 export const CharacterDetailPage = () => {
@@ -34,6 +36,8 @@ export const CharacterDetailPage = () => {
   const summary = characters.find((item) => item.id === characterId);
   const detailStatus = detailStatusById[characterId] ?? 'idle';
   const detailError = detailErrorById[characterId] ?? null;
+  const neighbors = getCharacterNeighbors(characters, characterId);
+  const canNavigateBetweenDetails = neighbors.currentIndex >= 0 && neighbors.totalCount > 1;
 
   return (
     <SiteShell>
@@ -42,7 +46,17 @@ export const CharacterDetailPage = () => {
       </ButtonLink>
 
       {character ? (
-        <CharacterProfile character={character} />
+        <>
+          <CharacterProfile character={character} />
+          {canNavigateBetweenDetails ? (
+            <CharacterDetailNavigator
+              previousCharacter={neighbors.previousCharacter}
+              nextCharacter={neighbors.nextCharacter}
+              currentIndex={neighbors.currentIndex}
+              totalCount={neighbors.totalCount}
+            />
+          ) : null}
+        </>
       ) : null}
 
       {!character && (detailStatus === 'idle' || detailStatus === 'loading') ? (
