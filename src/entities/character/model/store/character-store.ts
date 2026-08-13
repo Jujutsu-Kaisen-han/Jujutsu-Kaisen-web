@@ -31,10 +31,11 @@ interface CharacterStoreState {
   setOfficialCategoryFilter: (officialCategory: OfficialCategory | 'all') => void;
   setRoleFilter: (role: CharacterRole | 'all') => void;
   setSortBy: (sortBy: CatalogSortOption) => void;
+  setFilters: (filters: CharacterFilters) => void;
   resetFilters: () => void;
 }
 
-const initialFilters: CharacterFilters = {
+export const defaultCharacterFilters: CharacterFilters = {
   searchQuery: '',
   trait: 'all',
   officialCategory: 'all',
@@ -50,7 +51,7 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
   catalogError: null,
   detailStatusById: {},
   detailErrorById: {},
-  filters: initialFilters,
+  filters: defaultCharacterFilters,
 
   loadCatalog: async (force = false) => {
     if (get().catalogStatus === 'loading') {
@@ -211,7 +212,11 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
     }));
   },
 
+  setFilters: (filters) => {
+    set({ filters });
+  },
+
   resetFilters: () => {
-    set({ filters: initialFilters });
+    set({ filters: defaultCharacterFilters });
   },
 }));

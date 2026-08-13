@@ -1,5 +1,22 @@
+import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { filterAndSortCharacters } from '@/entities/character/lib/character-selectors';
-import { useCharacterStore } from '@/entities/character/model/store/character-store';
+import {
+  defaultCharacterFilters,
+  useCharacterStore,
+} from '@/entities/character/model/store/character-store';
+import type {
+  CatalogSortOption,
+  CharacterFilters,
+  CharacterRole,
+  CharacterTrait,
+  OfficialCategory,
+} from '@/entities/character/model/types/character';
+import {
+  areCatalogFiltersEqual,
+  createCatalogSearchParams,
+  getCatalogFiltersFromSearchParams,
+} from '@/pages/character-list/lib/catalog-url-state';
 import { ErrorState } from '@/shared/ui/ErrorState';
 import { LoadingState } from '@/shared/ui/LoadingState';
 import { PageIntro } from '@/shared/ui/PageIntro';
@@ -7,19 +24,29 @@ import { SiteShell } from '@/widgets/layout/ui/SiteShell';
 import { CharacterCatalog } from '@/widgets/character-catalog/ui/CharacterCatalog';
 
 export const CharacterListPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const characters = useCharacterStore((state) => state.characters);
-  const filters = useCharacterStore((state) => state.filters);
+  const storeFilters = useCharacterStore((state) => state.filters);
   const catalogStatus = useCharacterStore((state) => state.catalogStatus);
   const catalogError = useCharacterStore((state) => state.catalogError);
   const loadCatalog = useCharacterStore((state) => state.loadCatalog);
-  const setSearchQuery = useCharacterStore((state) => state.setSearchQuery);
-  const setTraitFilter = useCharacterStore((state) => state.setTraitFilter);
-  const setOfficialCategoryFilter = useCharacterStore((state) => state.setOfficialCategoryFilter);
-  const setRoleFilter = useCharacterStore((state) => state.setRoleFilter);
-  const setSortBy = useCharacterStore((state) => state.setSortBy);
-  const resetFilters = useCharacterStore((state) => state.resetFilters);
+  const setFilters = useCharacterStore((state) => state.setFilters);
 
-  const filteredCharacters = filterAndSortCharacters(characters, filters);
+  const catalogFilters = useMemo(
+    () => getCatalogFiltersFromSearchParams(searchParams),
+    [searchParams],
+  );
+  const filteredCharacters = filterAndSortCharacters(characters, catalogFilters);
+
+  useEffect(() => {
+    if (!areCatalogFiltersEqual(storeFilters, catalogFilters)) {
+      setFilters(catalogFilters);
+    }
+  }, [catalogFilters, setFilters, storeFilters]);
+
+  const updateCatalogFilters = (nextFilters: CharacterFilters) => {
+    setSearchParams(createCatalogSearchParams(nextFilters), { replace: true });
+  };
 
   return (
     <SiteShell>
@@ -48,13 +75,25 @@ export const CharacterListPage = () => {
         <CharacterCatalog
           characters={filteredCharacters}
           totalCount={characters.length}
-          filters={filters}
-          onSearchQueryChange={setSearchQuery}
-          onTraitFilterChange={setTraitFilter}
-          onOfficialCategoryFilterChange={setOfficialCategoryFilter}
-          onRoleFilterChange={setRoleFilter}
-          onSortByChange={setSortBy}
-          onResetFilters={resetFilters}
+          filters={catalogFilters}
+          onSearchQueryChange={(searchQuery) => {
+            updateCatalogFilters({ ...catalogFilters, searchQuery });
+          }}
+          onTraitFilterChange={(trait: CharacterTrait | 'all') => {
+            updateCatalogFilters({ ...catalogFilters, trait });
+          }}
+          onOfficialCategoryFilterChange={(officialCategory: OfficialCategory | 'all') => {
+            updateCatalogFilters({ ...catalogFilters, officialCategory });
+          }}
+          onRoleFilterChange={(role: CharacterRole | 'all') => {
+            updateCatalogFilters({ ...catalogFilters, role });
+          }}
+          onSortByChange={(sortBy: CatalogSortOption) => {
+            updateCatalogFilters({ ...catalogFilters, sortBy });
+          }}
+          onResetFilters={() => {
+            updateCatalogFilters(defaultCharacterFilters);
+          }}
         />
       ) : null}
     </SiteShell>
