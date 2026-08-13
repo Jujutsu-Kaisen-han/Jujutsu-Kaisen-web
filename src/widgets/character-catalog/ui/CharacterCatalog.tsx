@@ -104,6 +104,7 @@ interface CharacterCatalogProps {
   characters: CharacterSummary[];
   totalCount: number;
   filters: CharacterFilters;
+  detailLinkSearch?: string;
   onSearchQueryChange: (value: string) => void;
   onTraitFilterChange: (value: CharacterTrait | 'all') => void;
   onOfficialCategoryFilterChange: (value: OfficialCategory | 'all') => void;
@@ -116,6 +117,7 @@ export const CharacterCatalog = ({
   characters,
   totalCount,
   filters,
+  detailLinkSearch,
   onSearchQueryChange,
   onTraitFilterChange,
   onOfficialCategoryFilterChange,
@@ -171,7 +173,11 @@ export const CharacterCatalog = ({
 
                 <Grid>
                   {section.characters.map((character) => (
-                    <CharacterCard key={character.id} character={character} />
+                    <CharacterCard
+                      key={character.id}
+                      character={character}
+                      detailLinkSearch={detailLinkSearch}
+                    />
                   ))}
                 </Grid>
               </TraitSection>

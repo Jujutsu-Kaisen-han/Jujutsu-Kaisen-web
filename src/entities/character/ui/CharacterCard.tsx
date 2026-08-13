@@ -150,14 +150,19 @@ const Chip = styled.span`
 
 interface CharacterCardProps {
   character: CharacterSummary;
+  detailLinkSearch?: string;
 }
 
-export const CharacterCard = ({ character }: CharacterCardProps) => {
+export const CharacterCard = ({ character, detailLinkSearch }: CharacterCardProps) => {
   const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
   const subtitle = hasVariant ? `${character.variantName} · ${character.title}` : character.title;
+  const detailPath = routes.characterDetail(character.id);
+  const detailTo = detailLinkSearch
+    ? { pathname: detailPath, search: `?${detailLinkSearch}` }
+    : detailPath;
 
   return (
-    <Card to={routes.characterDetail(character.id)}>
+    <Card to={detailTo}>
       <Poster>
         <Backdrop
           src={character.variantImage}

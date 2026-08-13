@@ -36,6 +36,10 @@ export const CharacterListPage = () => {
     () => getCatalogFiltersFromSearchParams(searchParams),
     [searchParams],
   );
+  const detailLinkSearch = useMemo(
+    () => createCatalogSearchParams(catalogFilters).toString(),
+    [catalogFilters],
+  );
   const filteredCharacters = filterAndSortCharacters(characters, catalogFilters);
 
   useEffect(() => {
@@ -76,6 +80,7 @@ export const CharacterListPage = () => {
           characters={filteredCharacters}
           totalCount={characters.length}
           filters={catalogFilters}
+          detailLinkSearch={detailLinkSearch}
           onSearchQueryChange={(searchQuery) => {
             updateCatalogFilters({ ...catalogFilters, searchQuery });
           }}

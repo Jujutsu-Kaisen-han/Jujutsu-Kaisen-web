@@ -150,41 +150,51 @@ interface CharacterDetailNavigatorProps {
   nextCharacter?: CharacterSummary;
   currentIndex: number;
   totalCount: number;
+  detailLinkSearch?: string;
 }
 
 interface CharacterNavLinkProps {
   direction: string;
   character: CharacterSummary;
+  detailLinkSearch?: string;
 }
 
-const CharacterNavLink = ({ direction, character }: CharacterNavLinkProps) => (
-  <NavCard to={routes.characterDetail(character.id)} aria-label={`${direction}: ${character.name}`}>
-    <ImageFrame>
-      <Image
-        src={character.variantImage}
-        fallbackSrc={character.image}
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-      />
-    </ImageFrame>
-    <Copy>
-      <Direction>{direction}</Direction>
-      <Name>{character.name}</Name>
-      <Meta>{character.variantName} · {character.title}</Meta>
-      <Badges>
-        <TierBadge tier={character.tier} />
-        <Trait>{traitLabels[character.trait]}</Trait>
-      </Badges>
-    </Copy>
-  </NavCard>
-);
+const CharacterNavLink = ({ direction, character, detailLinkSearch }: CharacterNavLinkProps) => {
+  const detailPath = routes.characterDetail(character.id);
+  const detailTo = detailLinkSearch
+    ? { pathname: detailPath, search: `?${detailLinkSearch}` }
+    : detailPath;
+
+  return (
+    <NavCard to={detailTo} aria-label={`${direction}: ${character.name}`}>
+      <ImageFrame>
+        <Image
+          src={character.variantImage}
+          fallbackSrc={character.image}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+        />
+      </ImageFrame>
+      <Copy>
+        <Direction>{direction}</Direction>
+        <Name>{character.name}</Name>
+        <Meta>{character.variantName} · {character.title}</Meta>
+        <Badges>
+          <TierBadge tier={character.tier} />
+          <Trait>{traitLabels[character.trait]}</Trait>
+        </Badges>
+      </Copy>
+    </NavCard>
+  );
+};
 
 export const CharacterDetailNavigator = ({
   previousCharacter,
   nextCharacter,
   currentIndex,
   totalCount,
+  detailLinkSearch,
 }: CharacterDetailNavigatorProps) => (
   <Navigator aria-label="캐릭터 상세 페이지 이동">
     <Header>
@@ -196,10 +206,18 @@ export const CharacterDetailNavigator = ({
     </Header>
     <LinkGrid>
       {previousCharacter ? (
-        <CharacterNavLink direction="이전 캐릭터" character={previousCharacter} />
+        <CharacterNavLink
+          direction="이전 캐릭터"
+          character={previousCharacter}
+          detailLinkSearch={detailLinkSearch}
+        />
       ) : null}
       {nextCharacter ? (
-        <CharacterNavLink direction="다음 캐릭터" character={nextCharacter} />
+        <CharacterNavLink
+          direction="다음 캐릭터"
+          character={nextCharacter}
+          detailLinkSearch={detailLinkSearch}
+        />
       ) : null}
     </LinkGrid>
   </Navigator>

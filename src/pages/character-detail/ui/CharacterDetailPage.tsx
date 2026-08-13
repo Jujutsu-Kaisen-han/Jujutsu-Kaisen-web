@@ -1,7 +1,18 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getCharacterNeighbors } from '@/entities/character/lib/character-selectors';
-import { useCharacterStore } from '@/entities/character/model/store/character-store';
+import { useEffect, useMemo } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import {
+  filterAndSortCharacters,
+  getCharacterNeighbors,
+} from '@/entities/character/lib/character-selectors';
+import {
+  defaultCharacterFilters,
+  useCharacterStore,
+} from '@/entities/character/model/store/character-store';
+import {
+  areCatalogFiltersEqual,
+  createCatalogSearchParams,
+  getCatalogFiltersFromSearchParams,
+} from '@/pages/character-list/lib/catalog-url-state';
 import { ButtonLink } from '@/shared/ui/Button';
 import { ErrorState } from '@/shared/ui/ErrorState';
 import { LoadingState } from '@/shared/ui/LoadingState';
@@ -14,11 +25,20 @@ import { CharacterProfile } from '@/widgets/character-detail/ui/CharacterProfile
 export const CharacterDetailPage = () => {
   const { characterId } = useParams<{ characterId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const characters = useCharacterStore((state) => state.characters);
   const characterDetails = useCharacterStore((state) => state.characterDetails);
   const detailStatusById = useCharacterStore((state) => state.detailStatusById);
   const detailErrorById = useCharacterStore((state) => state.detailErrorById);
   const loadCharacterById = useCharacterStore((state) => state.loadCharacterById);
+  const catalogFilters = useMemo(
+    () => getCatalogFiltersFromSearchParams(searchParams),
+    [searchParams],
+  );
+  const catalogSearch = useMemo(
+    () => createCatalogSearchParams(catalogFilters).toString(),
+    [catalogFilters],
+  );
 
   useEffect(() => {
     if (!characterId) {
@@ -36,12 +56,17 @@ export const CharacterDetailPage = () => {
   const summary = characters.find((item) => item.id === characterId);
   const detailStatus = detailStatusById[characterId] ?? 'idle';
   const detailError = detailErrorById[characterId] ?? null;
-  const neighbors = getCharacterNeighbors(characters, characterId);
+  const hasCatalogContext = !areCatalogFiltersEqual(catalogFilters, defaultCharacterFilters);
+  const neighborCharacters = filterAndSortCharacters(characters, catalogFilters);
+  const neighbors = getCharacterNeighbors(neighborCharacters, characterId);
   const canNavigateBetweenDetails = neighbors.currentIndex >= 0 && neighbors.totalCount > 1;
+  const characterListTo = hasCatalogContext
+    ? { pathname: routes.characters, search: `?${catalogSearch}` }
+    : routes.characters;
 
   return (
     <SiteShell>
-      <ButtonLink to={routes.characters} variant="ghost">
+      <ButtonLink to={characterListTo} variant="ghost">
         캐릭터 목록으로
       </ButtonLink>
 
@@ -54,6 +79,7 @@ export const CharacterDetailPage = () => {
               nextCharacter={neighbors.nextCharacter}
               currentIndex={neighbors.currentIndex}
               totalCount={neighbors.totalCount}
+              detailLinkSearch={hasCatalogContext ? catalogSearch : undefined}
             />
           ) : null}
         </>
@@ -87,7 +113,7 @@ export const CharacterDetailPage = () => {
           description="목록으로 돌아가 다른 캐릭터를 선택해보세요."
           actionLabel="목록으로 이동"
           onAction={() => {
-            navigate(routes.characters);
+            navigate(characterListTo);
           }}
         />
       ) : null}
