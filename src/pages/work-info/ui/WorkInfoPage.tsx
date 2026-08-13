@@ -140,11 +140,11 @@ const BodyText = styled.p`
 
 const CharacterStrip = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, minmax(72px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
   gap: 12px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    grid-template-columns: repeat(5, minmax(54px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
     gap: 8px;
   }
 `;
@@ -162,7 +162,7 @@ const CharacterFrame = styled.div`
     linear-gradient(180deg, rgba(15, 23, 42, 0.88), rgba(8, 15, 29, 0.96));
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    min-height: 180px;
+    min-height: clamp(150px, 42vw, 180px);
   }
 `;
 
