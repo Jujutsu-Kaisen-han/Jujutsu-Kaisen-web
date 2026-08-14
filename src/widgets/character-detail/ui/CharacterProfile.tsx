@@ -252,11 +252,51 @@ const VideoEmbed = styled.iframe`
 const VideoTitle = styled.h3`
   margin: 0;
   font-size: 18px;
+  overflow-wrap: anywhere;
 `;
 
 const EmptyText = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.colors.muted};
+`;
+
+const RelatedVideoList = styled.div`
+  display: grid;
+  gap: 10px;
+`;
+
+const RelatedVideoTitle = styled.h3`
+  margin: 0;
+  font-size: 16px;
+`;
+
+const RelatedVideoLink = styled.a`
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border-radius: ${({ theme }) => theme.radius.sm};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: rgba(8, 15, 29, 0.72);
+  color: ${({ theme }) => theme.colors.text};
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: ${({ theme }) => theme.colors.borderStrong};
+    background: rgba(15, 23, 42, 0.92);
+  }
+`;
+
+const RelatedVideoName = styled.span`
+  font-size: 14px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+`;
+
+const RelatedVideoSource = styled.span`
+  color: ${({ theme }) => theme.colors.muted};
+  font-size: 12px;
 `;
 
 const Cooldown = styled.span`
@@ -273,38 +313,25 @@ interface CharacterProfileProps {
   onToggleFavorite: () => void;
 }
 
-const introVideoMatchers = [
-  /プレイアブルキャラクター紹介PV/u,
-  /15秒でわかるファンパレ/u,
-  /ファンパレ.?紹介動画/u,
-];
+type OfficialVideo = NonNullable<CharacterDetail['officialVideos']>[number];
 
-const selectOfficialIntroVideo = (character: CharacterDetail) => {
-  if (!character.officialVideos) {
-    return undefined;
-  }
-
-  for (const matcher of introVideoMatchers) {
-    const matchedVideo = character.officialVideos.find((video) => matcher.test(video.title));
-
-    if (matchedVideo) {
-      return matchedVideo;
-    }
-  }
-
-  return undefined;
-};
-
-const getOfficialIntroVideoLabel = (character: CharacterDetail) => `${character.name} 공식 캐릭터 소개 영상`;
+const getOfficialVideoEmbedTitle = (
+  character: CharacterDetail,
+  video: OfficialVideo,
+) => `${character.name} 공식 영상: ${video.title}`;
 
 export const CharacterProfile = ({
   character,
   isFavorite,
   onToggleFavorite,
 }: CharacterProfileProps) => {
-  const officialIntroVideo = selectOfficialIntroVideo(character);
-  const officialIntroVideoLabel = officialIntroVideo ? getOfficialIntroVideoLabel(character) : '';
+  const officialVideos = character.officialVideos ?? [];
+  const featuredOfficialVideo = officialVideos[0];
+  const relatedOfficialVideos = officialVideos.slice(1);
   const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
+  const hasOfficialProfileContent = Boolean(
+    character.officialProfile || character.officialVariantSpotlight,
+  );
   const subtitle = hasVariant ? `${character.variantName} · ${character.title}` : character.title;
 
   return (
@@ -368,69 +395,86 @@ export const CharacterProfile = ({
       <SectionGrid>
         <Panel>
           <SectionTitle>공식 소개</SectionTitle>
-          <SkillList>
-            {character.officialProfile ? (
-              <SkillCard>
-                <SkillName>기본 캐릭터 소개</SkillName>
-                <SkillDescription>{character.officialProfile.summary}</SkillDescription>
-                <SourceList>
-                  <SourceLink
-                    href={character.officialProfile.source.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {character.officialProfile.source.label}
-                  </SourceLink>
-                </SourceList>
-              </SkillCard>
-            ) : null}
+          {hasOfficialProfileContent ? (
+            <SkillList>
+              {character.officialProfile ? (
+                <SkillCard>
+                  <SkillName>기본 캐릭터 소개</SkillName>
+                  <SkillDescription>{character.officialProfile.summary}</SkillDescription>
+                  <SourceList>
+                    <SourceLink
+                      href={character.officialProfile.source.url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {character.officialProfile.source.label}
+                    </SourceLink>
+                  </SourceList>
+                </SkillCard>
+              ) : null}
 
-            {character.officialVariantSpotlight ? (
-              <SkillCard>
-                <SkillName>공식 변형 스포트라이트</SkillName>
-                <SkillDescription>{character.officialVariantSpotlight.summary}</SkillDescription>
-                <SourceList>
-                  <SourceLink
-                    href={character.officialVariantSpotlight.source.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {character.officialVariantSpotlight.source.label}
-                  </SourceLink>
-                </SourceList>
-              </SkillCard>
-            ) : null}
-          </SkillList>
+              {character.officialVariantSpotlight ? (
+                <SkillCard>
+                  <SkillName>공식 변형 스포트라이트</SkillName>
+                  <SkillDescription>{character.officialVariantSpotlight.summary}</SkillDescription>
+                  <SourceList>
+                    <SourceLink
+                      href={character.officialVariantSpotlight.source.url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {character.officialVariantSpotlight.source.label}
+                    </SourceLink>
+                  </SourceList>
+                </SkillCard>
+              ) : null}
+            </SkillList>
+          ) : (
+            <EmptyText>
+              현재 연결된 공식 소개 요약은 없습니다. 연결된 공식 영상과 출처 링크를 기준으로 확인해 주세요.
+            </EmptyText>
+          )}
         </Panel>
 
         <Panel>
-          <SectionTitle>공식 캐릭터 소개 영상</SectionTitle>
-          {officialIntroVideo ? (
+          <SectionTitle>공식 영상</SectionTitle>
+          {featuredOfficialVideo ? (
             <VideoGrid>
               <VideoCard>
                 <VideoFrame>
                   <VideoEmbed
-                    src={officialIntroVideo.embedUrl}
-                    title={officialIntroVideoLabel}
+                    src={featuredOfficialVideo.embedUrl}
+                    title={getOfficialVideoEmbedTitle(character, featuredOfficialVideo)}
                     loading="lazy"
                     referrerPolicy="strict-origin-when-cross-origin"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                   />
                 </VideoFrame>
-                <VideoTitle>{officialIntroVideoLabel}</VideoTitle>
+                <VideoTitle>{featuredOfficialVideo.title}</VideoTitle>
                 <SourceList>
-                  <SourceLink href={officialIntroVideo.url} target="_blank" rel="noreferrer">
+                  <SourceLink href={featuredOfficialVideo.url} target="_blank" rel="noreferrer">
                     YouTube에서 보기
                   </SourceLink>
-                  <SourceLink href={officialIntroVideo.source.url} target="_blank" rel="noreferrer">
-                    {officialIntroVideo.source.label}
+                  <SourceLink href={featuredOfficialVideo.source.url} target="_blank" rel="noreferrer">
+                    {featuredOfficialVideo.source.label}
                   </SourceLink>
                 </SourceList>
               </VideoCard>
+              {relatedOfficialVideos.length > 0 ? (
+                <RelatedVideoList aria-label="관련 공식 영상">
+                  <RelatedVideoTitle>관련 공식 영상</RelatedVideoTitle>
+                  {relatedOfficialVideos.map((video) => (
+                    <RelatedVideoLink key={video.url} href={video.url} target="_blank" rel="noreferrer">
+                      <RelatedVideoName>{video.title}</RelatedVideoName>
+                      <RelatedVideoSource>{video.source.label}</RelatedVideoSource>
+                    </RelatedVideoLink>
+                  ))}
+                </RelatedVideoList>
+              ) : null}
             </VideoGrid>
           ) : (
-            <EmptyText>현재 연결된 공식 캐릭터 소개 영상이 없습니다.</EmptyText>
+            <EmptyText>현재 연결된 공식 영상이 없습니다.</EmptyText>
           )}
         </Panel>
       </SectionGrid>
