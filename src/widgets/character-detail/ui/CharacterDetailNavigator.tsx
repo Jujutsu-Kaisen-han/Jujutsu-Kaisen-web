@@ -55,7 +55,7 @@ const Count = styled.span`
 const LinkGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-  gap: 14px;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const NavCard = styled(Link)`
