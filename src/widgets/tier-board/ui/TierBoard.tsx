@@ -94,6 +94,8 @@ const DropHint = styled.p`
 `;
 
 const DragItem = styled.div<{ $isDragging: boolean }>`
+  display: grid;
+  align-content: start;
   min-width: 0;
   cursor: grab;
   opacity: ${({ $isDragging }) => ($isDragging ? 0.45 : 1)};
