@@ -99,7 +99,7 @@ export const CharacterDetailPage = () => {
       {!character && (detailStatus === 'idle' || detailStatus === 'loading') ? (
         <>
           <PageIntro
-            eyebrow="Character Detail"
+            eyebrow="캐릭터 상세"
             title={summary?.name ?? '캐릭터 정보'}
             description="상세 정보를 불러오고 있습니다."
           />

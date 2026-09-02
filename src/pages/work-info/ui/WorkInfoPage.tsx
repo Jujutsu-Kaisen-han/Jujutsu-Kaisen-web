@@ -42,19 +42,19 @@ const worldNotes = [
 const mediaSections = [
   {
     title: '원작 만화',
-    eyebrow: 'Manga',
+    eyebrow: '만화',
     description:
       '소년점프 공식 작품 페이지 기준, 주간 소년점프 2018년 14호부터 시작한 아쿠타미 게게의 작품입니다. 공식 목록에는 30권까지 정리되어 있습니다.',
   },
   {
     title: 'TV 애니메이션',
-    eyebrow: 'Animation',
+    eyebrow: '애니메이션',
     description:
       'TV 애니메이션 공식 사이트는 캐릭터, 에피소드, 스태프/캐스트, 사멸회유 관련 정보를 별도 섹션으로 제공합니다.',
   },
   {
     title: '팬텀 퍼레이드',
-    eyebrow: 'Game',
+    eyebrow: '게임',
     description:
       '공식 스마트폰 게임 팬텀 퍼레이드는 캐릭터 변형과 속성, 역할 중심으로 팬들이 팀 편성과 티어를 비교하기 좋은 기반을 제공합니다.',
   },
@@ -256,7 +256,7 @@ const SourceLink = styled.a`
 export const WorkInfoPage = () => (
   <SiteShell>
     <PageIntro
-      eyebrow="Series Guide"
+      eyebrow="작품 안내"
       title="작품 정보"
       description="원작, 애니메이션, 팬텀 퍼레이드로 이어지는 주술회전의 핵심 정보를 팬 사이트 안에서 빠르게 확인할 수 있도록 정리했습니다."
       meta={(
@@ -271,7 +271,7 @@ export const WorkInfoPage = () => (
 
     <VisualBand>
       <VisualCopy>
-        <SectionEyebrow>World View</SectionEyebrow>
+        <SectionEyebrow>세계관</SectionEyebrow>
         <SectionTitle>저주를 둘러싼 전투와 성장의 기록</SectionTitle>
         <BodyText>
           주술회전은 일상에 스며든 저주, 이를 처리하는 주술사, 그리고 특급 주물 료멘 스쿠나를
@@ -291,7 +291,7 @@ export const WorkInfoPage = () => (
     <Grid>
       {worldNotes.map((note) => (
         <InfoPanel key={note.title}>
-          <SectionEyebrow>Concept</SectionEyebrow>
+          <SectionEyebrow>핵심 설정</SectionEyebrow>
           <CardTitle>{note.title}</CardTitle>
           <BodyText>{note.description}</BodyText>
         </InfoPanel>
@@ -310,7 +310,7 @@ export const WorkInfoPage = () => (
 
     <TimelinePanel>
       <div>
-        <SectionEyebrow>Official Milestones</SectionEyebrow>
+        <SectionEyebrow>주요 공식 일정</SectionEyebrow>
         <SectionTitle>공식 흐름</SectionTitle>
       </div>
       <TimelineList>
@@ -328,7 +328,7 @@ export const WorkInfoPage = () => (
 
     <LinkPanel>
       <div>
-        <SectionEyebrow>Sources</SectionEyebrow>
+        <SectionEyebrow>출처</SectionEyebrow>
         <SectionTitle>공식 링크</SectionTitle>
       </div>
       <BodyText>

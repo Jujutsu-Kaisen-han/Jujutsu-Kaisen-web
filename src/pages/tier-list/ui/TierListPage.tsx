@@ -31,9 +31,9 @@ export const TierListPage = () => {
   return (
     <SiteShell>
       <PageIntro
-        eyebrow="Tier Board"
+        eyebrow="티어 보드"
         title="주술회전 팬텀 퍼레이드 티어표"
-        description="메타 기준으로 SS부터 C까지 캐릭터를 빠르게 비교하고, 카드 hover와 상세 페이지로 바로 이어지는 팬 사이트 구조입니다."
+        description="메타 기준으로 SS부터 C까지 캐릭터를 빠르게 비교하고, 카드와 상세 페이지로 바로 이어지는 팬 사이트입니다."
         meta={(
           <Meta>
             <StatPill label="총 캐릭터" value={`${characters.length}명`} />

@@ -201,7 +201,7 @@ export const CharacterDetailNavigator = ({
   <Navigator aria-label="캐릭터 상세 페이지 이동">
     <Header>
       <TitleGroup>
-        <Eyebrow>Character Flow</Eyebrow>
+        <Eyebrow>캐릭터 이어보기</Eyebrow>
         <Title>다른 캐릭터로 이어보기</Title>
       </TitleGroup>
       <Count>{currentIndex + 1} / {totalCount}</Count>

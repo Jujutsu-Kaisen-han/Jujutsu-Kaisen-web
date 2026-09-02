@@ -240,7 +240,7 @@ export const CatalogControls = ({
       <FieldGrid>
         <SearchField
           label="이름 검색"
-          placeholder="gojo, 고죠, ㄱㅈ, hollow purple..."
+          placeholder="고죠, ㄱㅈ, 허식 자색..."
           value={filters.searchQuery}
           onChange={(event) => onSearchQueryChange(event.target.value)}
         />

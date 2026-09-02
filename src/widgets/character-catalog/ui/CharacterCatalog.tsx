@@ -173,7 +173,7 @@ export const CharacterCatalog = ({
               <TraitSection key={section.trait} id={`trait-${section.trait}`}>
                 <TraitHeader>
                   <TraitTitleGroup>
-                    <TraitEyebrow>Trait Archive</TraitEyebrow>
+                    <TraitEyebrow>특성 아카이브</TraitEyebrow>
                     <TraitTitle>{traitLabels[section.trait]} 특성</TraitTitle>
                     <TraitDescription>
                       현재 조건에 맞는 {traitLabels[section.trait]} 특성 캐릭터를 따로 모아봤습니다.

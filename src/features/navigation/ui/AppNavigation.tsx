@@ -73,7 +73,7 @@ const MenuLink = styled(NavLink)`
 export const AppNavigation = () => (
   <Nav aria-label="주요 메뉴">
     <BrandBlock>
-      <Brand>Jujutsu Kaisen</Brand>
+      <Brand>주술회전</Brand>
       <BrandTitle>주술회전 팬 아카이브</BrandTitle>
       <BrandDescription>캐릭터 검색, 티어 비교, 작품 정보를 한 화면 흐름으로.</BrandDescription>
     </BrandBlock>

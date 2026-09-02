@@ -1,4 +1,4 @@
-# Jujutsu Kaisen Fan Archive
+# 주술회전 팬 아카이브
 
 React + TypeScript + Vite로 만든 주술회전 팬 웹 서비스입니다. 팬텀 퍼레이드 캐릭터 티어표, 캐릭터 도감, 상세 프로필, 검색/필터링, 작품 정보 페이지를 반응형 UI로 제공합니다.
 
