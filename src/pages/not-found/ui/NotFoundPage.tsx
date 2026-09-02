@@ -18,7 +18,7 @@ const Code = styled.p`
   text-transform: uppercase;
 `;
 
-const Title = styled.h1`
+const Title = styled.h2`
   margin: 0 0 12px;
   font-size: clamp(32px, 6vw, 54px);
 `;
