@@ -107,7 +107,10 @@ const Header = styled.div`
 
 const Name = styled.h3`
   margin: 0;
+  overflow: hidden;
   font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 interface CharacterCardProps {
