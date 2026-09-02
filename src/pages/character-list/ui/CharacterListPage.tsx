@@ -17,9 +17,11 @@ import {
   createCatalogSearchParams,
   getCatalogFiltersFromSearchParams,
 } from '@/pages/character-list/lib/catalog-url-state';
+import { ButtonLink } from '@/shared/ui/Button';
 import { ErrorState } from '@/shared/ui/ErrorState';
 import { LoadingState } from '@/shared/ui/LoadingState';
 import { PageIntro } from '@/shared/ui/PageIntro';
+import { routes } from '@/shared/config/routes';
 import { SiteShell } from '@/widgets/layout/ui/SiteShell';
 import { CharacterCatalog } from '@/widgets/character-catalog/ui/CharacterCatalog';
 
@@ -61,8 +63,9 @@ export const CharacterListPage = () => {
     <SiteShell>
       <PageIntro
         eyebrow="캐릭터 도감"
-        title="캐릭터 목록과 필터링"
-        description="이름 검색, 팬파레 특성, 공식 사이트 분류, 역할 필터를 조합하고 결과를 환·영·야·행 섹션으로 나눠서 원하는 변형 유닛을 빠르게 찾을 수 있습니다."
+        title="티어표에 넣을 캐릭터"
+        description="이름과 특성, 분류, 역할로 캐릭터를 찾은 뒤 상세 정보를 확인할 수 있습니다."
+        actions={<ButtonLink to={routes.home} variant="ghost">티어표로 돌아가기</ButtonLink>}
       />
 
       {catalogStatus === 'loading' && characters.length === 0 ? (
