@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import styled from 'styled-components';
 import {
   filterAndSortCatalogCharacters,
   getCharacterNeighbors,
@@ -21,6 +22,12 @@ import { routes } from '@/shared/config/routes';
 import { SiteShell } from '@/widgets/layout/ui/SiteShell';
 import { CharacterDetailNavigator } from '@/widgets/character-detail/ui/CharacterDetailNavigator';
 import { CharacterProfile } from '@/widgets/character-detail/ui/CharacterProfile';
+
+const BackNavigation = styled.nav`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
 
 export const CharacterDetailPage = () => {
   const { characterId } = useParams<{ characterId: string }>();
@@ -73,9 +80,14 @@ export const CharacterDetailPage = () => {
 
   return (
     <SiteShell>
-      <ButtonLink to={characterListTo} variant="ghost">
-        캐릭터 목록으로
-      </ButtonLink>
+      <BackNavigation aria-label="상세 페이지 이동">
+        <ButtonLink to={routes.home} variant="ghost">
+          전투력 티어표로
+        </ButtonLink>
+        <ButtonLink to={characterListTo} variant="ghost">
+          캐릭터 목록으로
+        </ButtonLink>
+      </BackNavigation>
 
       {character ? (
         <>
