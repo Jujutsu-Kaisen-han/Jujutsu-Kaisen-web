@@ -21,12 +21,14 @@ export const TierListPage = () => {
   const tiers = useCharacterStore((state) => state.tiers);
   const catalogStatus = useCharacterStore((state) => state.catalogStatus);
   const catalogError = useCharacterStore((state) => state.catalogError);
-  const tierOverrides = useCharacterStore((state) => state.tierOverrides);
+  const tierAssignments = useCharacterStore((state) => state.tierAssignments);
   const loadCatalog = useCharacterStore((state) => state.loadCatalog);
   const setCharacterTier = useCharacterStore((state) => state.setCharacterTier);
   const resetTierAssignments = useCharacterStore((state) => state.resetTierAssignments);
 
   const sections = groupCharactersByTier(tiers, characters);
+  const assignedCharacterIds = new Set(Object.keys(tierAssignments));
+  const unassignedCharacters = characters.filter((character) => !assignedCharacterIds.has(character.id));
 
   return (
     <SiteShell>
@@ -61,7 +63,8 @@ export const TierListPage = () => {
       {characters.length > 0 ? (
         <TierBoard
           sections={sections}
-          hasCustomTierAssignments={Object.keys(tierOverrides).length > 0}
+          unassignedCharacters={unassignedCharacters}
+          hasCustomTierAssignments={Object.keys(tierAssignments).length > 0}
           onTierChange={setCharacterTier}
           onResetTierAssignments={resetTierAssignments}
         />

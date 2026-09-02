@@ -5,6 +5,7 @@ import {
   officialCategoryLabels,
   roleLabels,
   traitLabels,
+  type CharacterTier,
   type CharacterSummary,
 } from '@/entities/character/model/types/character';
 import { CharacterArtwork } from '@/entities/character/ui/CharacterArtwork';
@@ -171,12 +172,16 @@ interface CharacterCardProps {
   character: CharacterSummary;
   detailLinkSearch?: string;
   isFavorite?: boolean;
+  showTierBadge?: boolean;
+  displayTier?: CharacterTier;
 }
 
 export const CharacterCard = ({
   character,
   detailLinkSearch,
   isFavorite = false,
+  showTierBadge = true,
+  displayTier,
 }: CharacterCardProps) => {
   const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
   const accessibleLabel = hasVariant
@@ -208,9 +213,11 @@ export const CharacterCard = ({
             loading="lazy"
           />
         </Frame>
-        <Tier>
-          <TierBadge tier={character.tier} />
-        </Tier>
+        {showTierBadge ? (
+          <Tier>
+            <TierBadge tier={displayTier ?? character.tier} />
+          </Tier>
+        ) : null}
         {isFavorite ? <FavoriteMark aria-hidden="true">★</FavoriteMark> : null}
       </Poster>
       <Body>

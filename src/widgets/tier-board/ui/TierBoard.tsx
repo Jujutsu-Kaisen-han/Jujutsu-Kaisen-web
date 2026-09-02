@@ -1,13 +1,12 @@
-import { useState } from 'react';
+import { useState, type DragEvent } from 'react';
 import styled from 'styled-components';
-import type {
-  CharacterSummary,
-  CharacterTier,
-  TierGroup,
+import {
+  type CharacterSummary,
+  type CharacterTier,
+  type TierGroup,
 } from '@/entities/character/model/types/character';
 import { CharacterCard } from '@/entities/character/ui/CharacterCard';
 import { TierBadge } from '@/entities/character/ui/TierBadge';
-import { tierOrder } from '@/entities/character/model/types/character';
 import { Button } from '@/shared/ui/Button';
 import { Panel } from '@/shared/ui/Panel';
 
@@ -46,18 +45,18 @@ const ToolbarActions = styled.div`
   gap: 10px;
 `;
 
-const EditorNotice = styled.p`
-  margin: -4px 0 0;
-  padding: 0 4px;
-  color: ${({ theme }) => theme.colors.secondary};
-  font-size: 14px;
-`;
-
-const Row = styled(Panel)`
+const Row = styled(Panel)<{ $isDropTarget: boolean }>`
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
   gap: 22px;
   align-items: start;
+  border-color: ${({ $isDropTarget, theme }) => (
+    $isDropTarget ? theme.colors.primary : theme.colors.border
+  )};
+  box-shadow: ${({ $isDropTarget, theme }) => (
+    $isDropTarget ? theme.shadows.glow : theme.shadows.card
+  )};
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     grid-template-columns: 1fr;
@@ -78,51 +77,94 @@ const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
   gap: 16px;
+  min-height: 180px;
 `;
 
-const EditorList = styled.div`
+const DropHint = styled.p`
   display: grid;
-  gap: 8px;
-  margin-top: 2px;
-  padding-top: 16px;
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
-`;
-
-const EditorItem = styled.div`
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(120px, 160px);
-  gap: 12px;
-  align-items: center;
-  padding: 10px 12px;
+  min-height: 180px;
+  place-items: center;
+  margin: 0;
+  padding: 24px;
+  border: 1px dashed ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius.sm};
-  background: rgba(8, 15, 29, 0.58);
+  color: ${({ theme }) => theme.colors.muted};
+  text-align: center;
+`;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    grid-template-columns: 1fr;
+const DragItem = styled.div<{ $isDragging: boolean }>`
+  min-width: 0;
+  cursor: grab;
+  opacity: ${({ $isDragging }) => ($isDragging ? 0.45 : 1)};
+
+  &:active {
+    cursor: grabbing;
   }
 `;
 
-const EditorName = styled.span`
-  min-width: 0;
-  overflow-wrap: anywhere;
-  color: ${({ theme }) => theme.colors.text};
+const EditorNotice = styled.p`
+  margin: -4px 0 0;
+  padding: 0 4px;
+  color: ${({ theme }) => theme.colors.secondary};
   font-size: 14px;
+`;
+
+const UnassignedPanel = styled(Panel)<{ $isDropTarget: boolean }>`
+  display: grid;
+  gap: 18px;
+  border-color: ${({ $isDropTarget, theme }) => (
+    $isDropTarget ? theme.colors.primary : theme.colors.borderStrong
+  )};
+  box-shadow: ${({ $isDropTarget, theme }) => (
+    $isDropTarget ? theme.shadows.glow : theme.shadows.card
+  )};
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+`;
+
+const UnassignedHeader = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+`;
+
+const UnassignedTitleGroup = styled.div`
+  display: grid;
+  gap: 6px;
+`;
+
+const UnassignedTitle = styled.h2`
+  margin: 0;
+  font-size: clamp(24px, 4vw, 34px);
+`;
+
+const UnassignedDescription = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.muted};
+`;
+
+const Count = styled.span`
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  color: ${({ theme }) => theme.colors.secondary};
+  font-size: 13px;
   font-weight: 700;
 `;
 
-const TierSelect = styled.select`
-  width: 100%;
-  min-height: 40px;
-  padding: 0 12px;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radius.sm};
-  background: ${({ theme }) => theme.colors.input};
-  color: ${({ theme }) => theme.colors.text};
+const UnassignedGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 16px;
+  min-height: 180px;
+`;
 
-  &:focus {
-    border-color: ${({ theme }) => theme.colors.borderStrong};
-    box-shadow: 0 0 0 4px rgba(255, 122, 69, 0.12);
-  }
+const UnassignedDropHint = styled(DropHint)`
+  grid-column: 1 / -1;
 `;
 
 interface TierBoardSection extends TierGroup {
@@ -131,86 +173,138 @@ interface TierBoardSection extends TierGroup {
 
 interface TierBoardProps {
   sections: TierBoardSection[];
+  unassignedCharacters: CharacterSummary[];
   hasCustomTierAssignments: boolean;
-  onTierChange: (characterId: string, tier: CharacterTier) => void;
+  onTierChange: (characterId: string, tier: CharacterTier | null) => void;
   onResetTierAssignments: () => void;
 }
 
 export const TierBoard = ({
   sections,
+  unassignedCharacters,
   hasCustomTierAssignments,
   onTierChange,
   onResetTierAssignments,
 }: TierBoardProps) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [draggedCharacterId, setDraggedCharacterId] = useState<string | null>(null);
+  const [dragOverTarget, setDragOverTarget] = useState<CharacterTier | 'unassigned' | null>(null);
+
+  const handleDragStart = (event: DragEvent<HTMLDivElement>, characterId: string) => {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', characterId);
+    setDraggedCharacterId(characterId);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedCharacterId(null);
+    setDragOverTarget(null);
+  };
+
+  const handleDragOver = (
+    event: DragEvent<HTMLElement>,
+    destination: CharacterTier | 'unassigned',
+  ) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    setDragOverTarget(destination);
+  };
+
+  const handleDrop = (
+    event: DragEvent<HTMLElement>,
+    destination: CharacterTier | null,
+  ) => {
+    event.preventDefault();
+    const characterId = event.dataTransfer.getData('text/plain');
+
+    if (characterId) {
+      onTierChange(characterId, destination);
+    }
+
+    handleDragEnd();
+  };
+
+  const renderDraggableCard = (character: CharacterSummary, displayTier?: CharacterTier) => (
+    <DragItem
+      key={character.id}
+      draggable
+      $isDragging={draggedCharacterId === character.id}
+      onDragStart={(event) => handleDragStart(event, character.id)}
+      onDragEnd={handleDragEnd}
+    >
+      <CharacterCard
+        character={character}
+        displayTier={displayTier}
+        showTierBadge={Boolean(displayTier)}
+      />
+    </DragItem>
+  );
 
   return (
     <Board>
       <Toolbar>
         <ToolbarCopy>
-          <ToolbarTitle>티어표 조정</ToolbarTitle>
+          <ToolbarTitle>나만의 티어표</ToolbarTitle>
           <ToolbarDescription>
-            원하는 캐릭터의 티어를 바꾸고 나만의 티어표를 저장할 수 있습니다.
+            아래 미배치 캐릭터를 원하는 등급으로 끌어다 놓으세요.
           </ToolbarDescription>
         </ToolbarCopy>
         <ToolbarActions>
-          <Button
-            variant={isEditing ? 'primary' : 'ghost'}
-            aria-pressed={isEditing}
-            onClick={() => setIsEditing((current) => !current)}
-          >
-            {isEditing ? '편집 닫기' : '티어 편집'}
-          </Button>
           {hasCustomTierAssignments ? (
             <Button variant="ghost" onClick={onResetTierAssignments}>
-              기본 티어 복원
+              전체 배치 초기화
             </Button>
           ) : null}
         </ToolbarActions>
       </Toolbar>
-      {isEditing ? (
-        <EditorNotice role="status">
-          각 캐릭터의 티어를 선택하면 즉시 저장되고, 카드도 새 티어 구역으로 이동합니다.
-        </EditorNotice>
-      ) : null}
+      <EditorNotice role="status">
+        캐릭터 카드를 마우스로 끌어 SS/S/A/B/C 등급 구역에 놓으면 바로 저장됩니다.
+      </EditorNotice>
       {sections.map((section) => (
-        <Row key={section.tier}>
+        <Row
+          key={section.tier}
+          $isDropTarget={dragOverTarget === section.tier}
+          onDragOver={(event) => handleDragOver(event, section.tier)}
+          onDragLeave={() => setDragOverTarget(null)}
+          onDrop={(event) => handleDrop(event, section.tier)}
+        >
           <Side>
             <TierBadge tier={section.tier} />
             <Headline>{section.headline}</Headline>
           </Side>
-          <div>
-            <CardGrid>
-              {section.characters.map((character) => (
-                <CharacterCard key={character.id} character={character} />
-              ))}
-            </CardGrid>
-            {isEditing ? (
-              <EditorList aria-label={`${section.tier} 티어 캐릭터 조정`}>
-                {section.characters.map((character) => (
-                  <EditorItem key={character.id}>
-                    <EditorName>
-                      {character.name}
-                      {character.variantName !== '기본형' ? ` · ${character.variantName}` : ''}
-                    </EditorName>
-                    <TierSelect
-                      value={section.tier}
-                      aria-label={`${character.name} ${character.variantName} 티어`}
-                      onChange={(event) => onTierChange(character.id, event.target.value as CharacterTier)}
-                    >
-                      {tierOrder.map((tier) => (
-                        <option key={tier} value={tier}>
-                          {tier} 티어
-                        </option>
-                      ))}
-                    </TierSelect>
-                  </EditorItem>
-                ))}
-              </EditorList>
-            ) : null}
-          </div>
+          <CardGrid>
+            {section.characters.length > 0 ? section.characters.map((character) => (
+              renderDraggableCard(character, section.tier)
+            )) : (
+              <DropHint>이곳으로 캐릭터를 끌어다 놓으세요.</DropHint>
+            )}
+          </CardGrid>
         </Row>
       ))}
+      <UnassignedPanel
+        $isDropTarget={dragOverTarget === 'unassigned'}
+        onDragOver={(event) => handleDragOver(event, 'unassigned')}
+        onDragLeave={() => setDragOverTarget(null)}
+        onDrop={(event) => handleDrop(event, null)}
+      >
+        <UnassignedHeader>
+          <UnassignedTitleGroup>
+            <UnassignedTitle>미배치 캐릭터</UnassignedTitle>
+            <UnassignedDescription>
+              아직 등급을 정하지 않은 캐릭터입니다. 카드를 원하는 등급으로 옮겨보세요.
+            </UnassignedDescription>
+          </UnassignedTitleGroup>
+          <Count>{unassignedCharacters.length}명</Count>
+        </UnassignedHeader>
+        <UnassignedGrid>
+          {unassignedCharacters.length > 0 ? unassignedCharacters.map((character) => (
+            renderDraggableCard(character)
+          )) : (
+            <UnassignedDropHint>
+              모든 캐릭터가 티어에 배치되었습니다. 카드를 이곳으로 끌어오면 다시 미배치할 수 있습니다.
+            </UnassignedDropHint>
+          )}
+        </UnassignedGrid>
+      </UnassignedPanel>
     </Board>
   );
 };
