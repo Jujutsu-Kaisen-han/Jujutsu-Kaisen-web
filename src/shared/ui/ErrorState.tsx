@@ -25,7 +25,7 @@ export const ErrorState = ({
   actionLabel,
   onAction,
 }: ErrorStateProps) => (
-  <Panel>
+  <Panel role="alert">
     <Title>{title}</Title>
     <Description>{description}</Description>
     {actionLabel && onAction ? <Button onClick={onAction}>{actionLabel}</Button> : null}
