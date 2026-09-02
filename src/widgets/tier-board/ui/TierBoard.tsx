@@ -66,7 +66,7 @@ const Row = styled(Panel)<{ $isDropTarget: boolean }>`
 
 const Side = styled.div`
   display: grid;
-  gap: 14px;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const Headline = styled.p`
