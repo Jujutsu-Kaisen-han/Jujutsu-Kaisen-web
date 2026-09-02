@@ -33,7 +33,7 @@ interface LoadingStateProps {
 }
 
 export const LoadingState = ({ label }: LoadingStateProps) => (
-  <Panel role="status" aria-live="polite" aria-busy="true">
+  <Panel role="status" aria-live="polite" aria-busy="true" aria-label={label}>
     <Body>
       <Spinner />
       <Label>{label}</Label>
