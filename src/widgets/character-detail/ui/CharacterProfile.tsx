@@ -196,7 +196,7 @@ const SectionGrid = styled.div`
 
 const SkillList = styled.div`
   display: grid;
-  gap: 14px;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const SectionTitle = styled.h2`
