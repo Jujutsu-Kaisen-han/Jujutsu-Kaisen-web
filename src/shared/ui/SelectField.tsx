@@ -11,12 +11,12 @@ interface SelectFieldProps extends SelectHTMLAttributes<HTMLSelectElement> {
   options: SelectOption[];
 }
 
-const Field = styled.label`
+const Field = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing.sm};
 `;
 
-const Label = styled.span`
+const Label = styled.label`
   color: ${({ theme }) => theme.colors.muted};
   font-size: 13px;
   font-weight: 700;
