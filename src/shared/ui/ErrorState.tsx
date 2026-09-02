@@ -8,7 +8,7 @@ const Title = styled.h2`
 `;
 
 const Description = styled.p`
-  margin: 0 0 22px;
+  margin: 0 0 ${({ theme }) => theme.spacing.xl};
   color: ${({ theme }) => theme.colors.muted};
 `;
 
