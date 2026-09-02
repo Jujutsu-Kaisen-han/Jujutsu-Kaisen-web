@@ -100,7 +100,7 @@ const Timeline = [
 const Meta = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const VisualBand = styled(Panel)`
