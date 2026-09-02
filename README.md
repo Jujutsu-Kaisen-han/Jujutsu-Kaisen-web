@@ -29,7 +29,7 @@ npm run dev
 ```bash
 npm run build      # TypeScript 검사 후 Vite 프로덕션 빌드
 npm run typecheck  # TypeScript 검사
-npm test           # Node 기반 HTTP 유틸 테스트
+npm test           # Node 기반 선택자·라우트·HTTP 유틸 테스트
 npm run preview    # 빌드 결과 미리보기
 ```
 
