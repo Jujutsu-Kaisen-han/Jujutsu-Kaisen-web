@@ -76,14 +76,14 @@ const Headline = styled.p`
 
 const CardGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
-  gap: 16px;
-  min-height: 180px;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: 12px;
+  min-height: 120px;
 `;
 
 const DropHint = styled.p`
   display: grid;
-  min-height: 180px;
+  min-height: 120px;
   place-items: center;
   margin: 0;
   padding: 24px;
@@ -186,9 +186,9 @@ const Count = styled.span`
 
 const UnassignedGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
-  gap: 16px;
-  min-height: 180px;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: 12px;
+  min-height: 120px;
 `;
 
 const UnassignedDropHint = styled(DropHint)`
