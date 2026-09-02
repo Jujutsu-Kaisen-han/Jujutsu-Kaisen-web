@@ -1,6 +1,7 @@
 import { useState, type DragEvent } from 'react';
 import styled from 'styled-components';
 import {
+  tierOrder,
   type CharacterSummary,
   type CharacterTier,
   type TierGroup,
@@ -99,6 +100,33 @@ const DragItem = styled.div<{ $isDragging: boolean }>`
 
   &:active {
     cursor: grabbing;
+  }
+`;
+
+const PlacementControl = styled.label`
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+`;
+
+const PlacementLabel = styled.span`
+  color: ${({ theme }) => theme.colors.muted};
+  font-size: 12px;
+  font-weight: 700;
+`;
+
+const PlacementSelect = styled.select`
+  width: 100%;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  background: ${({ theme }) => theme.colors.input};
+  color: ${({ theme }) => theme.colors.text};
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.borderStrong};
+    box-shadow: 0 0 0 4px rgba(255, 122, 69, 0.12);
   }
 `;
 
@@ -246,6 +274,24 @@ export const TierBoard = ({
         displayTier={displayTier}
         showTierBadge={Boolean(displayTier)}
       />
+      <PlacementControl>
+        <PlacementLabel>빠른 배치</PlacementLabel>
+        <PlacementSelect
+          value={displayTier ?? ''}
+          aria-label={`${character.name} 티어 빠른 배치`}
+          onChange={(event) => onTierChange(
+            character.id,
+            event.target.value === '' ? null : event.target.value as CharacterTier,
+          )}
+        >
+          <option value="">미배치</option>
+          {tierOrder.map((tier) => (
+            <option key={tier} value={tier}>
+              {tier} 등급
+            </option>
+          ))}
+        </PlacementSelect>
+      </PlacementControl>
     </DragItem>
   );
 
