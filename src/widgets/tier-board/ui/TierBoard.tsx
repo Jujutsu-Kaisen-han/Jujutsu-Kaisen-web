@@ -43,7 +43,7 @@ const ToolbarDescription = styled.p`
 const ToolbarActions = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const Row = styled(Panel)<{ $isDropTarget: boolean }>`
