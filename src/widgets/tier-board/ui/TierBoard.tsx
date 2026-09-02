@@ -338,7 +338,7 @@ export const TierBoard = ({
             <TierBadge tier={section.tier} />
             <Headline id={`tier-${section.tier}-headline`}>{section.headline}</Headline>
           </Side>
-          <CardGrid>
+          <CardGrid role="list" aria-label={`${section.tier} 등급 캐릭터 목록`}>
             {section.characters.length > 0 ? section.characters.map((character) => (
               renderDraggableCard(character, section.tier)
             )) : (
@@ -363,7 +363,7 @@ export const TierBoard = ({
           </UnassignedTitleGroup>
           <Count>{unassignedCharacters.length}명</Count>
         </UnassignedHeader>
-        <UnassignedGrid>
+        <UnassignedGrid role="list" aria-label="미배치 캐릭터 목록">
           {unassignedCharacters.length > 0 ? unassignedCharacters.map((character) => (
             renderDraggableCard(character)
           )) : (
