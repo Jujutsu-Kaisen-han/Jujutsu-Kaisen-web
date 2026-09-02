@@ -329,14 +329,14 @@ export const TierBoard = ({
         <Row
           key={section.tier}
           $isDropTarget={dragOverTarget === section.tier}
-          aria-label={`${section.tier} 등급 배치 구역`}
+          aria-labelledby={`tier-${section.tier}-headline`}
           onDragOver={(event) => handleDragOver(event, section.tier)}
           onDragLeave={handleDragLeave}
           onDrop={(event) => handleDrop(event, section.tier)}
         >
           <Side>
             <TierBadge tier={section.tier} />
-            <Headline>{section.headline}</Headline>
+            <Headline id={`tier-${section.tier}-headline`}>{section.headline}</Headline>
           </Side>
           <CardGrid>
             {section.characters.length > 0 ? section.characters.map((character) => (
