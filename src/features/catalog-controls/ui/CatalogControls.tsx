@@ -30,7 +30,7 @@ const Layout = styled(Panel)`
 const FieldGrid = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: ${({ theme }) => theme.spacing.md};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
