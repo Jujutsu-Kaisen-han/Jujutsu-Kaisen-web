@@ -273,6 +273,12 @@ export const TierBoard = ({
     handleDragEnd();
   };
 
+  const handlePlacementChange = (character: CharacterSummary, value: string) => {
+    const destination = value === '' ? null : value as CharacterTier;
+    onTierChange(character.id, destination);
+    setDragStatus(`${character.name} 카드를 ${destination ? `${destination} 등급` : '미배치 영역'}에 배치했습니다.`);
+  };
+
   const renderDraggableCard = (character: CharacterSummary, displayTier?: CharacterTier) => (
     <DragItem
       key={character.id}
@@ -290,10 +296,7 @@ export const TierBoard = ({
         <PlacementSelect
           value={displayTier ?? ''}
           aria-label={`${character.name} 티어 빠른 배치`}
-          onChange={(event) => onTierChange(
-            character.id,
-            event.target.value === '' ? null : event.target.value as CharacterTier,
-          )}
+          onChange={(event) => handlePlacementChange(character, event.target.value)}
         >
           <option value="">미배치</option>
           {tierOrder.map((tier) => (
