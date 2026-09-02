@@ -137,6 +137,20 @@ test('filterAndSortCharacters supports Korean name ordering', () => {
   );
 });
 
+test('filterAndSortCharacters supports descending Korean name ordering', () => {
+  assert.deepEqual(
+    filterAndSortCharacters(characters, {
+      searchQuery: '',
+      trait: 'all',
+      officialCategory: 'all',
+      role: 'all',
+      sortBy: 'name-desc',
+      favoritesOnly: false,
+    }).map((character) => character.id),
+    ['yuji-lightfooted', 'nanami-ratio', 'gojo-hollow-purple'],
+  );
+});
+
 test('getCharacterNeighbors returns adjacent entries inside the provided list', () => {
   assert.deepEqual(getCharacterNeighbors(characters, 'nanami-ratio'), {
     previousCharacter: characters[0],
