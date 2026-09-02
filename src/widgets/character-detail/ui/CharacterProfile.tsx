@@ -210,6 +210,19 @@ const SectionDescription = styled.p`
   font-size: 14px;
 `;
 
+const SectionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+`;
+
+const VideoCount = styled.span`
+  color: ${({ theme }) => theme.colors.secondary};
+  font-size: 13px;
+  font-weight: 700;
+`;
+
 const SkillCard = styled.div`
   display: grid;
   gap: 8px;
@@ -446,7 +459,10 @@ export const CharacterProfile = ({
         </Panel>
 
         <Panel aria-labelledby="official-video-title">
-          <SectionTitle id="official-video-title">공식 영상</SectionTitle>
+          <SectionHeader>
+            <SectionTitle id="official-video-title">공식 영상</SectionTitle>
+            <VideoCount>{officialVideos.length}개</VideoCount>
+          </SectionHeader>
           <SectionDescription>
             공식 채널에 등록된 대표 영상과 관련 영상을 확인할 수 있습니다.
           </SectionDescription>
