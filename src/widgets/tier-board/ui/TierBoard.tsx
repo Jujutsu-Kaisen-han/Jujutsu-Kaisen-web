@@ -107,7 +107,7 @@ const DragItem = styled.div<{ $isDragging: boolean }>`
 
 const PlacementControl = styled.label`
   display: grid;
-  gap: 6px;
+  gap: ${({ theme }) => theme.spacing.xs};
   margin-top: 8px;
 `;
 
