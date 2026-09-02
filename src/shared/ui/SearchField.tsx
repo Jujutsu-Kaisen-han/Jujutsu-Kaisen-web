@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Field = styled.label`
   display: grid;
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const Label = styled.span`
@@ -17,7 +17,7 @@ const Label = styled.span`
 const Input = styled.input`
   width: 100%;
   min-height: 52px;
-  padding: 0 18px;
+  padding: 0 ${({ theme }) => theme.spacing.xl};
   border-radius: ${({ theme }) => theme.radius.sm};
   background: ${({ theme }) => theme.colors.input};
   border: 1px solid ${({ theme }) => theme.colors.border};
