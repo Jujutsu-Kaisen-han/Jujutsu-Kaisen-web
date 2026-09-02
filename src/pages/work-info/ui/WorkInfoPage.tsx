@@ -106,7 +106,7 @@ const Meta = styled.div`
 const VisualBand = styled(Panel)`
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
-  gap: 24px;
+  gap: ${({ theme }) => theme.spacing['2xl']};
   align-items: center;
   overflow: hidden;
 
