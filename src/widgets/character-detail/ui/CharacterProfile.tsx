@@ -253,7 +253,7 @@ const VideoGrid = styled.div`
 
 const VideoCard = styled.div`
   display: grid;
-  gap: 12px;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const VideoFrame = styled.div`
