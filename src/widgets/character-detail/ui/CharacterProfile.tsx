@@ -105,7 +105,7 @@ const HeaderTop = styled.div`
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const FavoriteIcon = styled.span`
