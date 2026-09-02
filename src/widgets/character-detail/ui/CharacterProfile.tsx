@@ -92,7 +92,7 @@ const Poster = styled(CharacterArtwork)`
 
 const Summary = styled(Panel)`
   display: grid;
-  gap: 18px;
+  gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const Header = styled.div`
