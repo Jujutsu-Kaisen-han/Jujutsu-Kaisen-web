@@ -17,7 +17,7 @@ const Layout = styled.div`
 `;
 
 const ShowcasePanel = styled(Panel)`
-  padding: 16px;
+  padding: ${({ theme }) => theme.spacing.lg};
   overflow: hidden;
 `;
 
