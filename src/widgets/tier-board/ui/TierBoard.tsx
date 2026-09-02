@@ -279,6 +279,11 @@ export const TierBoard = ({
     setDragStatus(`${character.name} 카드를 ${destination ? `${destination} 등급` : '미배치 영역'}에 배치했습니다.`);
   };
 
+  const handleReset = () => {
+    onResetTierAssignments();
+    setDragStatus('모든 캐릭터를 미배치 영역으로 되돌렸습니다.');
+  };
+
   const renderDraggableCard = (character: CharacterSummary, displayTier?: CharacterTier) => (
     <DragItem
       key={character.id}
@@ -320,7 +325,7 @@ export const TierBoard = ({
         </ToolbarCopy>
         <ToolbarActions>
           {hasCustomTierAssignments ? (
-            <Button variant="ghost" onClick={onResetTierAssignments}>
+            <Button variant="ghost" onClick={handleReset}>
               전체 배치 초기화
             </Button>
           ) : null}
