@@ -332,7 +332,6 @@ export const CharacterProfile = ({
   const hasOfficialProfileContent = Boolean(
     character.officialProfile || character.officialVariantSpotlight,
   );
-  const subtitle = hasVariant ? `${character.variantName} · ${character.title}` : character.title;
 
   return (
     <Layout>
@@ -378,7 +377,7 @@ export const CharacterProfile = ({
             </HeaderTop>
             {hasVariant ? <Variant>{character.variantName}</Variant> : null}
             <Title>{character.name}</Title>
-            <Subtitle>{subtitle}</Subtitle>
+            <Subtitle>{character.title}</Subtitle>
           </Header>
           <Chips>
             <Chip>{traitLabels[character.trait]}</Chip>

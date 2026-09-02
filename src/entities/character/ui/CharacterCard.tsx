@@ -179,7 +179,9 @@ export const CharacterCard = ({
   isFavorite = false,
 }: CharacterCardProps) => {
   const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
-  const subtitle = hasVariant ? `${character.variantName} · ${character.title}` : character.title;
+  const accessibleLabel = hasVariant
+    ? `${character.name} ${character.variantName} ${character.title}`
+    : `${character.name} ${character.title}`;
   const detailPath = routes.characterDetail(character.id);
   const detailTo = detailLinkSearch
     ? { pathname: detailPath, search: `?${detailLinkSearch}` }
@@ -188,7 +190,7 @@ export const CharacterCard = ({
   return (
     <Card
       to={detailTo}
-      aria-label={`${character.name} ${subtitle} 상세 보기${isFavorite ? ', 즐겨찾기됨' : ''}`}
+      aria-label={`${accessibleLabel} 상세 보기${isFavorite ? ', 즐겨찾기됨' : ''}`}
     >
       <Poster>
         <Backdrop
@@ -215,7 +217,7 @@ export const CharacterCard = ({
         <Header>
           {hasVariant ? <Variant>{character.variantName}</Variant> : null}
           <Name>{character.name}</Name>
-          <Title>{subtitle}</Title>
+          <Title>{character.title}</Title>
         </Header>
         <Meta>
           <Chip>{traitLabels[character.trait]}</Chip>
