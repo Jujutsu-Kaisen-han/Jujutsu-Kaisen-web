@@ -21,7 +21,7 @@ const Toolbar = styled(Panel)`
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const ToolbarCopy = styled.div`
