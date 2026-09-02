@@ -68,7 +68,7 @@ const Showcase = styled(CharacterArtwork)`
 const Hero = styled.div`
   display: grid;
   grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-  gap: 20px;
+  gap: ${({ theme }) => theme.spacing.xl};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     grid-template-columns: 1fr;
