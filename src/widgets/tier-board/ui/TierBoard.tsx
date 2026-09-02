@@ -370,7 +370,9 @@ export const TierBoard = ({
               아직 등급을 정하지 않은 캐릭터입니다. 카드를 원하는 등급으로 옮겨보세요.
             </UnassignedDescription>
           </UnassignedTitleGroup>
-          <Count>{unassignedCharacters.length}명</Count>
+          <Count aria-label={`미배치 캐릭터 ${unassignedCharacters.length}명`}>
+            {unassignedCharacters.length}명
+          </Count>
         </UnassignedHeader>
         <UnassignedGrid role="list" aria-label="미배치 캐릭터 목록">
           {unassignedCharacters.length > 0 ? unassignedCharacters.map((character) => (
