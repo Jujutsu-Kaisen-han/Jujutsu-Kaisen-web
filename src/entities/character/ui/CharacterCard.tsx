@@ -13,9 +13,12 @@ import { TierBadge } from '@/entities/character/ui/TierBadge';
 import { routes } from '@/shared/config/routes';
 
 const Card = styled(Link)`
-  display: grid;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   overflow: hidden;
-  min-height: 100%;
+  min-height: 88px;
+  padding: 8px;
   border-radius: ${({ theme }) => theme.radius.md};
   background: ${({ theme }) => theme.colors.surface};
   border: 1px solid ${({ theme }) => theme.colors.border};
@@ -23,7 +26,7 @@ const Card = styled(Link)`
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 
   &:hover {
-    transform: translateY(-6px);
+    transform: translateY(-2px);
     border-color: ${({ theme }) => theme.colors.borderStrong};
     box-shadow: ${({ theme }) => theme.shadows.glow};
   }
@@ -31,7 +34,9 @@ const Card = styled(Link)`
 
 const Poster = styled.div`
   position: relative;
-  aspect-ratio: 16 / 10;
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
   overflow: hidden;
   background:
     radial-gradient(circle at top, rgba(255, 122, 69, 0.2), transparent 44%),
@@ -68,7 +73,7 @@ const Frame = styled.div`
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 14px 12px;
+  padding: 7px 6px;
 `;
 
 const Image = styled(CharacterArtwork)`
@@ -95,34 +100,35 @@ const Image = styled(CharacterArtwork)`
 
 const Tier = styled.div`
   position: absolute;
-  top: 14px;
-  left: 14px;
+  top: 6px;
+  left: 6px;
   z-index: 1;
 `;
 
 const FavoriteMark = styled.span`
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 6px;
+  right: 6px;
   z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
   border: 1px solid ${({ theme }) => theme.colors.borderStrong};
   background: ${({ theme }) => theme.colors.primarySoft};
   color: ${({ theme }) => theme.colors.primary};
-  font-size: 17px;
+  font-size: 13px;
   font-weight: 800;
   line-height: 1;
 `;
 
 const Body = styled.div`
   display: grid;
-  gap: 14px;
-  padding: 18px;
+  min-width: 0;
+  gap: 4px;
+  padding: 4px 6px 4px 0;
 `;
 
 const Header = styled.div`
