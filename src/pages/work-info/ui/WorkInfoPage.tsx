@@ -230,7 +230,7 @@ const LinkPanel = styled(Panel)`
 const SourceList = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const SourceLink = styled.a`
