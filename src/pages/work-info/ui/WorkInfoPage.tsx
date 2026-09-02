@@ -224,7 +224,7 @@ const TimelineDate = styled.strong`
 
 const LinkPanel = styled(Panel)`
   display: grid;
-  gap: 18px;
+  gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const SourceList = styled.div`
