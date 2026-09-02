@@ -500,10 +500,20 @@ export const CharacterProfile = ({
                 <VideoEyebrow>대표 공식 영상</VideoEyebrow>
                 <VideoTitle>{featuredOfficialVideo.title}</VideoTitle>
                 <SourceList>
-                  <SourceLink href={featuredOfficialVideo.url} target="_blank" rel="noopener noreferrer">
+                  <SourceLink
+                    href={featuredOfficialVideo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${featuredOfficialVideo.title} YouTube에서 보기`}
+                  >
                     YouTube에서 보기
                   </SourceLink>
-                  <SourceLink href={featuredOfficialVideo.source.url} target="_blank" rel="noopener noreferrer">
+                  <SourceLink
+                    href={featuredOfficialVideo.source.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${featuredOfficialVideo.source.label} 출처 열기`}
+                  >
                     {featuredOfficialVideo.source.label}
                   </SourceLink>
                 </SourceList>
