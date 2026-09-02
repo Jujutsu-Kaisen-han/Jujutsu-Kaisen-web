@@ -195,7 +195,7 @@ const CardTitle = styled.h3`
 
 const TimelinePanel = styled(Panel)`
   display: grid;
-  gap: 18px;
+  gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const TimelineList = styled.div`
