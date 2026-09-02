@@ -230,7 +230,7 @@ const VideoCount = styled.span`
 const SkillCard = styled.div`
   display: grid;
   gap: 8px;
-  padding: 18px;
+  padding: ${({ theme }) => theme.spacing.lg};
   border-radius: ${({ theme }) => theme.radius.sm};
   background: rgba(8, 15, 29, 0.78);
   border: 1px solid ${({ theme }) => theme.colors.border};
