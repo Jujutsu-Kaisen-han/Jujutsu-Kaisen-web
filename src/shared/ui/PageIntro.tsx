@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 const Root = styled.section`
   display: grid;
-  gap: 22px;
-  padding: 34px;
+  gap: ${({ theme }) => theme.spacing['2xl']};
+  padding: ${({ theme }) => theme.spacing['2xl']};
   border-radius: ${({ theme }) => theme.radius.lg};
   background:
     linear-gradient(145deg, rgba(8, 15, 29, 0.96), rgba(30, 41, 59, 0.7)),
