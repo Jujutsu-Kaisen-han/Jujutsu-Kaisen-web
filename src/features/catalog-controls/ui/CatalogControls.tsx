@@ -24,7 +24,7 @@ import { SelectField } from '@/shared/ui/SelectField';
 
 const Layout = styled(Panel)`
   display: grid;
-  gap: 20px;
+  gap: ${({ theme }) => theme.spacing.xl};
 `;
 
 const FieldGrid = styled.div`
