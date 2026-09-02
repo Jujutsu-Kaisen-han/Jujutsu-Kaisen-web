@@ -17,7 +17,7 @@ import { StatPill } from '@/shared/ui/StatPill';
 
 const Layout = styled.div`
   display: grid;
-  gap: 20px;
+  gap: ${({ theme }) => theme.spacing.xl};
 `;
 
 const ResultBar = styled.div`
