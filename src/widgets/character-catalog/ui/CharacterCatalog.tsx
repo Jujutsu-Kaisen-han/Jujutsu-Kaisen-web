@@ -60,7 +60,7 @@ const SectionLink = styled.a`
 
 const TraitSections = styled.div`
   display: grid;
-  gap: 18px;
+  gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const TraitSection = styled(Panel)`
