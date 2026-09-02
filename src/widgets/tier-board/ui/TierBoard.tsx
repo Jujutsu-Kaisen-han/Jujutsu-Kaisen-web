@@ -106,7 +106,7 @@ const DragItem = styled.div<{ $isDragging: boolean }>`
 const PlacementControl = styled.label`
   display: grid;
   gap: 6px;
-  margin-top: 10px;
+  margin-top: 8px;
 `;
 
 const PlacementLabel = styled.span`
@@ -117,7 +117,7 @@ const PlacementLabel = styled.span`
 
 const PlacementSelect = styled.select`
   width: 100%;
-  min-height: 38px;
+  min-height: 34px;
   padding: 0 10px;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius.sm};
