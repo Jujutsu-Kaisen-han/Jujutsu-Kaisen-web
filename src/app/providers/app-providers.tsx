@@ -3,12 +3,15 @@ import { BootstrapProvider } from '@/app/providers/bootstrap-provider';
 import { AppRouterProvider } from '@/app/providers/router-provider';
 import { GlobalStyle } from '@/app/styles/global-style';
 import { theme } from '@/shared/styles/theme';
+import { AppErrorBoundary } from '@/shared/ui/AppErrorBoundary';
 
 export const AppProviders = () => (
   <ThemeProvider theme={theme}>
     <BootstrapProvider>
       <GlobalStyle />
-      <AppRouterProvider />
+      <AppErrorBoundary>
+        <AppRouterProvider />
+      </AppErrorBoundary>
     </BootstrapProvider>
   </ThemeProvider>
 );
