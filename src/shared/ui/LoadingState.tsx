@@ -10,7 +10,7 @@ const rotate = keyframes`
 const Body = styled.div`
   display: grid;
   justify-items: center;
-  gap: 16px;
+  gap: ${({ theme }) => theme.spacing.lg};
   text-align: center;
 `;
 
