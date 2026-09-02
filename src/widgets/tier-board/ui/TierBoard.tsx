@@ -141,7 +141,7 @@ const EditorNotice = styled.p`
 
 const UnassignedPanel = styled(Panel)<{ $isDropTarget: boolean }>`
   display: grid;
-  gap: 18px;
+  gap: ${({ theme }) => theme.spacing.lg};
   border-color: ${({ $isDropTarget, theme }) => (
     $isDropTarget ? theme.colors.primary : theme.colors.borderStrong
   )};
