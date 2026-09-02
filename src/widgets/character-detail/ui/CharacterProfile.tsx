@@ -204,6 +204,12 @@ const SectionTitle = styled.h2`
   font-size: 22px;
 `;
 
+const SectionDescription = styled.p`
+  margin: -6px 0 16px;
+  color: ${({ theme }) => theme.colors.muted};
+  font-size: 14px;
+`;
+
 const SkillCard = styled.div`
   display: grid;
   gap: 8px;
@@ -441,6 +447,9 @@ export const CharacterProfile = ({
 
         <Panel>
           <SectionTitle>공식 영상</SectionTitle>
+          <SectionDescription>
+            공식 채널에 등록된 대표 영상과 관련 영상을 확인할 수 있습니다.
+          </SectionDescription>
           {featuredOfficialVideo ? (
             <VideoGrid>
               <VideoCard>
