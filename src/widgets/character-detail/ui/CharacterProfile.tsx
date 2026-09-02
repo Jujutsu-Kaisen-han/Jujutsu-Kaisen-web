@@ -137,7 +137,7 @@ const Subtitle = styled.p`
 const Chips = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const Chip = styled.span`
