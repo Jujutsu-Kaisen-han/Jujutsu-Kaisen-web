@@ -1,6 +1,10 @@
 import { create } from 'zustand';
 import { characterApi } from '@/entities/character/api/characterApi';
 import { isResourceNotFoundError } from '@/shared/api/http';
+import {
+  applyTierOverridesToCharacters,
+  rebuildTierGroups,
+} from '@/entities/character/lib/character-selectors';
 import { tierOrder } from '@/entities/character/model/types/character';
 import type {
   CatalogSortOption,
@@ -170,27 +174,6 @@ const pruneTierOverrides = (
   );
 };
 
-const applyTierOverrides = (
-  characters: CharacterSummary[],
-  tierOverrides: Record<string, CharacterTier>,
-): CharacterSummary[] => characters.map((character) => {
-  const tierOverride = tierOverrides[character.id];
-
-  return tierOverride ? { ...character, tier: tierOverride } : character;
-});
-
-const rebuildTierGroups = (tiers: TierGroup[], characters: CharacterSummary[]): TierGroup[] => {
-  const tierGroups = new Map(tiers.map((tierGroup) => [tierGroup.tier, tierGroup]));
-
-  return tierOrder.map((tier) => ({
-    tier,
-    headline: tierGroups.get(tier)?.headline ?? `${tier} 티어 캐릭터`,
-    characterIds: characters
-      .filter((character) => character.tier === tier)
-      .map((character) => character.id),
-  }));
-};
-
 const applyTierOverridesToDetails = (
   characterDetails: Record<string, CharacterDetail>,
   tierOverrides: Record<string, CharacterTier>,
@@ -239,7 +222,7 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
         characterApi.getTiers(),
       ]);
       const tierOverrides = pruneTierOverrides(get().tierOverrides, characters);
-      const nextCharacters = applyTierOverrides(characters, tierOverrides);
+      const nextCharacters = applyTierOverridesToCharacters(characters, tierOverrides);
       const favoriteCharacterIds = pruneFavoriteCharacterIds(get().favoriteCharacterIds, characters);
 
       if (favoriteCharacterIds.length !== get().favoriteCharacterIds.length) {

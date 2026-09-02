@@ -5,6 +5,7 @@ import type {
   CharacterTier,
   TierGroup,
 } from '@/entities/character/model/types/character';
+import { tierOrder } from '../model/types/character.ts';
 
 const tierRankMap: Record<CharacterTier, number> = {
   SS: 5,
@@ -96,6 +97,30 @@ const matchesCharacterSearch = (character: CharacterSummary, rawSearchQuery: str
 };
 
 export const getTierRank = (tier: CharacterTier): number => tierRankMap[tier];
+
+export const applyTierOverridesToCharacters = (
+  characters: CharacterSummary[],
+  tierOverrides: Record<string, CharacterTier>,
+): CharacterSummary[] => characters.map((character) => {
+  const tierOverride = tierOverrides[character.id];
+
+  return tierOverride ? { ...character, tier: tierOverride } : character;
+});
+
+export const rebuildTierGroups = (
+  tiers: TierGroup[],
+  characters: CharacterSummary[],
+): TierGroup[] => {
+  const tierGroups = new Map(tiers.map((tierGroup) => [tierGroup.tier, tierGroup]));
+
+  return tierOrder.map((tier) => ({
+    tier,
+    headline: tierGroups.get(tier)?.headline ?? `${tier} 티어 캐릭터`,
+    characterIds: characters
+      .filter((character) => character.tier === tier)
+      .map((character) => character.id),
+  }));
+};
 
 export interface CharacterNeighbors {
   previousCharacter?: CharacterSummary;
