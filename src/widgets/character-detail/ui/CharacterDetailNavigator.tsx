@@ -19,7 +19,7 @@ const Header = styled.div`
   flex-wrap: wrap;
   align-items: end;
   justify-content: space-between;
-  gap: 12px;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const TitleGroup = styled.div`
