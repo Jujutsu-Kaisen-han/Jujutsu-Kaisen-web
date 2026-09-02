@@ -108,7 +108,7 @@ const Image = styled(CharacterArtwork)`
 const Copy = styled.div`
   display: grid;
   min-width: 0;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const Direction = styled.span`
