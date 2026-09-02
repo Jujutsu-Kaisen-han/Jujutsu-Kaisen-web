@@ -269,11 +269,7 @@ export const TierBoard = ({
       onDragStart={(event) => handleDragStart(event, character.id)}
       onDragEnd={handleDragEnd}
     >
-      <CharacterCard
-        character={character}
-        displayTier={displayTier}
-        showTierBadge={Boolean(displayTier)}
-      />
+      <CharacterCard character={character} />
       <PlacementControl>
         <PlacementLabel>빠른 배치</PlacementLabel>
         <PlacementSelect

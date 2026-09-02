@@ -1,11 +1,9 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import {
-  type CharacterTier,
   type CharacterSummary,
 } from '@/entities/character/model/types/character';
 import { CharacterArtwork } from '@/entities/character/ui/CharacterArtwork';
-import { TierBadge } from '@/entities/character/ui/TierBadge';
 import { routes } from '@/shared/config/routes';
 
 const Card = styled(Link)`
@@ -94,13 +92,6 @@ const Image = styled(CharacterArtwork)`
   }
 `;
 
-const Tier = styled.div`
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  z-index: 1;
-`;
-
 const FavoriteMark = styled.span`
   position: absolute;
   top: 6px;
@@ -141,16 +132,12 @@ interface CharacterCardProps {
   character: CharacterSummary;
   detailLinkSearch?: string;
   isFavorite?: boolean;
-  showTierBadge?: boolean;
-  displayTier?: CharacterTier;
 }
 
 export const CharacterCard = ({
   character,
   detailLinkSearch,
   isFavorite = false,
-  showTierBadge = true,
-  displayTier,
 }: CharacterCardProps) => {
   const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
   const accessibleLabel = hasVariant
@@ -182,11 +169,6 @@ export const CharacterCard = ({
             loading="lazy"
           />
         </Frame>
-        {showTierBadge ? (
-          <Tier>
-            <TierBadge tier={displayTier ?? character.tier} />
-          </Tier>
-        ) : null}
         {isFavorite ? <FavoriteMark aria-hidden="true">★</FavoriteMark> : null}
       </Poster>
       <Body>
