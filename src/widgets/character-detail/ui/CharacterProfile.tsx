@@ -402,8 +402,8 @@ export const CharacterProfile = ({
       </Hero>
 
       <SectionGrid>
-        <Panel>
-          <SectionTitle>공식 소개</SectionTitle>
+        <Panel aria-labelledby="official-profile-title">
+          <SectionTitle id="official-profile-title">공식 소개</SectionTitle>
           {hasOfficialProfileContent ? (
             <SkillList>
               {character.officialProfile ? (
@@ -445,8 +445,8 @@ export const CharacterProfile = ({
           )}
         </Panel>
 
-        <Panel>
-          <SectionTitle>공식 영상</SectionTitle>
+        <Panel aria-labelledby="official-video-title">
+          <SectionTitle id="official-video-title">공식 영상</SectionTitle>
           <SectionDescription>
             공식 채널에 등록된 대표 영상과 관련 영상을 확인할 수 있습니다.
           </SectionDescription>
@@ -492,8 +492,8 @@ export const CharacterProfile = ({
       </SectionGrid>
 
       <SectionGrid>
-        <Panel>
-          <SectionTitle>스킬</SectionTitle>
+        <Panel aria-labelledby="skills-title">
+          <SectionTitle id="skills-title">스킬</SectionTitle>
           <SkillList>
             {character.skills.map((skill) => (
               <SkillCard key={skill.name}>
@@ -505,8 +505,8 @@ export const CharacterProfile = ({
           </SkillList>
         </Panel>
 
-        <Panel>
-          <SectionTitle>필살기</SectionTitle>
+        <Panel aria-labelledby="ultimate-title">
+          <SectionTitle id="ultimate-title">필살기</SectionTitle>
           <SkillCard>
             <SkillName>{character.ultimate.name}</SkillName>
             {character.ultimate.cooldown ? <Cooldown>{character.ultimate.cooldown}</Cooldown> : null}
