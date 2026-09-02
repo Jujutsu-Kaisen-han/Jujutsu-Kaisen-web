@@ -13,7 +13,7 @@ import { Panel } from '@/shared/ui/Panel';
 
 const Board = styled.div`
   display: grid;
-  gap: 18px;
+  gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const Toolbar = styled(Panel)`
