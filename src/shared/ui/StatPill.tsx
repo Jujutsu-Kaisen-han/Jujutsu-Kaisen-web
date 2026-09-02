@@ -3,9 +3,9 @@ import styled from 'styled-components';
 const Pill = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing.sm};
   min-height: 42px;
-  padding: 0 14px;
+  padding: 0 ${({ theme }) => theme.spacing.lg};
   border-radius: 999px;
   background: rgba(15, 23, 42, 0.72);
   border: 1px solid ${({ theme }) => theme.colors.border};
