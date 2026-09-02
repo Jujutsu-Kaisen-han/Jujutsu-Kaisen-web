@@ -79,7 +79,7 @@ const PosterPanel = styled(Panel)`
   padding: 16px;
 `;
 
-const Poster = styled.img`
+const Poster = styled(CharacterArtwork)`
   width: 100%;
   border-radius: ${({ theme }) => theme.radius.md};
   aspect-ratio: 15 / 22;
@@ -356,7 +356,11 @@ export const CharacterProfile = ({
 
       <Hero>
         <PosterPanel>
-          <Poster src={character.image} alt={character.name} />
+          <Poster
+            src={character.image}
+            fallbackSrc="/characters/placeholder-character.svg"
+            alt={character.name}
+          />
         </PosterPanel>
         <Summary>
           <Header>
