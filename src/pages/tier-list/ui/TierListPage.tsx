@@ -40,6 +40,11 @@ export const TierListPage = () => {
           <Meta>
             <StatPill label="총 캐릭터" value={`${characters.length}명`} />
             <StatPill label="티어 구간" value={`${tiers.length}단계`} />
+            <StatPill
+              label="배치 완료"
+              value={`${characters.length - unassignedCharacters.length}명`}
+            />
+            <StatPill label="미배치" value={`${unassignedCharacters.length}명`} />
           </Meta>
         )}
         actions={<ButtonLink to={routes.characters}>캐릭터 도감 보기</ButtonLink>}
