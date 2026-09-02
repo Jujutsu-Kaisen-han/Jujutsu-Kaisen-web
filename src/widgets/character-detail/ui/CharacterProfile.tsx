@@ -300,6 +300,13 @@ const RelatedVideoTitle = styled.h3`
   font-size: 16px;
 `;
 
+const RelatedVideoHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+`;
+
 const RelatedVideoLink = styled.a`
   display: grid;
   gap: 6px;
@@ -503,7 +510,10 @@ export const CharacterProfile = ({
               </VideoCard>
               {relatedOfficialVideos.length > 0 ? (
                 <RelatedVideoList aria-label="관련 공식 영상">
-                  <RelatedVideoTitle>관련 공식 영상</RelatedVideoTitle>
+                  <RelatedVideoHeader>
+                    <RelatedVideoTitle>관련 공식 영상</RelatedVideoTitle>
+                    <VideoCount>{relatedOfficialVideos.length}개</VideoCount>
+                  </RelatedVideoHeader>
                   {relatedOfficialVideos.map((video) => (
                     <RelatedVideoLink key={video.url} href={video.url} target="_blank" rel="noopener noreferrer">
                       <RelatedVideoName>{video.title}</RelatedVideoName>
