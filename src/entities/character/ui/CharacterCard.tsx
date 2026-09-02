@@ -106,11 +106,6 @@ const Body = styled.div`
   padding: 4px 6px 4px 0;
 `;
 
-const Header = styled.div`
-  display: grid;
-  gap: 6px;
-`;
-
 const Name = styled.h3`
   margin: 0;
   overflow: hidden;
@@ -157,9 +152,7 @@ export const CharacterCard = ({
         {isFavorite ? <FavoriteMark aria-hidden="true">★</FavoriteMark> : null}
       </Poster>
       <Body>
-        <Header>
-          <Name>{character.name}</Name>
-        </Header>
+        <Name>{character.name}</Name>
       </Body>
     </Card>
   );
