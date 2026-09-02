@@ -25,8 +25,8 @@ export const ErrorState = ({
   actionLabel,
   onAction,
 }: ErrorStateProps) => (
-  <Panel role="alert">
-    <Title>{title}</Title>
+  <Panel role="alert" aria-labelledby="error-state-title">
+    <Title id="error-state-title">{title}</Title>
     <Description>{description}</Description>
     {actionLabel && onAction ? <Button onClick={onAction}>{actionLabel}</Button> : null}
   </Panel>
