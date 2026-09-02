@@ -33,9 +33,9 @@ export const TierListPage = () => {
   return (
     <SiteShell>
       <PageIntro
-        eyebrow="티어 보드"
-        title="주술회전 팬텀 퍼레이드 티어표"
-        description="메타 기준으로 SS부터 C까지 캐릭터를 빠르게 비교하고, 카드와 상세 페이지로 바로 이어지는 팬 사이트입니다."
+        eyebrow="전투력 티어표"
+        title="나만의 전투력 티어표"
+        description="캐릭터를 전투력 기준으로 SS부터 C까지 직접 배치하고, 나만의 티어표를 저장하세요."
         meta={(
           <Meta>
             <StatPill label="총 캐릭터" value={`${characters.length}명`} />
@@ -47,7 +47,7 @@ export const TierListPage = () => {
             <StatPill label="미배치" value={`${unassignedCharacters.length}명`} />
           </Meta>
         )}
-        actions={<ButtonLink to={routes.characters}>캐릭터 도감 보기</ButtonLink>}
+        actions={<ButtonLink to={routes.characters}>캐릭터 목록 보기</ButtonLink>}
       />
 
       {catalogStatus === 'loading' && characters.length === 0 ? (
