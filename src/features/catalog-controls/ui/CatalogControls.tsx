@@ -290,7 +290,7 @@ export const CatalogControls = ({
         </ActiveFilterPanel>
       ) : null}
       <Footer>
-        <Hint>팬파레 특성과 공식 사이트 분류를 함께 걸어 원하는 변형 유닛만 좁힐 수 있습니다.</Hint>
+        <Hint>특성과 분류, 역할을 함께 걸어 원하는 캐릭터만 빠르게 찾을 수 있습니다.</Hint>
         <Actions>
           <FavoriteToggle
             type="button"
