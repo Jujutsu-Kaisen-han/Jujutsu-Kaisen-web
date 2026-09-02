@@ -71,7 +71,7 @@ const MenuLink = styled(NavLink)`
 `;
 
 export const AppNavigation = () => (
-  <Nav>
+  <Nav aria-label="주요 메뉴">
     <BrandBlock>
       <Brand>Jujutsu Kaisen</Brand>
       <BrandTitle>주술회전 팬 아카이브</BrandTitle>
