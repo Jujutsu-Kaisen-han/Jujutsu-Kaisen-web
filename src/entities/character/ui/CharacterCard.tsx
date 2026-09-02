@@ -47,18 +47,6 @@ const Poster = styled.div`
   }
 `;
 
-const Backdrop = styled(CharacterArtwork)`
-  position: absolute;
-  inset: -8%;
-  width: calc(100% + 16%);
-  height: calc(100% + 16%);
-  object-fit: cover;
-  object-position: center top;
-  filter: blur(22px);
-  opacity: 0.28;
-  transform: scale(1.08);
-`;
-
 const Frame = styled.div`
   position: relative;
   z-index: 1;
@@ -154,13 +142,6 @@ export const CharacterCard = ({
       aria-label={`${accessibleLabel} 상세 보기${isFavorite ? ', 즐겨찾기됨' : ''}`}
     >
       <Poster>
-        <Backdrop
-          src={character.variantImage}
-          fallbackSrc={character.image}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-        />
         <Frame>
           <Image
             src={character.variantImage}
