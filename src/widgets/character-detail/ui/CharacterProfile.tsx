@@ -13,7 +13,7 @@ import { Panel } from '@/shared/ui/Panel';
 
 const Layout = styled.div`
   display: grid;
-  gap: 20px;
+  gap: ${({ theme }) => theme.spacing.xl};
 `;
 
 const ShowcasePanel = styled(Panel)`
