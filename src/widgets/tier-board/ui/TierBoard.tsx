@@ -77,7 +77,7 @@ const Headline = styled.p`
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
-  gap: 12px;
+  gap: ${({ theme }) => theme.spacing.md};
   min-height: 120px;
 `;
 
