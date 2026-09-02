@@ -17,8 +17,8 @@ interface EmptyStateProps {
 }
 
 export const EmptyState = ({ title, description }: EmptyStateProps) => (
-  <Panel>
-    <Title>{title}</Title>
+  <Panel aria-labelledby="empty-state-title">
+    <Title id="empty-state-title">{title}</Title>
     <Description>{description}</Description>
   </Panel>
 );
