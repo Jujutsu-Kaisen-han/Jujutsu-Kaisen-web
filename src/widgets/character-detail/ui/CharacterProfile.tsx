@@ -278,6 +278,13 @@ const VideoTitle = styled.h3`
   overflow-wrap: anywhere;
 `;
 
+const VideoEyebrow = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+`;
+
 const EmptyText = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.colors.muted};
@@ -483,6 +490,7 @@ export const CharacterProfile = ({
                     allowFullScreen
                   />
                 </VideoFrame>
+                <VideoEyebrow>대표 공식 영상</VideoEyebrow>
                 <VideoTitle>{featuredOfficialVideo.title}</VideoTitle>
                 <SourceList>
                   <SourceLink href={featuredOfficialVideo.url} target="_blank" rel="noopener noreferrer">
