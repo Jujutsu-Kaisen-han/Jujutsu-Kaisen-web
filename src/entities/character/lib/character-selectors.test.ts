@@ -192,3 +192,9 @@ test('tier assignments move characters between groups while preserving tier orde
   ]);
   assert.equal(tierGroups[0].headline, '최상위');
 });
+
+test('empty tier assignments leave every tier group ready for drops', () => {
+  const tierGroups = rebuildTierGroups([], [...characters], {});
+
+  assert.deepEqual(tierGroups.map((group) => group.characterIds), [[], [], [], [], []]);
+});
