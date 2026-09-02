@@ -42,7 +42,7 @@ const SectionLink = styled.a`
   display: inline-flex;
   align-items: center;
   min-height: 38px;
-  padding: 0 14px;
+  padding: 0 ${({ theme }) => theme.spacing.md};
   border-radius: 999px;
   border: 1px solid ${({ theme }) => theme.colors.border};
   color: ${({ theme }) => theme.colors.text};
