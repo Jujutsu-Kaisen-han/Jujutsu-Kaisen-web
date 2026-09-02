@@ -7,6 +7,7 @@ import {
   getCharacterNeighbors,
   groupCharactersByTrait,
   rebuildTierGroups,
+  updateTierAssignments,
 } from './character-selectors.ts';
 
 const createCharacter = (overrides: Partial<CharacterSummary>): CharacterSummary => ({
@@ -197,4 +198,11 @@ test('empty tier assignments leave every tier group ready for drops', () => {
   const tierGroups = rebuildTierGroups([], [...characters], {});
 
   assert.deepEqual(tierGroups.map((group) => group.characterIds), [[], [], [], [], []]);
+});
+
+test('tier assignments can place and return a character to the unassigned area', () => {
+  const assigned = updateTierAssignments({}, 'gojo-hollow-purple', 'SS');
+
+  assert.deepEqual(assigned, { 'gojo-hollow-purple': 'SS' });
+  assert.deepEqual(updateTierAssignments(assigned, 'gojo-hollow-purple', null), {});
 });
