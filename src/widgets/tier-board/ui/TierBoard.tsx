@@ -265,6 +265,8 @@ export const TierBoard = ({
     <DragItem
       key={character.id}
       draggable
+      aria-grabbed={draggedCharacterId === character.id}
+      aria-label={`${character.name} 카드. 드래그해서 등급을 바꿀 수 있습니다.`}
       $isDragging={draggedCharacterId === character.id}
       onDragStart={(event) => handleDragStart(event, character.id)}
       onDragEnd={handleDragEnd}
