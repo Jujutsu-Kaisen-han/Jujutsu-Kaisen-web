@@ -351,7 +351,7 @@ export const TierBoard = ({
             {section.characters.length > 0 ? section.characters.map((character) => (
               renderDraggableCard(character, section.tier)
             )) : (
-              <DropHint>이곳으로 캐릭터를 끌어다 놓으세요.</DropHint>
+              <DropHint role="status">이곳으로 캐릭터를 끌어다 놓으세요.</DropHint>
             )}
           </CardGrid>
         </Row>
@@ -376,7 +376,7 @@ export const TierBoard = ({
           {unassignedCharacters.length > 0 ? unassignedCharacters.map((character) => (
             renderDraggableCard(character)
           )) : (
-            <UnassignedDropHint>
+            <UnassignedDropHint role="status">
               모든 캐릭터가 티어에 배치되었습니다. 카드를 이곳으로 끌어오면 다시 미배치할 수 있습니다.
             </UnassignedDropHint>
           )}
