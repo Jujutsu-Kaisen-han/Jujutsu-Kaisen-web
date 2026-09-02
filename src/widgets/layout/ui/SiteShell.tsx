@@ -1,7 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import styled from 'styled-components';
 import { ScrollRestoration, useLocation } from 'react-router-dom';
-import { AppNavigation } from '@/features/navigation/ui/AppNavigation';
 import { Container } from '@/shared/ui/Container';
 import { RouteMetadata } from '@/widgets/layout/ui/RouteMetadata';
 
@@ -68,7 +67,6 @@ export const SiteShell = ({ children }: SiteShellProps) => {
       <ScrollRestoration getKey={(routerLocation) => routerLocation.pathname} />
       <SkipLink href="#main-content">본문으로 건너뛰기</SkipLink>
       <Container>
-        <AppNavigation />
         <Main id="main-content" ref={mainRef} tabIndex={-1}>
           {children}
         </Main>
