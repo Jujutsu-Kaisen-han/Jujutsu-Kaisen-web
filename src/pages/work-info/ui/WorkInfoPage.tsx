@@ -200,7 +200,7 @@ const TimelinePanel = styled(Panel)`
 
 const TimelineList = styled.div`
   display: grid;
-  gap: 14px;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const TimelineItem = styled.div`
