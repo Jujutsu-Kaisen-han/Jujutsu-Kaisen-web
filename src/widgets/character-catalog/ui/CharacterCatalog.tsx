@@ -65,7 +65,7 @@ const TraitSections = styled.div`
 
 const TraitSection = styled(Panel)`
   display: grid;
-  gap: 18px;
+  gap: ${({ theme }) => theme.spacing.lg};
   scroll-margin-top: 24px;
 `;
 
