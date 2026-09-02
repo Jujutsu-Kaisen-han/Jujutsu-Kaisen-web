@@ -525,7 +525,13 @@ export const CharacterProfile = ({
                     <VideoCount>{relatedOfficialVideos.length}개</VideoCount>
                   </RelatedVideoHeader>
                   {relatedOfficialVideos.map((video) => (
-                    <RelatedVideoLink key={video.url} href={video.url} target="_blank" rel="noopener noreferrer">
+                    <RelatedVideoLink
+                      key={video.url}
+                      href={video.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${video.title} 공식 영상 열기`}
+                    >
                       <RelatedVideoName>{video.title}</RelatedVideoName>
                       <RelatedVideoSource>{video.source.label}</RelatedVideoSource>
                     </RelatedVideoLink>
