@@ -48,8 +48,8 @@ const ToolbarActions = styled.div`
 
 const Row = styled(Panel)<{ $isDropTarget: boolean }>`
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 22px;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 18px;
   align-items: start;
   border-color: ${({ $isDropTarget, theme }) => (
     $isDropTarget ? theme.colors.primary : theme.colors.border
