@@ -125,9 +125,9 @@ const FavoriteToggle = styled.button<{ $active: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing.sm};
   min-height: 46px;
-  padding: 12px 18px;
+  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.xl}`};
   border-radius: 999px;
   border: 1px solid ${({ $active, theme }) => (
     $active ? theme.colors.borderStrong : theme.colors.border
