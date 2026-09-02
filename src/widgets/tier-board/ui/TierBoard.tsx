@@ -26,7 +26,7 @@ const Toolbar = styled(Panel)`
 
 const ToolbarCopy = styled.div`
   display: grid;
-  gap: 6px;
+  gap: ${({ theme }) => theme.spacing.xs};
 `;
 
 const ToolbarTitle = styled.h2`
