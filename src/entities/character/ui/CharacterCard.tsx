@@ -132,23 +132,9 @@ const Header = styled.div`
   gap: 6px;
 `;
 
-const Variant = styled.span`
-  color: ${({ theme }) => theme.colors.primary};
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-`;
-
 const Name = styled.h3`
   margin: 0;
-  font-size: 22px;
-`;
-
-const Title = styled.p`
-  margin: 0;
-  color: ${({ theme }) => theme.colors.muted};
-  font-size: 14px;
+  font-size: 16px;
 `;
 
 interface CharacterCardProps {
@@ -205,9 +191,7 @@ export const CharacterCard = ({
       </Poster>
       <Body>
         <Header>
-          {hasVariant ? <Variant>{character.variantName}</Variant> : null}
           <Name>{character.name}</Name>
-          <Title>{character.title}</Title>
         </Header>
       </Body>
     </Card>
