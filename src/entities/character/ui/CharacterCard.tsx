@@ -39,6 +39,12 @@ const Poster = styled.div`
   overflow: hidden;
   border-radius: ${({ theme }) => theme.radius.sm};
   background: rgba(8, 15, 29, 0.8);
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    flex-basis: 60px;
+    width: 60px;
+    height: 60px;
+  }
 `;
 
 const Frame = styled.div`
