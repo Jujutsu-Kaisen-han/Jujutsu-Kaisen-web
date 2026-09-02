@@ -97,7 +97,7 @@ const Summary = styled(Panel)`
 
 const Header = styled.div`
   display: grid;
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const HeaderTop = styled.div`
