@@ -79,7 +79,7 @@ const TraitHeader = styled.div`
 
 const TraitTitleGroup = styled.div`
   display: grid;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const TraitEyebrow = styled.span`
