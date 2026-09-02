@@ -24,6 +24,11 @@ const Card = styled(Link)`
     border-color: ${({ theme }) => theme.colors.borderStrong};
     box-shadow: ${({ theme }) => theme.shadows.glow};
   }
+
+  &:focus-visible {
+    outline: 3px solid ${({ theme }) => theme.colors.primary};
+    outline-offset: 3px;
+  }
 `;
 
 const Poster = styled.div`
