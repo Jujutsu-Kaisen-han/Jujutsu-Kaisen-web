@@ -76,7 +76,7 @@ const Hero = styled.div`
 `;
 
 const PosterPanel = styled(Panel)`
-  padding: 16px;
+  padding: ${({ theme }) => theme.spacing.lg};
 `;
 
 const Poster = styled(CharacterArtwork)`
