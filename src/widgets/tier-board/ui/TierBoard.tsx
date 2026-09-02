@@ -188,11 +188,18 @@ export const TierBoard = ({
 }: TierBoardProps) => {
   const [draggedCharacterId, setDraggedCharacterId] = useState<string | null>(null);
   const [dragOverTarget, setDragOverTarget] = useState<CharacterTier | 'unassigned' | null>(null);
+  const [dragStatus, setDragStatus] = useState('캐릭터 카드를 등급 구역으로 끌어다 놓으세요.');
+  const charactersById = new Map(
+    [...sections.flatMap((section) => section.characters), ...unassignedCharacters]
+      .map((character) => [character.id, character]),
+  );
 
   const handleDragStart = (event: DragEvent<HTMLDivElement>, characterId: string) => {
     event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.setData('text/plain', characterId);
     setDraggedCharacterId(characterId);
+    const character = charactersById.get(characterId);
+    setDragStatus(`${character?.name ?? '캐릭터'} 카드를 선택했습니다. 원하는 등급 구역에 놓으세요.`);
   };
 
   const handleDragEnd = () => {
@@ -218,6 +225,9 @@ export const TierBoard = ({
 
     if (characterId) {
       onTierChange(characterId, destination);
+      const character = charactersById.get(characterId);
+      const destinationLabel = destination ? `${destination} 등급` : '미배치 영역';
+      setDragStatus(`${character?.name ?? '캐릭터'} 카드를 ${destinationLabel}에 배치했습니다.`);
     }
 
     handleDragEnd();
@@ -256,8 +266,8 @@ export const TierBoard = ({
           ) : null}
         </ToolbarActions>
       </Toolbar>
-      <EditorNotice role="status">
-        캐릭터 카드를 마우스로 끌어 SS/S/A/B/C 등급 구역에 놓으면 바로 저장됩니다.
+      <EditorNotice role="status" aria-live="polite">
+        {dragStatus}
       </EditorNotice>
       {sections.map((section) => (
         <Row
