@@ -3,6 +3,7 @@ import { characterApi } from '@/entities/character/api/characterApi';
 import { isResourceNotFoundError } from '@/shared/api/http';
 import {
   rebuildTierGroups,
+  updateTierAssignments,
 } from '@/entities/character/lib/character-selectors';
 import { tierOrder } from '@/entities/character/model/types/character';
 import type {
@@ -375,15 +376,7 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
         return state;
       }
 
-      const tierAssignments: Record<string, CharacterTier> = {
-        ...state.tierAssignments,
-      };
-
-      if (tier === null) {
-        delete tierAssignments[characterId];
-      } else {
-        tierAssignments[characterId] = tier;
-      }
+      const tierAssignments = updateTierAssignments(state.tierAssignments, characterId, tier);
 
       writeStoredTierAssignments(tierAssignments);
 

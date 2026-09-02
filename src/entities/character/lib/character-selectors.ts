@@ -114,6 +114,22 @@ export const rebuildTierGroups = (
   }));
 };
 
+export const updateTierAssignments = (
+  tierAssignments: Record<string, CharacterTier>,
+  characterId: string,
+  tier: CharacterTier | null,
+): Record<string, CharacterTier> => {
+  const nextAssignments = { ...tierAssignments };
+
+  if (tier === null) {
+    delete nextAssignments[characterId];
+  } else {
+    nextAssignments[characterId] = tier;
+  }
+
+  return nextAssignments;
+};
+
 export interface CharacterNeighbors {
   previousCharacter?: CharacterSummary;
   nextCharacter?: CharacterSummary;
