@@ -409,7 +409,7 @@ export const CharacterProfile = ({
                     <SourceLink
                       href={character.officialProfile.source.url}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                     >
                       {character.officialProfile.source.label}
                     </SourceLink>
@@ -425,7 +425,7 @@ export const CharacterProfile = ({
                     <SourceLink
                       href={character.officialVariantSpotlight.source.url}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                     >
                       {character.officialVariantSpotlight.source.label}
                     </SourceLink>
@@ -457,10 +457,10 @@ export const CharacterProfile = ({
                 </VideoFrame>
                 <VideoTitle>{featuredOfficialVideo.title}</VideoTitle>
                 <SourceList>
-                  <SourceLink href={featuredOfficialVideo.url} target="_blank" rel="noreferrer">
+                  <SourceLink href={featuredOfficialVideo.url} target="_blank" rel="noopener noreferrer">
                     YouTube에서 보기
                   </SourceLink>
-                  <SourceLink href={featuredOfficialVideo.source.url} target="_blank" rel="noreferrer">
+                  <SourceLink href={featuredOfficialVideo.source.url} target="_blank" rel="noopener noreferrer">
                     {featuredOfficialVideo.source.label}
                   </SourceLink>
                 </SourceList>
@@ -469,7 +469,7 @@ export const CharacterProfile = ({
                 <RelatedVideoList aria-label="관련 공식 영상">
                   <RelatedVideoTitle>관련 공식 영상</RelatedVideoTitle>
                   {relatedOfficialVideos.map((video) => (
-                    <RelatedVideoLink key={video.url} href={video.url} target="_blank" rel="noreferrer">
+                    <RelatedVideoLink key={video.url} href={video.url} target="_blank" rel="noopener noreferrer">
                       <RelatedVideoName>{video.title}</RelatedVideoName>
                       <RelatedVideoSource>{video.source.label}</RelatedVideoSource>
                     </RelatedVideoLink>

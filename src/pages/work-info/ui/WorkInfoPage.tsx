@@ -337,7 +337,7 @@ export const WorkInfoPage = () => (
       </BodyText>
       <SourceList>
         {sourceLinks.map((source) => (
-          <SourceLink key={source.url} href={source.url} target="_blank" rel="noreferrer">
+          <SourceLink key={source.url} href={source.url} target="_blank" rel="noopener noreferrer">
             {source.label}
           </SourceLink>
         ))}
