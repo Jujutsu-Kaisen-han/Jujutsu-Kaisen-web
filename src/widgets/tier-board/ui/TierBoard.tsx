@@ -246,6 +246,16 @@ export const TierBoard = ({
     setDragOverTarget(destination);
   };
 
+  const handleDragLeave = (event: DragEvent<HTMLElement>) => {
+    const relatedTarget = event.relatedTarget;
+
+    if (relatedTarget instanceof Node && event.currentTarget.contains(relatedTarget)) {
+      return;
+    }
+
+    setDragOverTarget(null);
+  };
+
   const handleDrop = (
     event: DragEvent<HTMLElement>,
     destination: CharacterTier | null,
