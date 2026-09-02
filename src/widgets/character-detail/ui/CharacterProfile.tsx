@@ -495,7 +495,7 @@ export const CharacterProfile = ({
                   <VideoEmbed
                     src={featuredOfficialVideo.embedUrl}
                     title={getOfficialVideoEmbedTitle(character, featuredOfficialVideo)}
-                    loading="lazy"
+                    loading="eager"
                     referrerPolicy="strict-origin-when-cross-origin"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
