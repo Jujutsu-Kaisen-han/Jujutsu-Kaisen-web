@@ -217,6 +217,10 @@ const SectionHeader = styled.div`
   gap: 12px;
 `;
 
+const VideoPanel = styled(Panel)`
+  grid-column: 1 / -1;
+`;
+
 const VideoCount = styled.span`
   color: ${({ theme }) => theme.colors.secondary};
   font-size: 13px;
@@ -458,7 +462,7 @@ export const CharacterProfile = ({
           )}
         </Panel>
 
-        <Panel aria-labelledby="official-video-title">
+        <VideoPanel aria-labelledby="official-video-title">
           <SectionHeader>
             <SectionTitle id="official-video-title">공식 영상</SectionTitle>
             <VideoCount>{officialVideos.length}개</VideoCount>
@@ -504,7 +508,7 @@ export const CharacterProfile = ({
           ) : (
             <EmptyText>현재 연결된 공식 영상이 없습니다.</EmptyText>
           )}
-        </Panel>
+        </VideoPanel>
       </SectionGrid>
 
       <SectionGrid>
