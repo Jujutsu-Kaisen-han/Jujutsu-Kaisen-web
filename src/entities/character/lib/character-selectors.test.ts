@@ -123,6 +123,23 @@ test('filterAndSortCatalogCharacters combines filters, favorites, and tier sorti
   );
 });
 
+test('filterAndSortCatalogCharacters ignores favorite ids outside the catalog', () => {
+  const filteredCharacters = filterAndSortCatalogCharacters(
+    characters,
+    {
+      searchQuery: '',
+      trait: 'all',
+      officialCategory: 'all',
+      role: 'all',
+      sortBy: 'tier-desc',
+      favoritesOnly: true,
+    },
+    ['missing-character'],
+  );
+
+  assert.deepEqual(filteredCharacters, []);
+});
+
 test('filterAndSortCharacters supports Korean name ordering', () => {
   assert.deepEqual(
     filterAndSortCharacters(characters, {
