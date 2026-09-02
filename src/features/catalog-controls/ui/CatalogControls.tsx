@@ -72,7 +72,7 @@ const ActiveFilterHeader = styled.div`
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const ActiveFilterTitle = styled.span`
