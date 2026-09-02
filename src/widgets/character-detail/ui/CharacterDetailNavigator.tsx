@@ -11,7 +11,7 @@ import { Panel } from '@/shared/ui/Panel';
 
 const Navigator = styled(Panel).attrs({ as: 'nav' })`
   display: grid;
-  gap: 18px;
+  gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const Header = styled.div`
