@@ -264,6 +264,10 @@ const VideoFrame = styled.div`
   background:
     radial-gradient(circle at top, rgba(255, 122, 69, 0.16), transparent 40%),
     rgba(8, 15, 29, 0.9);
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    border-radius: ${({ theme }) => theme.radius.sm};
+  }
 `;
 
 const VideoEmbed = styled.iframe`
