@@ -61,7 +61,7 @@ const LinkGrid = styled.div`
 const NavCard = styled(Link)`
   display: grid;
   grid-template-columns: 82px minmax(0, 1fr);
-  gap: 14px;
+  gap: ${({ theme }) => theme.spacing.md};
   align-items: center;
   min-height: 112px;
   padding: 14px;
@@ -74,6 +74,11 @@ const NavCard = styled(Link)`
     transform: translateY(-2px);
     border-color: ${({ theme }) => theme.colors.borderStrong};
     background: rgba(15, 23, 42, 0.92);
+  }
+
+  &:focus-visible {
+    outline: 3px solid ${({ theme }) => theme.colors.primary};
+    outline-offset: 3px;
   }
 `;
 
