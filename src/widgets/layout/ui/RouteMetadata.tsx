@@ -3,7 +3,7 @@ import { useLocation, useMatch } from 'react-router-dom';
 import { useCharacterStore } from '@/entities/character/model/store/character-store';
 import { routePatterns, routes } from '@/shared/config/routes';
 
-const appTitle = '주술회전 팬 아카이브';
+const appTitle = '전투력 티어표';
 
 export const RouteMetadata = () => {
   const location = useLocation();
@@ -20,7 +20,7 @@ export const RouteMetadata = () => {
 
   const pageTitle = useMemo(() => {
     if (location.pathname === routes.home) {
-      return '팬텀 퍼레이드 티어표';
+      return '전투력 티어표 만들기';
     }
 
     if (location.pathname === routes.characters) {
