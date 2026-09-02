@@ -86,7 +86,7 @@ const ActiveFilterTitle = styled.span`
 const ActiveFilterList = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const ActiveFilterChip = styled.button`
