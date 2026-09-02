@@ -45,6 +45,9 @@ export const theme = {
     xl: '20px',
     '2xl': '28px',
   },
+  layout: {
+    contentMaxWidth: '1200px',
+  },
 } as const;
 
 export type AppTheme = typeof theme;
