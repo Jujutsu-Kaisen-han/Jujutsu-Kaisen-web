@@ -134,7 +134,7 @@ const Meta = styled.span`
 const Badges = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const Trait = styled.span`
