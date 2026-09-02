@@ -92,10 +92,10 @@ const ActiveFilterList = styled.div`
 const ActiveFilterChip = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing.sm};
   min-height: 36px;
   max-width: 100%;
-  padding: 0 12px;
+  padding: 0 ${({ theme }) => theme.spacing.md};
   border-radius: 999px;
   border: 1px solid ${({ theme }) => theme.colors.borderStrong};
   background: ${({ theme }) => theme.colors.primarySoft};
