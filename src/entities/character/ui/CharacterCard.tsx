@@ -32,19 +32,8 @@ const Poster = styled.div`
   width: 72px;
   height: 72px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top, rgba(255, 122, 69, 0.2), transparent 44%),
-    linear-gradient(180deg, rgba(8, 15, 29, 0.82) 0%, rgba(8, 15, 29, 1) 100%);
-
-  &::after {
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(180deg, rgba(8, 15, 29, 0.08) 0%, rgba(8, 15, 29, 0.7) 100%),
-      linear-gradient(180deg, rgba(8, 15, 29, 0) 0%, rgba(8, 15, 29, 0.92) 100%);
-    content: '';
-    pointer-events: none;
-  }
+  border-radius: ${({ theme }) => theme.radius.sm};
+  background: rgba(8, 15, 29, 0.8);
 `;
 
 const Frame = styled.div`
