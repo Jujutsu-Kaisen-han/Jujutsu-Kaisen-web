@@ -16,9 +16,9 @@ const buttonStyles = css<{ $variant: ButtonVariant }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing.sm};
   min-height: 46px;
-  padding: 12px 18px;
+  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.xl}`};
   border: 0;
   border-radius: 999px;
   text-decoration: none;
