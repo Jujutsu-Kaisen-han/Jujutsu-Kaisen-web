@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { CharacterSummary } from '../model/types/character.ts';
 import {
-  applyTierOverridesToCharacters,
   filterAndSortCatalogCharacters,
   filterAndSortCharacters,
   getCharacterNeighbors,
@@ -170,16 +169,18 @@ test('groupCharactersByTrait preserves requested order and omits empty groups', 
   );
 });
 
-test('tier overrides move characters between groups while preserving tier order', () => {
-  const movedCharacters = applyTierOverridesToCharacters([...characters], {
-    'gojo-hollow-purple': 'B',
-  });
+test('tier assignments move characters between groups while preserving tier order', () => {
   const tierGroups = rebuildTierGroups(
     [
       { tier: 'SS', headline: '최상위', characterIds: ['gojo-hollow-purple'] },
       { tier: 'S', headline: '우수', characterIds: ['nanami-ratio'] },
     ],
-    movedCharacters,
+    [...characters],
+    {
+      'gojo-hollow-purple': 'B',
+      'nanami-ratio': 'S',
+      'yuji-lightfooted': 'A',
+    },
   );
 
   assert.deepEqual(tierGroups.map((group) => [group.tier, group.characterIds]), [

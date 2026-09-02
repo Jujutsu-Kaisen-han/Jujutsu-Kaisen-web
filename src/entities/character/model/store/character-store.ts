@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { characterApi } from '@/entities/character/api/characterApi';
 import { isResourceNotFoundError } from '@/shared/api/http';
 import {
-  applyTierOverridesToCharacters,
   rebuildTierGroups,
 } from '@/entities/character/lib/character-selectors';
 import { tierOrder } from '@/entities/character/model/types/character';
@@ -27,7 +26,7 @@ interface CharacterStoreState {
   tiers: TierGroup[];
   sourceCharacters: CharacterSummary[];
   sourceTiers: TierGroup[];
-  tierOverrides: Record<string, CharacterTier>;
+  tierAssignments: Record<string, CharacterTier>;
   favoriteCharacterIds: string[];
   catalogStatus: AsyncStatus;
   catalogError: string | null;
@@ -42,7 +41,7 @@ interface CharacterStoreState {
   setRoleFilter: (role: CharacterRole | 'all') => void;
   setSortBy: (sortBy: CatalogSortOption) => void;
   setFilters: (filters: CharacterFilters) => void;
-  setCharacterTier: (characterId: string, tier: CharacterTier) => void;
+  setCharacterTier: (characterId: string, tier: CharacterTier | null) => void;
   resetTierAssignments: () => void;
   toggleFavoriteCharacter: (characterId: string) => void;
   resetFilters: () => void;
@@ -58,7 +57,7 @@ export const defaultCharacterFilters: CharacterFilters = {
 };
 
 const favoriteStorageKey = 'jujutsu-fan-archive:favorites';
-const tierOverridesStorageKey = 'jujutsu-fan-archive:tier-overrides';
+const tierAssignmentsStorageKey = 'jujutsu-fan-archive:tier-assignments';
 
 const getLocalStorage = (): Storage | null => {
   if (typeof window === 'undefined') {
@@ -112,21 +111,21 @@ const writeStoredFavoriteCharacterIds = (favoriteCharacterIds: string[]) => {
   }
 };
 
-const normalizeTierOverrides = (value: unknown): Record<string, CharacterTier> => {
+const normalizeTierAssignments = (value: unknown): Record<string, CharacterTier> => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     return {};
   }
 
-  return Object.entries(value).reduce<Record<string, CharacterTier>>((overrides, [characterId, tier]) => {
+  return Object.entries(value).reduce<Record<string, CharacterTier>>((assignments, [characterId, tier]) => {
     if (typeof tier === 'string' && tierOrder.includes(tier as CharacterTier)) {
-      overrides[characterId] = tier as CharacterTier;
+      assignments[characterId] = tier as CharacterTier;
     }
 
-    return overrides;
+    return assignments;
   }, {});
 };
 
-const readStoredTierOverrides = (): Record<string, CharacterTier> => {
+const readStoredTierAssignments = (): Record<string, CharacterTier> => {
   const storage = getLocalStorage();
 
   if (!storage) {
@@ -134,13 +133,15 @@ const readStoredTierOverrides = (): Record<string, CharacterTier> => {
   }
 
   try {
-    return normalizeTierOverrides(JSON.parse(storage.getItem(tierOverridesStorageKey) ?? '{}'));
+    const storedValue = storage.getItem(tierAssignmentsStorageKey) ?? '{}';
+
+    return normalizeTierAssignments(JSON.parse(storedValue));
   } catch {
     return {};
   }
 };
 
-const writeStoredTierOverrides = (tierOverrides: Record<string, CharacterTier>) => {
+const writeStoredTierAssignments = (tierAssignments: Record<string, CharacterTier>) => {
   const storage = getLocalStorage();
 
   if (!storage) {
@@ -148,7 +149,7 @@ const writeStoredTierOverrides = (tierOverrides: Record<string, CharacterTier>) 
   }
 
   try {
-    storage.setItem(tierOverridesStorageKey, JSON.stringify(tierOverrides));
+    storage.setItem(tierAssignmentsStorageKey, JSON.stringify(tierAssignments));
   } catch {
     // Ignore storage failures so custom tiers remain an optional enhancement.
   }
@@ -163,28 +164,16 @@ const pruneFavoriteCharacterIds = (
   return favoriteCharacterIds.filter((characterId) => knownCharacterIds.has(characterId));
 };
 
-const pruneTierOverrides = (
-  tierOverrides: Record<string, CharacterTier>,
+const pruneTierAssignments = (
+  tierAssignments: Record<string, CharacterTier>,
   characters: CharacterSummary[],
 ): Record<string, CharacterTier> => {
   const knownCharacterIds = new Set(characters.map((character) => character.id));
 
   return Object.fromEntries(
-    Object.entries(tierOverrides).filter(([characterId]) => knownCharacterIds.has(characterId)),
+    Object.entries(tierAssignments).filter(([characterId]) => knownCharacterIds.has(characterId)),
   );
 };
-
-const applyTierOverridesToDetails = (
-  characterDetails: Record<string, CharacterDetail>,
-  tierOverrides: Record<string, CharacterTier>,
-): Record<string, CharacterDetail> => Object.fromEntries(
-  Object.entries(characterDetails).map(([characterId, character]) => [
-    characterId,
-    tierOverrides[characterId]
-      ? { ...character, tier: tierOverrides[characterId] }
-      : character,
-  ]),
-);
 
 export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
   characters: [],
@@ -192,7 +181,7 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
   tiers: [],
   sourceCharacters: [],
   sourceTiers: [],
-  tierOverrides: readStoredTierOverrides(),
+  tierAssignments: readStoredTierAssignments(),
   favoriteCharacterIds: readStoredFavoriteCharacterIds(),
   catalogStatus: 'idle',
   catalogError: null,
@@ -221,25 +210,23 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
         characterApi.getCharacters(),
         characterApi.getTiers(),
       ]);
-      const tierOverrides = pruneTierOverrides(get().tierOverrides, characters);
-      const nextCharacters = applyTierOverridesToCharacters(characters, tierOverrides);
+      const tierAssignments = pruneTierAssignments(get().tierAssignments, characters);
       const favoriteCharacterIds = pruneFavoriteCharacterIds(get().favoriteCharacterIds, characters);
 
       if (favoriteCharacterIds.length !== get().favoriteCharacterIds.length) {
         writeStoredFavoriteCharacterIds(favoriteCharacterIds);
       }
 
-      if (Object.keys(tierOverrides).length !== Object.keys(get().tierOverrides).length) {
-        writeStoredTierOverrides(tierOverrides);
+      if (Object.keys(tierAssignments).length !== Object.keys(get().tierAssignments).length) {
+        writeStoredTierAssignments(tierAssignments);
       }
 
       set({
-        characters: nextCharacters,
-        tiers: rebuildTierGroups(tiers, nextCharacters),
+        characters,
+        tiers: rebuildTierGroups(tiers, characters, tierAssignments),
         sourceCharacters: characters,
         sourceTiers: tiers,
-        characterDetails: applyTierOverridesToDetails(get().characterDetails, tierOverrides),
-        tierOverrides,
+        tierAssignments,
         favoriteCharacterIds,
         catalogStatus: 'success',
         catalogError: null,
@@ -382,60 +369,42 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
   setCharacterTier: (characterId, tier) => {
     set((state) => {
       const character = state.characters.find((item) => item.id === characterId);
+      const currentTierAssignment = state.tierAssignments[characterId];
 
-      if (!character || character.tier === tier) {
+      if (!character || (tier === null ? !currentTierAssignment : currentTierAssignment === tier)) {
         return state;
       }
 
-      const tierOverrides = {
-        ...state.tierOverrides,
-        [characterId]: tier,
+      const tierAssignments: Record<string, CharacterTier> = {
+        ...state.tierAssignments,
       };
-      const characters = state.characters.map((item) => (
-        item.id === characterId ? { ...item, tier } : item
-      ));
-      const characterDetails = state.characterDetails[characterId]
-        ? {
-            ...state.characterDetails,
-            [characterId]: { ...state.characterDetails[characterId], tier },
-          }
-        : state.characterDetails;
 
-      writeStoredTierOverrides(tierOverrides);
+      if (tier === null) {
+        delete tierAssignments[characterId];
+      } else {
+        tierAssignments[characterId] = tier;
+      }
+
+      writeStoredTierAssignments(tierAssignments);
 
       return {
-        characters,
-        tiers: rebuildTierGroups(state.tiers, characters),
-        characterDetails,
-        tierOverrides,
+        tiers: rebuildTierGroups(state.tiers, state.characters, tierAssignments),
+        tierAssignments,
       };
     });
   },
 
   resetTierAssignments: () => {
     set((state) => {
-      if (Object.keys(state.tierOverrides).length === 0) {
+      if (Object.keys(state.tierAssignments).length === 0) {
         return state;
       }
 
-      writeStoredTierOverrides({});
-
-      const characterDetails = Object.fromEntries(
-        Object.entries(state.characterDetails).map(([characterId, character]) => {
-          const sourceCharacter = state.sourceCharacters.find((item) => item.id === characterId);
-
-          return [
-            characterId,
-            sourceCharacter ? { ...character, tier: sourceCharacter.tier } : character,
-          ];
-        }),
-      );
+      writeStoredTierAssignments({});
 
       return {
-        characters: state.sourceCharacters,
-        tiers: state.sourceTiers,
-        characterDetails,
-        tierOverrides: {},
+        tiers: rebuildTierGroups(state.sourceTiers, state.sourceCharacters, {}),
+        tierAssignments: {},
       };
     });
   },

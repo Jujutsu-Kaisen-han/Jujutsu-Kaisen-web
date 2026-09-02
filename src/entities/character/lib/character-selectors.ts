@@ -98,18 +98,10 @@ const matchesCharacterSearch = (character: CharacterSummary, rawSearchQuery: str
 
 export const getTierRank = (tier: CharacterTier): number => tierRankMap[tier];
 
-export const applyTierOverridesToCharacters = (
-  characters: CharacterSummary[],
-  tierOverrides: Record<string, CharacterTier>,
-): CharacterSummary[] => characters.map((character) => {
-  const tierOverride = tierOverrides[character.id];
-
-  return tierOverride ? { ...character, tier: tierOverride } : character;
-});
-
 export const rebuildTierGroups = (
   tiers: TierGroup[],
   characters: CharacterSummary[],
+  tierAssignments: Record<string, CharacterTier>,
 ): TierGroup[] => {
   const tierGroups = new Map(tiers.map((tierGroup) => [tierGroup.tier, tierGroup]));
 
@@ -117,7 +109,7 @@ export const rebuildTierGroups = (
     tier,
     headline: tierGroups.get(tier)?.headline ?? `${tier} 티어 캐릭터`,
     characterIds: characters
-      .filter((character) => character.tier === tier)
+      .filter((character) => tierAssignments[character.id] === tier)
       .map((character) => character.id),
   }));
 };
