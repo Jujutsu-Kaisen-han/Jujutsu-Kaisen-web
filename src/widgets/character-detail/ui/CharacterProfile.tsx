@@ -248,7 +248,7 @@ const SkillDescription = styled.p`
 
 const VideoGrid = styled.div`
   display: grid;
-  gap: 16px;
+  gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const VideoCard = styled.div`
