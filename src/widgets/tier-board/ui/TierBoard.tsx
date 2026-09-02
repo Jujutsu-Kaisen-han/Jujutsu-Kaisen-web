@@ -161,7 +161,7 @@ const UnassignedHeader = styled.div`
 
 const UnassignedTitleGroup = styled.div`
   display: grid;
-  gap: 6px;
+  gap: ${({ theme }) => theme.spacing.xs};
 `;
 
 const UnassignedTitle = styled.h2`
