@@ -117,7 +117,7 @@ const VisualBand = styled(Panel)`
 
 const VisualCopy = styled.div`
   display: grid;
-  gap: 14px;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const SectionEyebrow = styled.span`
