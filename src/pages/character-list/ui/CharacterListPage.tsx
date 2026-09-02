@@ -69,9 +69,9 @@ export const CharacterListPage = () => {
         <LoadingState label="캐릭터 목록을 정리하는 중입니다." />
       ) : null}
 
-      {catalogStatus === 'error' && characters.length === 0 ? (
+      {catalogStatus === 'error' ? (
         <ErrorState
-          title="캐릭터 목록을 불러오지 못했어요."
+          title={characters.length > 0 ? '최신 캐릭터 목록을 갱신하지 못했어요.' : '캐릭터 목록을 불러오지 못했어요.'}
           description={catalogError ?? '잠시 후 다시 시도해주세요.'}
           actionLabel="다시 시도"
           onAction={() => {

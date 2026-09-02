@@ -44,9 +44,9 @@ export const TierListPage = () => {
         <LoadingState label="티어표 데이터를 불러오는 중입니다." />
       ) : null}
 
-      {catalogStatus === 'error' && characters.length === 0 ? (
+      {catalogStatus === 'error' ? (
         <ErrorState
-          title="티어표를 불러오지 못했어요."
+          title={characters.length > 0 ? '최신 티어표를 갱신하지 못했어요.' : '티어표를 불러오지 못했어요.'}
           description={catalogError ?? '잠시 후 다시 시도해주세요.'}
           actionLabel="다시 시도"
           onAction={() => {
