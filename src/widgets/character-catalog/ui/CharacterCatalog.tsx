@@ -29,7 +29,7 @@ const ResultBar = styled.div`
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
-  gap: 18px;
+  gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const SectionNav = styled.nav`
