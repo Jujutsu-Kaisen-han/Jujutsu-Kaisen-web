@@ -21,7 +21,10 @@ export const TierListPage = () => {
   const tiers = useCharacterStore((state) => state.tiers);
   const catalogStatus = useCharacterStore((state) => state.catalogStatus);
   const catalogError = useCharacterStore((state) => state.catalogError);
+  const tierOverrides = useCharacterStore((state) => state.tierOverrides);
   const loadCatalog = useCharacterStore((state) => state.loadCatalog);
+  const setCharacterTier = useCharacterStore((state) => state.setCharacterTier);
+  const resetTierAssignments = useCharacterStore((state) => state.resetTierAssignments);
 
   const sections = groupCharactersByTier(tiers, characters);
 
@@ -55,7 +58,14 @@ export const TierListPage = () => {
         />
       ) : null}
 
-      {characters.length > 0 ? <TierBoard sections={sections} /> : null}
+      {characters.length > 0 ? (
+        <TierBoard
+          sections={sections}
+          hasCustomTierAssignments={Object.keys(tierOverrides).length > 0}
+          onTierChange={setCharacterTier}
+          onResetTierAssignments={resetTierAssignments}
+        />
+      ) : null}
     </SiteShell>
   );
 };
