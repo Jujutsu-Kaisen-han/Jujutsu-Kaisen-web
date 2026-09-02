@@ -35,7 +35,7 @@ const Grid = styled.div`
 const SectionNav = styled.nav`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const SectionLink = styled.a`
