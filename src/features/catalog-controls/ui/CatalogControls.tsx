@@ -46,7 +46,7 @@ const Footer = styled.div`
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const Actions = styled.div`
