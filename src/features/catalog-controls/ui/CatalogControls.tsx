@@ -63,7 +63,7 @@ const Hint = styled.p`
 
 const ActiveFilterPanel = styled.div`
   display: grid;
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing.sm};
   padding-top: 2px;
 `;
 
