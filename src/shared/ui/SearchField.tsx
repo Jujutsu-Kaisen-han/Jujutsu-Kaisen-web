@@ -37,9 +37,13 @@ interface SearchFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
 }
 
-export const SearchField = ({ label, ...props }: SearchFieldProps) => (
-  <Field>
-    <Label>{label}</Label>
-    <Input {...props} />
-  </Field>
-);
+export const SearchField = ({ label, id, ...props }: SearchFieldProps) => {
+  const inputId = id ?? 'search-field';
+
+  return (
+    <Field>
+      <Label htmlFor={inputId}>{label}</Label>
+      <Input id={inputId} {...props} />
+    </Field>
+  );
+};
