@@ -142,6 +142,7 @@ export const CharacterCard = ({
   return (
     <Card
       to={detailTo}
+      title={`${character.name} 상세 보기`}
       aria-label={`${accessibleLabel} 상세 보기${isFavorite ? ', 즐겨찾기됨' : ''}`}
     >
       <Poster>
