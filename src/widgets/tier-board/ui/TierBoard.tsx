@@ -86,7 +86,7 @@ const DropHint = styled.p`
   min-height: 120px;
   place-items: center;
   margin: 0;
-  padding: 24px;
+  padding: ${({ theme }) => theme.spacing['2xl']};
   border: 1px dashed ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius.sm};
   color: ${({ theme }) => theme.colors.muted};
