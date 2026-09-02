@@ -1,10 +1,6 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import {
-  combatTypeLabels,
-  officialCategoryLabels,
-  roleLabels,
-  traitLabels,
   type CharacterTier,
   type CharacterSummary,
 } from '@/entities/character/model/types/character';
@@ -155,25 +151,6 @@ const Title = styled.p`
   font-size: 14px;
 `;
 
-const Meta = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-`;
-
-const Chip = styled.span`
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  padding: 0 12px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.82);
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  color: ${({ theme }) => theme.colors.text};
-  font-size: 13px;
-  font-weight: 600;
-`;
-
 interface CharacterCardProps {
   character: CharacterSummary;
   detailLinkSearch?: string;
@@ -232,14 +209,6 @@ export const CharacterCard = ({
           <Name>{character.name}</Name>
           <Title>{character.title}</Title>
         </Header>
-        <Meta>
-          <Chip>{traitLabels[character.trait]}</Chip>
-          <Chip>{combatTypeLabels[character.combatType]}</Chip>
-          <Chip>{roleLabels[character.role]}</Chip>
-          <Chip>{officialCategoryLabels[character.officialCategory]}</Chip>
-          <Chip>{character.rarity}</Chip>
-          <Chip>{character.releaseType}</Chip>
-        </Meta>
       </Body>
     </Card>
   );
