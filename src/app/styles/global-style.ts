@@ -73,6 +73,17 @@ export const GlobalStyle = createGlobalStyle`
     background: rgba(255, 122, 69, 0.3);
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   ::-webkit-scrollbar {
     width: 12px;
   }
