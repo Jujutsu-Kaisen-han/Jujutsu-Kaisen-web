@@ -349,14 +349,14 @@ export const TierBoard = ({
       ))}
       <UnassignedPanel
         $isDropTarget={dragOverTarget === 'unassigned'}
-        aria-label="미배치 캐릭터 이동 구역"
+        aria-labelledby="unassigned-characters-title"
         onDragOver={(event) => handleDragOver(event, 'unassigned')}
         onDragLeave={handleDragLeave}
         onDrop={(event) => handleDrop(event, null)}
       >
         <UnassignedHeader>
           <UnassignedTitleGroup>
-            <UnassignedTitle>미배치 캐릭터</UnassignedTitle>
+            <UnassignedTitle id="unassigned-characters-title">미배치 캐릭터</UnassignedTitle>
             <UnassignedDescription>
               아직 등급을 정하지 않은 캐릭터입니다. 카드를 원하는 등급으로 옮겨보세요.
             </UnassignedDescription>
