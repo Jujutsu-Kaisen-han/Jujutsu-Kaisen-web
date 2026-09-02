@@ -164,6 +164,8 @@ const CharacterNavLink = ({ direction, character, detailLinkSearch }: CharacterN
   const detailTo = detailLinkSearch
     ? { pathname: detailPath, search: `?${detailLinkSearch}` }
     : detailPath;
+  const hasVariant = character.variantName.trim().length > 0 && character.variantName !== '기본형';
+  const meta = hasVariant ? `${character.variantName} · ${character.title}` : character.title;
 
   return (
     <NavCard to={detailTo} aria-label={`${direction}: ${character.name}`}>
@@ -179,7 +181,7 @@ const CharacterNavLink = ({ direction, character, detailLinkSearch }: CharacterN
       <Copy>
         <Direction>{direction}</Direction>
         <Name>{character.name}</Name>
-        <Meta>{character.variantName} · {character.title}</Meta>
+        <Meta>{meta}</Meta>
         <Badges>
           <TierBadge tier={character.tier} />
           <Trait>{traitLabels[character.trait]}</Trait>
