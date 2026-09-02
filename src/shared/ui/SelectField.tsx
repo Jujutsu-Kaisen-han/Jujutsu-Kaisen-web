@@ -41,17 +41,22 @@ const Select = styled.select`
 
 export const SelectField = ({
   label,
+  id,
   options,
   ...props
-}: SelectFieldProps) => (
-  <Field>
-    <Label>{label}</Label>
-    <Select {...props}>
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </Select>
-  </Field>
-);
+}: SelectFieldProps) => {
+  const selectId = id ?? label.replace(/\s+/gu, '-');
+
+  return (
+    <Field>
+      <Label htmlFor={selectId}>{label}</Label>
+      <Select id={selectId} {...props}>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </Select>
+    </Field>
+  );
+};
