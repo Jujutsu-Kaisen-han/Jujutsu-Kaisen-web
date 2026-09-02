@@ -331,7 +331,7 @@ export const TierBoard = ({
           $isDropTarget={dragOverTarget === section.tier}
           aria-label={`${section.tier} 등급 배치 구역`}
           onDragOver={(event) => handleDragOver(event, section.tier)}
-          onDragLeave={() => setDragOverTarget(null)}
+          onDragLeave={handleDragLeave}
           onDrop={(event) => handleDrop(event, section.tier)}
         >
           <Side>
@@ -351,7 +351,7 @@ export const TierBoard = ({
         $isDropTarget={dragOverTarget === 'unassigned'}
         aria-label="미배치 캐릭터 이동 구역"
         onDragOver={(event) => handleDragOver(event, 'unassigned')}
-        onDragLeave={() => setDragOverTarget(null)}
+        onDragLeave={handleDragLeave}
         onDrop={(event) => handleDrop(event, null)}
       >
         <UnassignedHeader>
