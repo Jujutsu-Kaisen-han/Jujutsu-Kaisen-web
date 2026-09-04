@@ -10,6 +10,7 @@ import { CharacterArtwork } from '@/entities/character/ui/CharacterArtwork';
 import { TierBadge } from '@/entities/character/ui/TierBadge';
 import { Button } from '@/shared/ui/Button';
 import { Panel } from '@/shared/ui/Panel';
+import { characterAsset } from '@/shared/config/assets';
 
 const Layout = styled.div`
   display: grid;
@@ -26,21 +27,7 @@ const ShowcaseStage = styled.div`
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: ${({ theme }) => theme.radius.md};
-  background:
-    radial-gradient(circle at top, rgba(255, 122, 69, 0.18), transparent 42%),
-    linear-gradient(180deg, rgba(8, 15, 29, 0.82) 0%, rgba(8, 15, 29, 1) 100%);
-`;
-
-const ShowcaseBackdrop = styled(CharacterArtwork)`
-  position: absolute;
-  inset: -10%;
-  width: calc(100% + 20%);
-  height: calc(100% + 20%);
-  object-fit: cover;
-  object-position: center top;
-  filter: blur(24px);
-  opacity: 0.32;
-  transform: scale(1.06);
+  background: ${({ theme }) => theme.colors.backgroundElevated};
 `;
 
 const ShowcaseFrame = styled.div`
@@ -85,9 +72,7 @@ const Poster = styled(CharacterArtwork)`
   aspect-ratio: 15 / 22;
   object-fit: contain;
   object-position: center bottom;
-  background:
-    radial-gradient(circle at top, rgba(255, 122, 69, 0.16), transparent 38%),
-    linear-gradient(180deg, rgba(8, 15, 29, 0.82) 0%, rgba(8, 15, 29, 1) 100%);
+  background: ${({ theme }) => theme.colors.backgroundElevated};
 `;
 
 const Summary = styled(Panel)`
@@ -261,9 +246,7 @@ const VideoFrame = styled.div`
   border-radius: ${({ theme }) => theme.radius.md};
   border: 1px solid ${({ theme }) => theme.colors.border};
   aspect-ratio: 16 / 9;
-  background:
-    radial-gradient(circle at top, rgba(255, 122, 69, 0.16), transparent 40%),
-    rgba(8, 15, 29, 0.9);
+  background: ${({ theme }) => theme.colors.backgroundElevated};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     border-radius: ${({ theme }) => theme.radius.sm};
@@ -378,12 +361,6 @@ export const CharacterProfile = ({
     <Layout>
       <ShowcasePanel>
         <ShowcaseStage>
-          <ShowcaseBackdrop
-            src={character.variantImage}
-            fallbackSrc={character.image}
-            alt=""
-            aria-hidden="true"
-          />
           <ShowcaseFrame>
             <Showcase
               src={character.variantImage}
@@ -398,7 +375,7 @@ export const CharacterProfile = ({
         <PosterPanel>
           <Poster
             src={character.image}
-            fallbackSrc="/characters/placeholder-character.svg"
+            fallbackSrc={characterAsset('placeholder-character.svg')}
             alt={character.name}
           />
         </PosterPanel>

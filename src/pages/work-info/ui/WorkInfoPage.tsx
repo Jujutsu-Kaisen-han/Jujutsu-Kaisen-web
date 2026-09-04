@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { ButtonLink } from '@/shared/ui/Button';
+import { characterAsset } from '@/shared/config/assets';
 import { PageIntro } from '@/shared/ui/PageIntro';
 import { Panel } from '@/shared/ui/Panel';
 import { StatPill } from '@/shared/ui/StatPill';
@@ -7,11 +8,11 @@ import { routes } from '@/shared/config/routes';
 import { SiteShell } from '@/widgets/layout/ui/SiteShell';
 
 const heroCharacters = [
-  { name: '이타도리 유지', image: '/characters/yuji.png' },
-  { name: '후시구로 메구미', image: '/characters/megumi.png' },
-  { name: '쿠기사키 노바라', image: '/characters/nobara.png' },
-  { name: '고죠 사토루', image: '/characters/gojo.png' },
-  { name: '료멘 스쿠나', image: '/characters/sukuna.png' },
+  { name: '이타도리 유지', image: characterAsset('yuji.png') },
+  { name: '후시구로 메구미', image: characterAsset('megumi.png') },
+  { name: '쿠기사키 노바라', image: characterAsset('nobara.png') },
+  { name: '고죠 사토루', image: characterAsset('gojo.png') },
+  { name: '료멘 스쿠나', image: characterAsset('sukuna.png') },
 ] as const;
 
 const overviewStats = [
@@ -157,9 +158,7 @@ const CharacterFrame = styled.div`
   overflow: hidden;
   border-radius: ${({ theme }) => theme.radius.sm};
   border: 1px solid ${({ theme }) => theme.colors.border};
-  background:
-    radial-gradient(circle at top, rgba(103, 232, 249, 0.16), transparent 38%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.88), rgba(8, 15, 29, 0.96));
+  background: ${({ theme }) => theme.colors.backgroundElevated};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     min-height: clamp(150px, 42vw, 180px);

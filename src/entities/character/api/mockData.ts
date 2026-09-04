@@ -5,6 +5,7 @@ import {
   type CharacterSummary,
   type TierGroup,
 } from '@/entities/character/model/types/character';
+import { characterAsset } from '@/shared/config/assets';
 
 // Variant naming and relative mock tiering were seeded from current Phantom Parade
 // reroll/meta references checked on April 28, 2026. Base character art is from
@@ -50,67 +51,67 @@ type BaseCharacterKey =
   | 'eiji'
   | 'ijichi';
 
-const placeholderCharacterImage = '/characters/placeholder-character.svg';
+const placeholderCharacterImage = characterAsset('placeholder-character.svg');
 
 const baseCharacters = {
   gojo: {
     baseName: '고죠 사토루',
-    image: '/characters/gojo.png',
+    image: characterAsset('gojo.png'),
     officialCategory: 'sorcerer',
   },
   sukuna: {
     baseName: '료멘 스쿠나',
-    image: '/characters/sukuna.png',
+    image: characterAsset('sukuna.png'),
     officialCategory: 'curse-side',
   },
   yuta: {
     baseName: '옷코츠 유타',
-    image: '/characters/yuta.png',
+    image: characterAsset('yuta.png'),
     officialCategory: 'tokyo-school',
   },
   toji: {
     baseName: '후시구로 토우지',
-    image: '/characters/toji.png',
+    image: characterAsset('toji.png'),
     officialCategory: 'curse-side',
   },
   mahito: {
     baseName: '마히토',
-    image: '/characters/mahito.png',
+    image: characterAsset('mahito.png'),
     officialCategory: 'curse-side',
   },
   yuji: {
     baseName: '이타도리 유지',
-    image: '/characters/yuji.png',
+    image: characterAsset('yuji.png'),
     officialCategory: 'tokyo-school',
   },
   megumi: {
     baseName: '후시구로 메구미',
-    image: '/characters/megumi.png',
+    image: characterAsset('megumi.png'),
     officialCategory: 'tokyo-school',
   },
   nobara: {
     baseName: '쿠기사키 노바라',
-    image: '/characters/nobara.png',
+    image: characterAsset('nobara.png'),
     officialCategory: 'tokyo-school',
   },
   nanami: {
     baseName: '나나미 켄토',
-    image: '/characters/nanami.png',
+    image: characterAsset('nanami.png'),
     officialCategory: 'sorcerer',
   },
   maki: {
     baseName: '젠인 마키',
-    image: '/characters/maki.png',
+    image: characterAsset('maki.png'),
     officialCategory: 'tokyo-school',
   },
   toge: {
     baseName: '이누마키 토게',
-    image: '/characters/toge.png',
+    image: characterAsset('toge.png'),
     officialCategory: 'tokyo-school',
   },
   panda: {
     baseName: '판다',
-    image: '/characters/panda.png',
+    image: characterAsset('panda.png'),
     officialCategory: 'tokyo-school',
   },
   todo: {

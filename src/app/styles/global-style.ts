@@ -23,10 +23,7 @@ export const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
     min-height: 100vh;
-    background:
-      radial-gradient(circle at top, rgba(255, 122, 69, 0.22), transparent 32%),
-      radial-gradient(circle at 85% 20%, rgba(103, 232, 249, 0.14), transparent 28%),
-      linear-gradient(180deg, #040612 0%, #08101f 48%, #040813 100%);
+    background: ${({ theme }) => theme.colors.background};
     color: ${({ theme }) => theme.colors.text};
     letter-spacing: 0;
   }

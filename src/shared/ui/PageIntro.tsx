@@ -6,11 +6,9 @@ const Root = styled.section`
   gap: ${({ theme }) => theme.spacing['2xl']};
   padding: ${({ theme }) => theme.spacing['2xl']};
   border-radius: ${({ theme }) => theme.radius.lg};
-  background:
-    linear-gradient(145deg, rgba(8, 15, 29, 0.96), rgba(30, 41, 59, 0.7)),
-    radial-gradient(circle at top right, rgba(255, 122, 69, 0.12), transparent 36%);
+  background: ${({ theme }) => theme.colors.surfaceStrong};
   border: 1px solid ${({ theme }) => theme.colors.border};
-  box-shadow: ${({ theme }) => theme.shadows.card};
+  box-shadow: none;
 `;
 
 const Eyebrow = styled.span`

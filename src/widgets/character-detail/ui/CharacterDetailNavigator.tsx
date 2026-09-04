@@ -92,9 +92,7 @@ const ImageFrame = styled.div`
   overflow: hidden;
   border-radius: ${({ theme }) => theme.radius.sm};
   border: 1px solid ${({ theme }) => theme.colors.border};
-  background:
-    radial-gradient(circle at top, rgba(255, 122, 69, 0.16), transparent 42%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(8, 15, 29, 0.98));
+  background: ${({ theme }) => theme.colors.backgroundElevated};
 `;
 
 const Image = styled(CharacterArtwork)`

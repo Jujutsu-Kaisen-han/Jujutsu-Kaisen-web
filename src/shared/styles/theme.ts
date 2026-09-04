@@ -1,10 +1,10 @@
 export const theme = {
   colors: {
-    background: '#040612',
-    backgroundElevated: '#08101f',
-    surface: 'rgba(15, 23, 42, 0.82)',
-    surfaceStrong: 'rgba(11, 18, 32, 0.96)',
-    surfaceSoft: 'rgba(30, 41, 59, 0.52)',
+    background: '#0f131a',
+    backgroundElevated: '#151b24',
+    surface: '#171d27',
+    surfaceStrong: '#1c232d',
+    surfaceSoft: '#222b36',
     border: 'rgba(148, 163, 184, 0.18)',
     borderStrong: 'rgba(255, 122, 69, 0.4)',
     primary: '#ff7a45',
@@ -22,8 +22,8 @@ export const theme = {
     tierC: '#94a3b8',
   },
   shadows: {
-    card: '0 30px 80px rgba(15, 23, 42, 0.45)',
-    glow: '0 24px 60px rgba(255, 122, 69, 0.18)',
+    card: '0 6px 18px rgba(0, 0, 0, 0.16)',
+    glow: '0 8px 22px rgba(0, 0, 0, 0.2)',
   },
   radius: {
     lg: '32px',

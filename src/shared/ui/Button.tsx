@@ -28,9 +28,9 @@ const buttonStyles = css<{ $variant: ButtonVariant }>`
 
   ${({ $variant, theme }) => $variant === 'primary'
     ? css`
-        background: linear-gradient(135deg, ${theme.colors.primary}, #f97316);
+        background: ${theme.colors.primary};
         color: #140b07;
-        box-shadow: ${theme.shadows.glow};
+        box-shadow: none;
       `
     : css`
         background: rgba(15, 23, 42, 0.82);
