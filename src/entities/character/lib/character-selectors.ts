@@ -3,6 +3,7 @@ import type {
   CharacterTrait,
   CharacterSummary,
   CharacterTier,
+  TierCharacterOrder,
   TierGroup,
 } from '@/entities/character/model/types/character';
 import { tierOrder } from '../model/types/character.ts';
@@ -102,16 +103,39 @@ export const rebuildTierGroups = (
   tiers: TierGroup[],
   characters: CharacterSummary[],
   tierAssignments: Record<string, CharacterTier>,
+  tierCharacterOrder?: TierCharacterOrder,
 ): TierGroup[] => {
   const tierGroups = new Map(tiers.map((tierGroup) => [tierGroup.tier, tierGroup]));
 
   return tierOrder.map((tier) => ({
     tier,
     headline: tierGroups.get(tier)?.headline ?? `${tier} 티어 캐릭터`,
-    characterIds: characters
-      .filter((character) => tierAssignments[character.id] === tier)
-      .map((character) => character.id),
+    characterIds: [
+      ...(tierCharacterOrder?.[tier] ?? [])
+        .filter((characterId) => tierAssignments[characterId] === tier),
+      ...characters
+        .filter((character) => tierAssignments[character.id] === tier)
+        .map((character) => character.id)
+        .filter((characterId) => !tierCharacterOrder?.[tier]?.includes(characterId)),
+    ],
   }));
+};
+
+export const updateTierCharacterOrder = (
+  tierCharacterOrder: TierCharacterOrder,
+  characterId: string,
+  tier: CharacterTier | null,
+): TierCharacterOrder => {
+  const nextOrder = tierOrder.reduce<TierCharacterOrder>((order, currentTier) => ({
+    ...order,
+    [currentTier]: tierCharacterOrder[currentTier].filter((id) => id !== characterId),
+  }), {} as TierCharacterOrder);
+
+  if (tier) {
+    nextOrder[tier] = [...nextOrder[tier], characterId];
+  }
+
+  return nextOrder;
 };
 
 export const updateTierAssignments = (

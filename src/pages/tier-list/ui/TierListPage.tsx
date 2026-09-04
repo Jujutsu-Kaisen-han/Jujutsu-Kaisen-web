@@ -24,6 +24,7 @@ export const TierListPage = () => {
   const tierAssignments = useCharacterStore((state) => state.tierAssignments);
   const loadCatalog = useCharacterStore((state) => state.loadCatalog);
   const setCharacterTier = useCharacterStore((state) => state.setCharacterTier);
+  const moveCharacterWithinTier = useCharacterStore((state) => state.moveCharacterWithinTier);
   const resetTierAssignments = useCharacterStore((state) => state.resetTierAssignments);
 
   const sections = groupCharactersByTier(tiers, characters);
@@ -71,6 +72,7 @@ export const TierListPage = () => {
           unassignedCharacters={unassignedCharacters}
           hasCustomTierAssignments={Object.keys(tierAssignments).length > 0}
           onTierChange={setCharacterTier}
+          onMoveCharacter={moveCharacterWithinTier}
           onResetTierAssignments={resetTierAssignments}
         />
       ) : null}

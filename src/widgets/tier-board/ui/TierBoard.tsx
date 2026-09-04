@@ -132,6 +132,26 @@ const PlacementSelect = styled.select`
   }
 `;
 
+const PlacementActions = styled.div`
+  display: flex;
+  gap: 6px;
+`;
+
+const MoveButton = styled.button`
+  flex: 1;
+  min-height: 34px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  background: ${({ theme }) => theme.colors.input};
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 16px;
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+`;
+
 const EditorNotice = styled.p`
   margin: -4px 0 0;
   padding: 0 4px;
@@ -206,6 +226,7 @@ interface TierBoardProps {
   unassignedCharacters: CharacterSummary[];
   hasCustomTierAssignments: boolean;
   onTierChange: (characterId: string, tier: CharacterTier | null) => void;
+  onMoveCharacter: (characterId: string, direction: 'up' | 'down') => void;
   onResetTierAssignments: () => void;
 }
 
@@ -214,6 +235,7 @@ export const TierBoard = ({
   unassignedCharacters,
   hasCustomTierAssignments,
   onTierChange,
+  onMoveCharacter,
   onResetTierAssignments,
 }: TierBoardProps) => {
   const [draggedCharacterId, setDraggedCharacterId] = useState<string | null>(null);
@@ -284,7 +306,12 @@ export const TierBoard = ({
     setDragStatus('모든 캐릭터를 미배치 영역으로 되돌렸습니다.');
   };
 
-  const renderDraggableCard = (character: CharacterSummary, displayTier?: CharacterTier) => (
+  const renderDraggableCard = (
+    character: CharacterSummary,
+    displayTier?: CharacterTier,
+    position?: number,
+    totalInTier?: number,
+  ) => (
     <DragItem
       key={character.id}
       draggable
@@ -310,6 +337,26 @@ export const TierBoard = ({
             </option>
           ))}
         </PlacementSelect>
+        {displayTier && position !== undefined && totalInTier !== undefined ? (
+          <PlacementActions aria-label={`${character.name} 티어 내 순서 변경`}>
+            <MoveButton
+              type="button"
+              aria-label={`${character.name} 위로 이동`}
+              disabled={position === 0}
+              onClick={() => onMoveCharacter(character.id, 'up')}
+            >
+              ↑
+            </MoveButton>
+            <MoveButton
+              type="button"
+              aria-label={`${character.name} 아래로 이동`}
+              disabled={position === totalInTier - 1}
+              onClick={() => onMoveCharacter(character.id, 'down')}
+            >
+              ↓
+            </MoveButton>
+          </PlacementActions>
+        ) : null}
       </PlacementControl>
     </DragItem>
   );
@@ -320,7 +367,7 @@ export const TierBoard = ({
         <ToolbarCopy>
           <ToolbarTitle>나만의 티어표</ToolbarTitle>
           <ToolbarDescription>
-            아래 미배치 캐릭터를 원하는 등급으로 끌어다 놓으세요.
+            미배치 캐릭터를 등급으로 옮기고, 등급 안에서는 위아래 버튼으로 순서를 정리하세요.
           </ToolbarDescription>
         </ToolbarCopy>
         <ToolbarActions>
@@ -348,8 +395,8 @@ export const TierBoard = ({
             <Headline id={`tier-${section.tier}-headline`}>{section.headline}</Headline>
           </Side>
           <CardGrid role="list" aria-label={`${section.tier} 등급 캐릭터 목록`}>
-            {section.characters.length > 0 ? section.characters.map((character) => (
-              renderDraggableCard(character, section.tier)
+            {section.characters.length > 0 ? section.characters.map((character, index) => (
+              renderDraggableCard(character, section.tier, index, section.characters.length)
             )) : (
               <DropHint role="status">이곳으로 캐릭터를 끌어다 놓으세요.</DropHint>
             )}

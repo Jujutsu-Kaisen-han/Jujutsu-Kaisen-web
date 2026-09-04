@@ -68,6 +68,8 @@ export interface TierGroup {
   characterIds: string[];
 }
 
+export type TierCharacterOrder = Record<CharacterTier, string[]>;
+
 export interface CharacterFilters {
   searchQuery: string;
   trait: CharacterTrait | 'all';

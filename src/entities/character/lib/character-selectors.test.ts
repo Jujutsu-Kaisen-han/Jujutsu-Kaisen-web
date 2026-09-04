@@ -225,6 +225,26 @@ test('tier assignments move characters between groups while preserving tier orde
   assert.equal(tierGroups[0].headline, '최상위');
 });
 
+test('tier groups preserve a custom order and append newly assigned characters', () => {
+  const tierGroups = rebuildTierGroups(
+    [],
+    [...characters],
+    {
+      'gojo-hollow-purple': 'SS',
+      'yuji-lightfooted': 'SS',
+    },
+    {
+      SS: ['yuji-lightfooted'],
+      S: [],
+      A: [],
+      B: [],
+      C: [],
+    },
+  );
+
+  assert.deepEqual(tierGroups[0].characterIds, ['yuji-lightfooted', 'gojo-hollow-purple']);
+});
+
 test('empty tier assignments leave every tier group ready for drops', () => {
   const tierGroups = rebuildTierGroups([], [...characters], {});
 

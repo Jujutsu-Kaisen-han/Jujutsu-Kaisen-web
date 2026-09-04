@@ -3,9 +3,10 @@ import { characterApi } from '@/entities/character/api/characterApi';
 import { isResourceNotFoundError } from '@/shared/api/http';
 import {
   rebuildTierGroups,
+  updateTierCharacterOrder,
   updateTierAssignments,
 } from '@/entities/character/lib/character-selectors';
-import { tierOrder } from '@/entities/character/model/types/character';
+import { tierOrder, type TierCharacterOrder } from '@/entities/character/model/types/character';
 import type {
   CatalogSortOption,
   CharacterCombatType,
@@ -28,6 +29,7 @@ interface CharacterStoreState {
   sourceCharacters: CharacterSummary[];
   sourceTiers: TierGroup[];
   tierAssignments: Record<string, CharacterTier>;
+  tierCharacterOrder: TierCharacterOrder;
   favoriteCharacterIds: string[];
   catalogStatus: AsyncStatus;
   catalogError: string | null;
@@ -43,6 +45,7 @@ interface CharacterStoreState {
   setSortBy: (sortBy: CatalogSortOption) => void;
   setFilters: (filters: CharacterFilters) => void;
   setCharacterTier: (characterId: string, tier: CharacterTier | null) => void;
+  moveCharacterWithinTier: (characterId: string, direction: 'up' | 'down') => void;
   resetTierAssignments: () => void;
   toggleFavoriteCharacter: (characterId: string) => void;
   resetFilters: () => void;
@@ -59,6 +62,7 @@ export const defaultCharacterFilters: CharacterFilters = {
 
 const favoriteStorageKey = 'jujutsu-fan-archive:favorites';
 const tierAssignmentsStorageKey = 'jujutsu-fan-archive:tier-assignments';
+const tierCharacterOrderStorageKey = 'jujutsu-fan-archive:tier-character-order';
 
 const getLocalStorage = (): Storage | null => {
   if (typeof window === 'undefined') {
@@ -142,6 +146,61 @@ const readStoredTierAssignments = (): Record<string, CharacterTier> => {
   }
 };
 
+const createEmptyTierCharacterOrder = (): TierCharacterOrder => tierOrder.reduce<TierCharacterOrder>(
+  (order, tier) => ({ ...order, [tier]: [] }),
+  {} as TierCharacterOrder,
+);
+
+const normalizeTierCharacterOrder = (value: unknown): TierCharacterOrder => {
+  const emptyOrder = createEmptyTierCharacterOrder();
+
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return emptyOrder;
+  }
+
+  tierOrder.forEach((tier) => {
+    const tierValue = (value as Record<string, unknown>)[tier];
+
+    if (Array.isArray(tierValue)) {
+      emptyOrder[tier] = Array.from(new Set(
+        tierValue.filter((item): item is string => typeof item === 'string' && item.trim().length > 0),
+      ));
+    }
+  });
+
+  return emptyOrder;
+};
+
+const readStoredTierCharacterOrder = (): TierCharacterOrder => {
+  const storage = getLocalStorage();
+
+  if (!storage) {
+    return createEmptyTierCharacterOrder();
+  }
+
+  try {
+    return normalizeTierCharacterOrder(JSON.parse(
+      storage.getItem(tierCharacterOrderStorageKey) ?? '{}',
+    ));
+  } catch {
+    return createEmptyTierCharacterOrder();
+  }
+};
+
+const writeStoredTierCharacterOrder = (tierCharacterOrder: TierCharacterOrder) => {
+  const storage = getLocalStorage();
+
+  if (!storage) {
+    return;
+  }
+
+  try {
+    storage.setItem(tierCharacterOrderStorageKey, JSON.stringify(tierCharacterOrder));
+  } catch {
+    // Ignore storage failures so custom ordering remains an optional enhancement.
+  }
+};
+
 const writeStoredTierAssignments = (tierAssignments: Record<string, CharacterTier>) => {
   const storage = getLocalStorage();
 
@@ -176,6 +235,18 @@ const pruneTierAssignments = (
   );
 };
 
+const pruneTierCharacterOrder = (
+  tierCharacterOrder: TierCharacterOrder,
+  characters: CharacterSummary[],
+): TierCharacterOrder => {
+  const knownCharacterIds = new Set(characters.map((character) => character.id));
+
+  return tierOrder.reduce<TierCharacterOrder>((order, tier) => ({
+    ...order,
+    [tier]: tierCharacterOrder[tier].filter((characterId) => knownCharacterIds.has(characterId)),
+  }), {} as TierCharacterOrder);
+};
+
 export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
   characters: [],
   characterDetails: {},
@@ -183,6 +254,7 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
   sourceCharacters: [],
   sourceTiers: [],
   tierAssignments: readStoredTierAssignments(),
+  tierCharacterOrder: readStoredTierCharacterOrder(),
   favoriteCharacterIds: readStoredFavoriteCharacterIds(),
   catalogStatus: 'idle',
   catalogError: null,
@@ -212,6 +284,7 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
         characterApi.getTiers(),
       ]);
       const tierAssignments = pruneTierAssignments(get().tierAssignments, characters);
+      const tierCharacterOrder = pruneTierCharacterOrder(get().tierCharacterOrder, characters);
       const favoriteCharacterIds = pruneFavoriteCharacterIds(get().favoriteCharacterIds, characters);
 
       if (favoriteCharacterIds.length !== get().favoriteCharacterIds.length) {
@@ -222,12 +295,17 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
         writeStoredTierAssignments(tierAssignments);
       }
 
+      if (JSON.stringify(tierCharacterOrder) !== JSON.stringify(get().tierCharacterOrder)) {
+        writeStoredTierCharacterOrder(tierCharacterOrder);
+      }
+
       set({
         characters,
-        tiers: rebuildTierGroups(tiers, characters, tierAssignments),
+        tiers: rebuildTierGroups(tiers, characters, tierAssignments, tierCharacterOrder),
         sourceCharacters: characters,
         sourceTiers: tiers,
         tierAssignments,
+        tierCharacterOrder,
         favoriteCharacterIds,
         catalogStatus: 'success',
         catalogError: null,
@@ -377,12 +455,61 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
       }
 
       const tierAssignments = updateTierAssignments(state.tierAssignments, characterId, tier);
+      const tierCharacterOrder = updateTierCharacterOrder(
+        state.tierCharacterOrder,
+        characterId,
+        tier,
+      );
 
       writeStoredTierAssignments(tierAssignments);
+      writeStoredTierCharacterOrder(tierCharacterOrder);
 
       return {
-        tiers: rebuildTierGroups(state.tiers, state.characters, tierAssignments),
+        tiers: rebuildTierGroups(state.tiers, state.characters, tierAssignments, tierCharacterOrder),
         tierAssignments,
+        tierCharacterOrder,
+      };
+    });
+  },
+
+  moveCharacterWithinTier: (characterId, direction) => {
+    set((state) => {
+      const currentTier = state.tierAssignments[characterId];
+
+      if (!currentTier) {
+        return state;
+      }
+
+      const currentGroup = state.tiers.find((group) => group.tier === currentTier);
+
+      if (!currentGroup) {
+        return state;
+      }
+
+      const currentIndex = currentGroup.characterIds.indexOf(characterId);
+      const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+
+      if (currentIndex < 0 || targetIndex < 0 || targetIndex >= currentGroup.characterIds.length) {
+        return state;
+      }
+
+      const nextIds = [...currentGroup.characterIds];
+      [nextIds[currentIndex], nextIds[targetIndex]] = [nextIds[targetIndex], nextIds[currentIndex]];
+      const tierCharacterOrder = {
+        ...state.tierCharacterOrder,
+        [currentTier]: nextIds,
+      };
+
+      writeStoredTierCharacterOrder(tierCharacterOrder);
+
+      return {
+        tiers: rebuildTierGroups(
+          state.tiers,
+          state.characters,
+          state.tierAssignments,
+          tierCharacterOrder,
+        ),
+        tierCharacterOrder,
       };
     });
   },
@@ -394,10 +521,13 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
       }
 
       writeStoredTierAssignments({});
+      const tierCharacterOrder = createEmptyTierCharacterOrder();
+      writeStoredTierCharacterOrder(tierCharacterOrder);
 
       return {
-        tiers: rebuildTierGroups(state.sourceTiers, state.sourceCharacters, {}),
+        tiers: rebuildTierGroups(state.sourceTiers, state.sourceCharacters, {}, tierCharacterOrder),
         tierAssignments: {},
+        tierCharacterOrder,
       };
     });
   },
