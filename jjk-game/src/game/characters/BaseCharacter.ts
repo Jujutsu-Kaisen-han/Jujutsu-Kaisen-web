@@ -83,8 +83,8 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     return new Hitbox({ owner: this.slot, x: this.x + this.facing * range / 2, y: this.y - 73, width: range, height: 48, damage, knockbackX: this.facing * (isStrong || finalHit ? 430 : 190), knockbackY: isStrong ? -80 : -25, activeUntil: now + 95 })
   }
 
-  receiveDamage(damage: number, knockbackX: number, knockbackY: number, now: number, technique = 'basic'): void {
-    if (now < this.invulnerableUntil || this.hp <= 0) return
+  receiveDamage(damage: number, knockbackX: number, knockbackY: number, now: number, technique = 'basic', bypassInfinity = false): void {
+    if ((now < this.invulnerableUntil && !(bypassInfinity && this.infinityActive(now))) || this.hp <= 0) return
     if (this.definition.id === 'megumi' && this.hp <= damage && this.ultimate >= 100 && !this.mahoragaSummoned) {
       this.mahoragaSummoned = true; this.adaptedTechnique = technique; this.ultimate = 0; this.hp = Math.max(1, Math.round(this.definition.stats.maxHp * 0.45)); this.velocityX = 0; this.velocityY = -180; this.isGrounded = false; this.hitstunUntil = now + 500; this.invulnerableUntil = now + 900; this.updateVisuals(now); return
     }

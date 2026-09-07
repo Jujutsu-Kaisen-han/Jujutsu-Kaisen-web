@@ -45,7 +45,7 @@ export class CombatSystem {
     const actualDamage = calculateDamage(attacker, defender, hitbox); defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, 0xd9c2ff); this.showTechniqueLabel(defender.x, defender.y - 112, label); return true
   }
 
-  rangedStrike(attacker: BaseCharacter, defender: BaseCharacter, range: number, damage: number, now: number, label: string, damageResolver?: (defender: BaseCharacter) => number): boolean {
+  rangedStrike(attacker: BaseCharacter, defender: BaseCharacter, range: number, damage: number, now: number, label: string, damageResolver?: (defender: BaseCharacter) => number, bypassInfinity = false): boolean {
     const direction = defender.x >= attacker.x ? 1 : -1
     const aimedAtTarget = direction === attacker.facing
     const distance = Math.abs(defender.x - attacker.x)
@@ -58,7 +58,7 @@ export class CombatSystem {
     if (!aimedAtTarget || distance > range || Math.abs(defender.y - attacker.y) > 105) return false
     const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 42, y: defender.y - 108, width: 84, height: 120, damage, knockbackX: attacker.facing * 210, knockbackY: -35, activeUntil: now + 80 })
     const actualDamage = damageResolver ? damageResolver(defender) : calculateDamage(attacker, defender, hitbox)
-    defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color); this.showTechniqueLabel(defender.x, defender.y - 112, label)
+    defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label, bypassInfinity); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color); if (bypassInfinity) { this.createSlashHitEffect(defender.x, defender.y - 70); this.scene.cameras.main.shake(180, 0.008) } this.showTechniqueLabel(defender.x, defender.y - 112, label)
     return true
   }
 
