@@ -97,7 +97,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   fullManifestActive(now: number): boolean { return this.fullManifestUntil > now }
   heal(amount: number): void { this.hp = Math.min(this.definition.stats.maxHp, this.hp + amount) }
   spendEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; const actualCost = Math.max(0.1, amount * this.energyCostMultiplier); if (this.energy < actualCost) return false; this.energy -= actualCost; return true }
-  spendEnergyPercent(percent: number): boolean { if (this.unlimitedEnergy) return true; const amount = this.definition.stats.maxEnergy * percent; if (this.energy < amount) return false; this.energy -= amount; return true }
+  spendFixedEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; if (this.energy < amount) return false; this.energy -= amount; return true }
 
   resetForRound(x: number, facing: 1 | -1): void {
     this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.unlimitedEnergy = false; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
