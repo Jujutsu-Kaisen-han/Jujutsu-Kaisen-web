@@ -9,6 +9,8 @@ export class YutaSkillSystem {
   private readonly nextAutoReverseAt: Record<'P1' | 'P2', number> = { P1: 0, P2: 0 }
   constructor(combat: CombatSystem) { this.combat = combat }
 
+  cooldown(index: 0 | 1 | 2 | 3 | 4): number { return [3400, 0, 2800, 3600, 5600][index] }
+
   update(owner: BaseCharacter, now: number): void {
     if (!owner.fullManifestActive(now)) { this.nextAutoReverseAt[owner.slot] = now; return }
     if (owner.hp <= 0) return

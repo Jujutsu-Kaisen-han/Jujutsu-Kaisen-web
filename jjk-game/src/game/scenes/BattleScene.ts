@@ -225,7 +225,10 @@ export class BattleScene extends Phaser.Scene {
       const action = `skill${index + 1}` as const
       if (!pressed || !this.cooldowns.ready(this.cooldownId(owner, action), now)) return
       const cast = owner.definition.id === 'yuta' ? this.yutaSkills.cast(index as 0 | 1 | 2 | 3 | 4, owner, opponent, now) !== null : this.characterSkills.cast(index as 0 | 1 | 2 | 3 | 4, owner, opponent, now)
-      if (cast) this.cooldowns.start(this.cooldownId(owner, action), now, index === 0 ? 2400 : index === 1 ? 8500 : 3200)
+      if (cast) {
+        const cooldown = owner.definition.id === 'yuta' ? this.yutaSkills.cooldown(index as 0 | 1 | 2 | 3 | 4) : this.characterSkills.cooldown(owner, index as 0 | 1 | 2 | 3 | 4)
+        if (cooldown > 0) this.cooldowns.start(this.cooldownId(owner, action), now, cooldown)
+      }
     })
   }
 
