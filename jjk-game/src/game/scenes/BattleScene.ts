@@ -6,6 +6,7 @@ import { CombatSystem } from '../combat/CombatSystem'
 import { InputManager, type InputSnapshot } from '../systems/InputManager'
 import { RoundManager } from '../systems/RoundManager'
 import { YutaSkillSystem } from '../skills/YutaSkillSystem'
+import { CharacterSkillSystem } from '../skills/CharacterSkillSystem'
 import { AIBrain } from '../systems/AIBrain'
 import { CooldownSystem } from '../systems/CooldownSystem'
 import type { CharacterId, GameMode } from '../types/CharacterTypes'
@@ -42,6 +43,7 @@ export class BattleScene extends Phaser.Scene {
   private domainClashLabel?: Phaser.GameObjects.Text
   private nextDomainStrikeAt = 0
   private yutaSkills!: YutaSkillSystem
+  private characterSkills!: CharacterSkillSystem
   private yutaSwords: Array<{ graphic: Phaser.GameObjects.Graphics; x: number; y: number; triggered: boolean }> = []
 
   constructor() { super(BattleScene.key) }
@@ -49,10 +51,11 @@ export class BattleScene extends Phaser.Scene {
   init(data?: BattleInitData): void { this.p1Id = data?.p1 ?? 'yuta'; this.p2Id = data?.p2 ?? 'yuji'; this.mode = data?.mode ?? 'local' }
 
   create(): void {
-    this.drawArena(); this.p1 = createCharacter(this, this.p1Id, 'P1', 390, GROUND_Y, 1); this.p2 = createCharacter(this, this.p2Id, 'P2', 890, GROUND_Y, -1)
+    this.drawArena(); this.p1 = createCharacter(this, this.p1Id, 'P1', 390, GROUND_Y, 1); this.p2 = createCharacter(this, this.p2Id, 'P2', 890, GROUND_Y, -1); this.p2.aiControlled = this.mode === 'solo'
     this.p1Input = new InputManager(this, 'P1', 'solo'); if (this.mode === 'local') this.p2Input = new InputManager(this, 'P2'); else this.aiBrain = new AIBrain(this.p2, this.p1)
     this.combat = new CombatSystem(this, (attacker, defender, damage) => { if (this.domainClashUntil > this.time.now) this.domainClashDamage[attacker.slot] += damage; attacker.ultimate = Math.min(100, attacker.ultimate + 3); defender.ultimate = Math.min(100, defender.ultimate + 1) })
     this.yutaSkills = new YutaSkillSystem(this.combat)
+    this.characterSkills = new CharacterSkillSystem(this.combat)
     this.startRound(this.time.now)
   }
 
@@ -170,12 +173,16 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private processCharacterSkills(owner: BaseCharacter, opponent: BaseCharacter, input: InputSnapshot, now: number): void {
-    if (owner.definition.id !== 'yuta') return
-    if (input.reversePressed && this.cooldowns.ready(this.cooldownId(owner, 'reverse'), now) && this.yutaSkills.reverseTechnique(owner)) this.cooldowns.start(this.cooldownId(owner, 'reverse'), now, 4200)
+    if (input.reversePressed && this.cooldowns.ready(this.cooldownId(owner, 'reverse'), now)) {
+      const healed = owner.definition.id === 'yuta' ? this.yutaSkills.reverseTechnique(owner) : this.characterSkills.reverseTechnique(owner)
+      if (healed) this.cooldowns.start(this.cooldownId(owner, 'reverse'), now, 4200)
+    }
     const inputs = [input.skill1Pressed, input.skill2Pressed, input.skill3Pressed, input.skill4Pressed, input.skill5Pressed] as const
     inputs.forEach((pressed, index) => {
       const action = `skill${index + 1}` as const
-      if (pressed && this.cooldowns.ready(this.cooldownId(owner, action), now) && this.yutaSkills.cast(index as 0 | 1 | 2 | 3 | 4, owner, opponent, now)) this.cooldowns.start(this.cooldownId(owner, action), now, index === 0 ? 2400 : index === 1 ? 8500 : 3200)
+      if (!pressed || !this.cooldowns.ready(this.cooldownId(owner, action), now)) return
+      const cast = owner.definition.id === 'yuta' ? this.yutaSkills.cast(index as 0 | 1 | 2 | 3 | 4, owner, opponent, now) !== null : this.characterSkills.cast(index as 0 | 1 | 2 | 3 | 4, owner, opponent, now)
+      if (cast) this.cooldowns.start(this.cooldownId(owner, action), now, index === 0 ? 2400 : index === 1 ? 8500 : 3200)
     })
   }
 

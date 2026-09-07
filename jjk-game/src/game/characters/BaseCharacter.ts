@@ -17,6 +17,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   domainUntil = 0
   simpleDomainUntil = 0
   fullManifestUntil = 0
+  aiControlled = false
   isGuarding = false
   isGrounded = true
   facing: 1 | -1
@@ -50,8 +51,8 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     if (now >= this.hitstunUntil) {
       const direction = Number(input.right) - Number(input.left)
       if (direction !== 0) { this.facing = direction > 0 ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1); this.velocityX = direction * this.definition.stats.moveSpeed }
-      if (input.aimX !== null) { this.facing = input.aimX >= this.x ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1) }
       else if (now >= this.dashUntil) this.velocityX = 0
+      if (input.aimX !== null) { this.facing = input.aimX >= this.x ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1) }
       if (input.jumpPressed && this.isGrounded && !this.isGuarding) { this.velocityY = -this.definition.stats.jumpPower; this.isGrounded = false }
       if ((input.dashLeft || input.dashRight) && !this.isGuarding && now >= this.dashUntil) { this.facing = input.dashRight ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1); this.velocityX = this.facing * 620; this.dashUntil = now + 180; this.invulnerableUntil = now + 240 }
     }
