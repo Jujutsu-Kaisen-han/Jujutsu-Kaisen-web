@@ -98,7 +98,7 @@ export class BattleScene extends Phaser.Scene {
     if (rightInput.attackPressed) this.combat.attack(this.p2, this.p1, 'basic', time)
     if (rightInput.strongPressed) this.combat.attack(this.p2, this.p1, 'strong', time)
     if (this.domainClashUntil > 0 && (time >= this.domainClashUntil || this.p1.hp <= 0 || this.p2.hp <= 0)) this.resolveDomainClash(time)
-    if (this.domainOwner && !this.domainOwner.domainActive(time)) { this.clearYutaSwords(); this.domainOwner = undefined }
+    if (this.domainOwner && !this.domainOwner.domainActive(time)) { this.domainOwner.blockDomain(time); this.clearYutaSwords(); this.domainOwner = undefined }
     if (this.domainOwner) {
       const target = this.domainOwner === this.p1 ? this.p2 : this.p1
       if (this.domainOwner.definition.id === 'yuta') { this.checkYutaSwordProximity(this.domainOwner, target, time); if (time >= this.nextDomainStrikeAt) { this.combat.guaranteedStrike(this.domainOwner, target, 12, time, '야곱의 사다리 // 필중', true); this.nextDomainStrikeAt = time + 900 } }
@@ -182,13 +182,14 @@ export class BattleScene extends Phaser.Scene {
       const loser = participants[loserIndex]
       winner.domainUntil = now + remaining[winnerIndex]
       loser.domainUntil = now
+      loser.blockDomain(now)
       this.domainOwner = winner
       this.nextDomainStrikeAt = now + (winner.definition.id === 'sukuna' ? 240 : 450)
       if (winner.definition.id === 'yuta') this.spawnYutaSwords(winner)
       if (winner.definition.id === 'gojo') { loser.immobilizedUntil = now + 5000; loser.hitstunUntil = Math.max(loser.hitstunUntil, loser.immobilizedUntil); loser.velocityX = 0; loser.velocityY = 0 }
       this.roundMessage = `${winner.slot} 영역 우세 // ${loser.slot} 영역 밀림`
     } else if (participants) {
-      participants[0].domainUntil = now; participants[1].domainUntil = now; this.domainOwner = undefined; this.roundMessage = '영역 충돌 // 동시 상쇄'
+      participants[0].domainUntil = now; participants[1].domainUntil = now; participants[0].blockDomain(now); participants[1].blockDomain(now); this.domainOwner = undefined; this.roundMessage = '영역 충돌 // 동시 상쇄'
     }
     this.clearYutaSwords()
     this.clearDomainClash()
@@ -303,7 +304,7 @@ export class BattleScene extends Phaser.Scene {
 
   private fighterHud(fighter: BaseCharacter): BattleHudState['p1'] {
     const now = this.time.now
-    return { name: fighter.definition.name, hp: fighter.hp, maxHp: fighter.definition.stats.maxHp, energy: fighter.energy, maxEnergy: fighter.definition.stats.maxEnergy, ultimate: fighter.ultimate, ultimateReady: fighter.ultimate >= 100, domainActive: fighter.domainActive(now), simpleDomainActive: fighter.simpleDomainActive(now), fullManifestActive: fighter.fullManifestActive(now), mahoragaSummoned: fighter.mahoragaSummoned, guard: fighter.isGuarding, combo: fighter.combo.index, cooldowns: { reverse: this.cooldowns.remaining(this.cooldownId(fighter, 'reverse'), now), skill1: this.cooldowns.remaining(this.cooldownId(fighter, 'skill1'), now), skill2: this.cooldowns.remaining(this.cooldownId(fighter, 'skill2'), now), skill3: this.cooldowns.remaining(this.cooldownId(fighter, 'skill3'), now), skill4: this.cooldowns.remaining(this.cooldownId(fighter, 'skill4'), now), skill5: this.cooldowns.remaining(this.cooldownId(fighter, 'skill5'), now), simpleDomain: this.cooldowns.remaining(this.cooldownId(fighter, 'simpleDomain'), now), domain: this.cooldowns.remaining(this.cooldownId(fighter, 'domain'), now) } }
+    return { name: fighter.definition.name, hp: fighter.hp, maxHp: fighter.definition.stats.maxHp, energy: fighter.energy, maxEnergy: fighter.definition.stats.maxEnergy, ultimate: fighter.ultimate, ultimateReady: fighter.ultimate >= 100, domainActive: fighter.domainActive(now), simpleDomainActive: fighter.simpleDomainActive(now), fullManifestActive: fighter.fullManifestActive(now), mahoragaSummoned: fighter.mahoragaSummoned, guard: fighter.isGuarding, combo: fighter.combo.index, cooldowns: { reverse: this.cooldowns.remaining(this.cooldownId(fighter, 'reverse'), now), skill1: this.cooldowns.remaining(this.cooldownId(fighter, 'skill1'), now), skill2: this.cooldowns.remaining(this.cooldownId(fighter, 'skill2'), now), skill3: this.cooldowns.remaining(this.cooldownId(fighter, 'skill3'), now), skill4: this.cooldowns.remaining(this.cooldownId(fighter, 'skill4'), now), skill5: this.cooldowns.remaining(this.cooldownId(fighter, 'skill5'), now), simpleDomain: this.cooldowns.remaining(this.cooldownId(fighter, 'simpleDomain'), now), domain: Math.max(this.cooldowns.remaining(this.cooldownId(fighter, 'domain'), now), fighter.domainBlockRemaining(now)) } }
   }
 
   private drawArena(): void {
