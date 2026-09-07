@@ -100,7 +100,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.domainOwner) {
       const target = this.domainOwner === this.p1 ? this.p2 : this.p1
       if (this.domainOwner.definition.id === 'yuta') { this.checkYutaSwordProximity(this.domainOwner, target, time); if (time >= this.nextDomainStrikeAt) { this.combat.guaranteedStrike(this.domainOwner, target, 12, time, '야곱의 사다리 // 필중', true); this.nextDomainStrikeAt = time + 900 } }
-      else if (this.domainOwner.definition.id !== 'gojo' && time >= this.nextDomainStrikeAt) { this.combat.domainStrike(this.domainOwner, target, time); this.nextDomainStrikeAt = time + 850 }
+      else if (this.domainOwner.definition.id !== 'gojo' && time >= this.nextDomainStrikeAt) { this.combat.domainStrike(this.domainOwner, target, time); this.nextDomainStrikeAt = time + (this.domainOwner.definition.id === 'sukuna' ? 460 : 850) }
     }
     const timeLeft = Math.max(0, 90 - (time - this.roundStartedAt) / 1000)
     if (this.p1.hp <= 0 || this.p2.hp <= 0 || timeLeft <= 0) this.finishRound(this.getRoundWinner(), time)
@@ -129,7 +129,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.domainOwner) return
     if (!owner.activateDomain(now)) return
     this.cooldowns.start(this.cooldownId(owner, 'domain'), now, 15000)
-    this.domainOwner = owner; this.nextDomainStrikeAt = now + 450; opponent.hitstunUntil = Math.max(opponent.hitstunUntil, now + 550); opponent.velocityX = 0
+    this.domainOwner = owner; this.nextDomainStrikeAt = now + (owner.definition.id === 'sukuna' ? 240 : 450); opponent.hitstunUntil = Math.max(opponent.hitstunUntil, now + 550); opponent.velocityX = 0
     if (owner.definition.id === 'gojo') { opponent.immobilizedUntil = now + 5000; opponent.hitstunUntil = Math.max(opponent.hitstunUntil, opponent.immobilizedUntil); opponent.velocityY = 0 }
     if (owner.definition.id === 'yuta') this.spawnYutaSwords(owner)
     const overlay = this.add.rectangle(ARENA_WIDTH / 2, ARENA_HEIGHT / 2, ARENA_WIDTH, ARENA_HEIGHT, owner.definition.color, 0.13).setDepth(30)
@@ -181,7 +181,7 @@ export class BattleScene extends Phaser.Scene {
       winner.domainUntil = now + remaining[winnerIndex]
       loser.domainUntil = now
       this.domainOwner = winner
-      this.nextDomainStrikeAt = now + 450
+      this.nextDomainStrikeAt = now + (winner.definition.id === 'sukuna' ? 240 : 450)
       if (winner.definition.id === 'yuta') this.spawnYutaSwords(winner)
       if (winner.definition.id === 'gojo') { loser.immobilizedUntil = now + 5000; loser.hitstunUntil = Math.max(loser.hitstunUntil, loser.immobilizedUntil); loser.velocityX = 0; loser.velocityY = 0 }
       this.roundMessage = `${winner.slot} 영역 우세 // ${loser.slot} 영역 밀림`
