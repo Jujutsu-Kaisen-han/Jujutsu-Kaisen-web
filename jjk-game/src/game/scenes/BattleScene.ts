@@ -68,6 +68,7 @@ export class BattleScene extends Phaser.Scene {
     if (leftInput.ultimatePressed) this.activateDomain(this.p1, this.p2, time)
     if (rightInput.ultimatePressed) this.activateDomain(this.p2, this.p1, time)
     if (leftInput.simpleDomainPressed) this.activateSimpleDomain(this.p1, time)
+    if (rightInput.simpleDomainPressed) this.activateSimpleDomain(this.p2, time)
     if (leftInput.attackPressed) this.combat.attack(this.p1, this.p2, 'basic', time)
     if (leftInput.strongPressed) this.combat.attack(this.p1, this.p2, 'strong', time)
     if (rightInput.attackPressed) this.combat.attack(this.p2, this.p1, 'basic', time)
