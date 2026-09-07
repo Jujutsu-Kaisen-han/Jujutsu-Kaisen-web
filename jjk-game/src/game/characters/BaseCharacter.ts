@@ -19,6 +19,8 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   fullManifestUntil = 0
   private unlimitedEnergy = false
   aiControlled = false
+  mahoragaSummoned = false
+  adaptedTechnique: string | null = null
   readonly energyCostMultiplier: number
   isGuarding = false
   isGrounded = true
@@ -79,9 +81,14 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     return new Hitbox({ owner: this.slot, x: this.x + this.facing * range / 2, y: this.y - 73, width: range, height: 48, damage, knockbackX: this.facing * (isStrong || finalHit ? 430 : 190), knockbackY: isStrong ? -80 : -25, activeUntil: now + 95 })
   }
 
-  receiveDamage(damage: number, knockbackX: number, knockbackY: number, now: number): void {
+  receiveDamage(damage: number, knockbackX: number, knockbackY: number, now: number, technique = 'basic'): void {
     if (now < this.invulnerableUntil || this.hp <= 0) return
-    this.hp = Math.max(0, this.hp - damage); this.velocityX = knockbackX; this.velocityY = knockbackY; this.isGrounded = false; this.hitstunUntil = now + 260; this.invulnerableUntil = now + 420; this.ultimate = Math.min(100, this.ultimate + 4); this.updateVisuals(now)
+    if (this.definition.id === 'megumi' && this.hp <= damage && this.ultimate >= 100 && !this.mahoragaSummoned) {
+      this.mahoragaSummoned = true; this.adaptedTechnique = technique; this.ultimate = 0; this.hp = Math.max(1, Math.round(this.definition.stats.maxHp * 0.45)); this.velocityX = 0; this.velocityY = -180; this.isGrounded = false; this.hitstunUntil = now + 500; this.invulnerableUntil = now + 900; this.updateVisuals(now); return
+    }
+    const adaptedDamage = this.mahoragaSummoned && this.adaptedTechnique === technique ? Math.max(1, Math.round(damage * 0.45)) : damage
+    if (this.mahoragaSummoned && this.adaptedTechnique === null) this.adaptedTechnique = technique
+    this.hp = Math.max(0, this.hp - adaptedDamage); this.velocityX = knockbackX; this.velocityY = knockbackY; this.isGrounded = false; this.hitstunUntil = now + 260; this.invulnerableUntil = now + 420; this.ultimate = Math.min(100, this.ultimate + 4); this.updateVisuals(now)
   }
 
   activateDomain(now: number): boolean {
@@ -100,7 +107,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   spendFixedEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; if (this.energy < amount) return false; this.energy -= amount; return true }
 
   resetForRound(x: number, facing: 1 | -1): void {
-    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.unlimitedEnergy = false; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
+    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.unlimitedEnergy = false; this.mahoragaSummoned = false; this.adaptedTechnique = null; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
   }
 
   private updateVisuals(now: number): void {
@@ -111,6 +118,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     if (this.domainUntil > now) { this.auraGraphic.lineStyle(2, this.definition.color, 0.7); this.auraGraphic.strokeCircle(0, -62, 80); this.auraGraphic.lineStyle(1, 0xffffff, 0.25); this.auraGraphic.strokeCircle(0, -62, 91) }
     if (this.simpleDomainUntil > now) { this.auraGraphic.lineStyle(4, 0xf3dc92, 0.9); this.auraGraphic.strokeCircle(0, -62, 68); this.auraGraphic.lineStyle(1, 0xfff3bf, 0.75); this.auraGraphic.strokeCircle(0, -62, 76) }
     if (this.fullManifestUntil > now) { this.auraGraphic.lineStyle(3, 0xd7c6ff, 0.85); this.auraGraphic.strokeCircle(0, -62, 56); this.auraGraphic.lineStyle(2, this.definition.color, 0.65); this.auraGraphic.strokeCircle(0, -62, 66) }
+    if (this.mahoragaSummoned && this.definition.id === 'megumi') { this.auraGraphic.lineStyle(4, 0xffd56f, 0.9); this.auraGraphic.strokeCircle(0, -62, 88); this.auraGraphic.lineStyle(2, 0xfff1b0, 0.85); this.auraGraphic.strokeCircle(0, -62, 98) }
   }
 
   private drawBody(): void {
@@ -144,5 +152,6 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
       this.signatureGraphic.lineStyle(3, 0x9bb5ff, 0.85); this.signatureGraphic.beginPath(); this.signatureGraphic.moveTo(-12, -58); this.signatureGraphic.lineTo(-4, -72); this.signatureGraphic.lineTo(4, -58); this.signatureGraphic.moveTo(12, -58); this.signatureGraphic.lineTo(4, -72); this.signatureGraphic.lineTo(-4, -58); this.signatureGraphic.strokePath(); this.signatureGraphic.fillStyle(0x161832, 0.9); this.signatureGraphic.fillEllipse(0, 0, 62, 15)
       if (attacking) { this.auraGraphic.lineStyle(4, color, 0.85); this.auraGraphic.beginPath(); this.auraGraphic.arc(0, -54, 76, -1.2, 1.2, false); this.auraGraphic.strokePath() }
     }
+    if (this.mahoragaSummoned && this.definition.id === 'megumi') { this.signatureGraphic.lineStyle(3, 0xffd56f, 0.9); this.signatureGraphic.strokeCircle(0, -122, 27); this.signatureGraphic.lineStyle(2, 0xfff1b0, 0.9); for (let index = 0; index < 8; index += 1) { const angle = index * Math.PI / 4; this.signatureGraphic.lineBetween(0, -122, Math.cos(angle) * 42, -122 + Math.sin(angle) * 42) } }
   }
 }
