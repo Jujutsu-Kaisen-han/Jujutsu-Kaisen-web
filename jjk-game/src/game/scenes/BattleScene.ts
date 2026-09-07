@@ -114,7 +114,7 @@ export class BattleScene extends Phaser.Scene {
 
   private clearYutaSwords(): void { this.yutaSwords.forEach((sword) => sword.graphic.destroy()); this.yutaSwords = [] }
 
-  private emptyInput(): InputSnapshot { return { left: false, right: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false } }
+  private emptyInput(): InputSnapshot { return { left: false, right: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null } }
 
   private finishRound(winner: 'P1' | 'P2' | 'DRAW', now: number): void {
     if (this.roundFinished) return

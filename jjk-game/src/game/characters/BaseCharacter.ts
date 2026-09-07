@@ -38,7 +38,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy
     this.bodyGraphic = scene.add.graphics(); this.auraGraphic = scene.add.graphics(); this.signatureGraphic = scene.add.graphics()
     this.drawBody()
-    this.nameTag = scene.add.text(0, -98, this.definition.name, { color: '#f5fbff', fontFamily: 'Space Mono, monospace', fontSize: '9px', fontStyle: 'bold', stroke: '#07111f', strokeThickness: 3 }).setOrigin(0.5)
+    this.nameTag = scene.add.text(0, -62, this.definition.name, { color: '#f5fbff', fontFamily: 'Space Mono, monospace', fontSize: '9px', fontStyle: 'bold', stroke: '#07111f', strokeThickness: 3 }).setOrigin(0.5)
     this.add([this.auraGraphic, this.bodyGraphic, this.signatureGraphic, this.nameTag]); this.setSize(76, 92); this.setDepth(y); this.setScale(facing, 1); this.nameTag.setScale(facing, 1); scene.add.existing(this)
     this.hurtbox.update(x, y)
   }
@@ -49,6 +49,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     if (now >= this.hitstunUntil) {
       const direction = Number(input.right) - Number(input.left)
       if (direction !== 0) { this.facing = direction > 0 ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1); this.velocityX = direction * this.definition.stats.moveSpeed }
+      if (input.aimX !== null) { this.facing = input.aimX >= this.x ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1) }
       else this.velocityX *= 0.78
       if (input.jumpPressed && this.isGrounded && !this.isGuarding) { this.velocityY = -this.definition.stats.jumpPower; this.isGrounded = false }
       if ((input.dashLeft || input.dashRight) && !this.isGuarding && now >= this.dashUntil) { this.facing = input.dashRight ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1); this.velocityX = this.facing * 620; this.dashUntil = now + 180; this.invulnerableUntil = now + 240 }
