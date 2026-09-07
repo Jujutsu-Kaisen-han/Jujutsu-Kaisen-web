@@ -43,7 +43,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, id: CharacterId, slot: PlayerSlot, x: number, y: number, facing: 1 | -1) {
     super(scene, x, y)
-    this.definition = CHARACTER_DEFINITIONS[id]; this.slot = slot; this.facing = facing; this.energyCostMultiplier = id === 'gojo' ? 0.05 : 1
+    this.definition = CHARACTER_DEFINITIONS[id]; this.slot = slot; this.facing = facing; this.energyCostMultiplier = id === 'gojo' ? 0.05 : id === 'sukuna' ? 0.8 : 1
     this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy
     this.bodyGraphic = scene.add.graphics(); this.auraGraphic = scene.add.graphics(); this.signatureGraphic = scene.add.graphics()
     this.drawBody()
