@@ -36,6 +36,8 @@ export class BattleScene extends Phaser.Scene {
   private domainOwner?: BaseCharacter
   private domainClashUntil = 0
   private domainClashParticipants?: [BaseCharacter, BaseCharacter]
+  private domainClashRemaining?: [number, number]
+  private domainClashDamage: Record<'P1' | 'P2', number> = { P1: 0, P2: 0 }
   private domainClashGraphic?: Phaser.GameObjects.Graphics
   private domainClashLabel?: Phaser.GameObjects.Text
   private nextDomainStrikeAt = 0
@@ -49,7 +51,7 @@ export class BattleScene extends Phaser.Scene {
   create(): void {
     this.drawArena(); this.p1 = createCharacter(this, this.p1Id, 'P1', 390, GROUND_Y, 1); this.p2 = createCharacter(this, this.p2Id, 'P2', 890, GROUND_Y, -1)
     this.p1Input = new InputManager(this, 'P1', 'solo'); if (this.mode === 'local') this.p2Input = new InputManager(this, 'P2'); else this.aiBrain = new AIBrain(this.p2, this.p1)
-    this.combat = new CombatSystem(this, (attacker, defender, damage) => { void damage; attacker.ultimate = Math.min(100, attacker.ultimate + 3); defender.ultimate = Math.min(100, defender.ultimate + 1) })
+    this.combat = new CombatSystem(this, (attacker, defender, damage) => { if (this.domainClashUntil > this.time.now) this.domainClashDamage[attacker.slot] += damage; attacker.ultimate = Math.min(100, attacker.ultimate + 3); defender.ultimate = Math.min(100, defender.ultimate + 1) })
     this.yutaSkills = new YutaSkillSystem(this.combat)
     this.startRound(this.time.now)
   }
@@ -67,11 +69,7 @@ export class BattleScene extends Phaser.Scene {
     if (leftInput.strongPressed) this.combat.attack(this.p1, this.p2, 'strong', time)
     if (rightInput.attackPressed) this.combat.attack(this.p2, this.p1, 'basic', time)
     if (rightInput.strongPressed) this.combat.attack(this.p2, this.p1, 'strong', time)
-    if (this.domainClashUntil > 0 && time >= this.domainClashUntil) this.resolveDomainClash(time)
-    if (this.domainClashUntil > time) {
-      this.emitHud(time)
-      return
-    }
+    if (this.domainClashUntil > 0 && (time >= this.domainClashUntil || this.p1.hp <= 0 || this.p2.hp <= 0)) this.resolveDomainClash(time)
     if (this.domainOwner && !this.domainOwner.domainActive(time)) { this.clearYutaSwords(); this.domainOwner = undefined }
     if (this.domainOwner) {
       const target = this.domainOwner === this.p1 ? this.p2 : this.p1
@@ -84,7 +82,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private startRound(now: number): void {
-    this.clearYutaSwords(); this.clearDomainClash(); this.domainOwner = undefined; this.domainClashUntil = 0; this.domainClashParticipants = undefined; this.p1.resetForRound(390, 1); this.p2.resetForRound(890, -1); this.aiBrain?.reset(now); this.roundStartedAt = now; this.roundFinished = false; this.roundMessage = `ROUND ${this.rounds.round}`; this.matchMessage = ''; this.time.delayedCall(900, () => { this.roundMessage = '' })
+    this.clearYutaSwords(); this.clearDomainClash(); this.domainOwner = undefined; this.domainClashUntil = 0; this.domainClashParticipants = undefined; this.domainClashRemaining = undefined; this.domainClashDamage = { P1: 0, P2: 0 }; this.p1.resetForRound(390, 1); this.p2.resetForRound(890, -1); this.aiBrain?.reset(now); this.roundStartedAt = now; this.roundFinished = false; this.roundMessage = `ROUND ${this.rounds.round}`; this.matchMessage = ''; this.time.delayedCall(900, () => { this.roundMessage = '' })
   }
 
   private activateSimpleDomain(owner: BaseCharacter, now: number): void {
@@ -120,8 +118,10 @@ export class BattleScene extends Phaser.Scene {
     this.domainOwner = undefined
     this.domainClashUntil = now + clashDuration
     this.domainClashParticipants = [first, second]
-    first.domainUntil = this.domainClashUntil
-    second.domainUntil = this.domainClashUntil
+    this.domainClashRemaining = [Math.max(0, first.domainUntil - now), Math.max(0, second.domainUntil - now)]
+    this.domainClashDamage = { P1: 0, P2: 0 }
+    first.domainUntil = Number.MAX_SAFE_INTEGER
+    second.domainUntil = Number.MAX_SAFE_INTEGER
     this.domainClashGraphic = this.add.graphics().setDepth(31)
     this.domainClashGraphic.lineStyle(5, first.definition.color, 0.9); this.domainClashGraphic.strokeCircle(ARENA_WIDTH / 2 - 90, 340, 165)
     this.domainClashGraphic.lineStyle(5, second.definition.color, 0.9); this.domainClashGraphic.strokeCircle(ARENA_WIDTH / 2 + 90, 340, 165)
@@ -133,12 +133,34 @@ export class BattleScene extends Phaser.Scene {
 
   private resolveDomainClash(now: number): void {
     const participants = this.domainClashParticipants
-    if (participants) { participants[0].domainUntil = now; participants[1].domainUntil = now }
+    const remaining = this.domainClashRemaining ?? [0, 0]
+    const firstDamage = this.domainClashDamage[participants?.[0].slot ?? 'P1']
+    const secondDamage = this.domainClashDamage[participants?.[1].slot ?? 'P2']
+    let winnerIndex: 0 | 1 | -1 = -1
+    if (participants) {
+      if (firstDamage !== secondDamage) winnerIndex = firstDamage > secondDamage ? 0 : 1
+      else if (participants[0].hp > 0 && participants[1].hp <= 0) winnerIndex = 0
+      else if (participants[1].hp > 0 && participants[0].hp <= 0) winnerIndex = 1
+    }
+    if (participants && winnerIndex !== -1) {
+      const loserIndex: 0 | 1 = winnerIndex === 0 ? 1 : 0
+      const winner = participants[winnerIndex]
+      const loser = participants[loserIndex]
+      winner.domainUntil = now + remaining[winnerIndex]
+      loser.domainUntil = now
+      this.domainOwner = winner
+      this.nextDomainStrikeAt = now + 450
+      if (winner.definition.id === 'yuta') this.spawnYutaSwords(winner)
+      this.roundMessage = `${winner.slot} 영역 우세 // ${loser.slot} 영역 밀림`
+    } else if (participants) {
+      participants[0].domainUntil = now; participants[1].domainUntil = now; this.domainOwner = undefined; this.roundMessage = '영역 충돌 // 동시 상쇄'
+    }
     this.clearYutaSwords()
     this.clearDomainClash()
     this.domainClashUntil = 0
     this.domainClashParticipants = undefined
-    this.roundMessage = '영역 충돌 // 상쇄'
+    this.domainClashRemaining = undefined
+    this.domainClashDamage = { P1: 0, P2: 0 }
     this.time.delayedCall(900, () => { if (!this.roundFinished) this.roundMessage = '' })
   }
 
