@@ -26,7 +26,8 @@ export class CombatSystem {
   domainStrike(attacker: BaseCharacter, defender: BaseCharacter, now: number): boolean {
     if (!attacker.domainActive(now) || defender.hp <= 0) return false
     if (defender.simpleDomainActive(now)) { this.showTechniqueLabel(defender.x, defender.y - 112, '간이영역 // 필중 무효'); return false }
-    const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 105, y: defender.y - 118, width: 210, height: 120, damage: attacker.definition.stats.attackDamage * 0.85, knockbackX: attacker.facing * 100, knockbackY: -35, activeUntil: now + 80 })
+    const domainMultiplier = attacker.definition.id === 'sukuna' ? 1.5 : 0.85
+    const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 105, y: defender.y - 118, width: 210, height: 120, damage: attacker.definition.stats.attackDamage * domainMultiplier, knockbackX: attacker.facing * (attacker.definition.id === 'sukuna' ? 180 : 100), knockbackY: -35, activeUntil: now + 80 })
     const attackRect = new Phaser.Geom.Rectangle(hitbox.bounds.x, hitbox.bounds.y, hitbox.bounds.width, hitbox.bounds.height)
     const hurtRect = new Phaser.Geom.Rectangle(defender.hurtbox.bounds.x, defender.hurtbox.bounds.y, defender.hurtbox.bounds.width, defender.hurtbox.bounds.height)
     if (!Phaser.Geom.Intersects.RectangleToRectangle(attackRect, hurtRect)) return false

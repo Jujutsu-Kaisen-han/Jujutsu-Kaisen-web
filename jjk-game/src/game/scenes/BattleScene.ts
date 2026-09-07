@@ -134,8 +134,9 @@ export class BattleScene extends Phaser.Scene {
     if (owner.definition.id === 'yuta') this.spawnYutaSwords(owner)
     const overlay = this.add.rectangle(ARENA_WIDTH / 2, ARENA_HEIGHT / 2, ARENA_WIDTH, ARENA_HEIGHT, owner.definition.color, 0.13).setDepth(30)
     const frame = this.add.graphics().setDepth(31); frame.lineStyle(3, owner.definition.color, 0.9); frame.strokeRect(28, 78, ARENA_WIDTH - 56, GROUND_Y - 78)
-    const label = this.add.text(ARENA_WIDTH / 2, 175, owner.definition.id === 'gojo' ? '무량공처 // 5초 정지' : owner.definition.name + ' // 영역전개', { color: owner.definition.accent, fontFamily: 'Space Mono, monospace', fontSize: '17px', fontStyle: 'bold', stroke: '#020711', strokeThickness: 6 }).setOrigin(0.5).setDepth(32)
-    this.tweens.add({ targets: [overlay, frame, label], alpha: 0, delay: 5800, duration: 700, onComplete: () => { overlay.destroy(); frame.destroy(); label.destroy() } })
+    const sukunaArt = owner.definition.id === 'sukuna' ? this.createSukunaDomainEffect() : undefined
+    const label = this.add.text(ARENA_WIDTH / 2, 175, owner.definition.id === 'gojo' ? '무량공처 // 5초 정지' : owner.definition.id === 'sukuna' ? '복마어주자 // MALEVOLENT SHRINE' : owner.definition.name + ' // 영역전개', { color: owner.definition.accent, fontFamily: 'Space Mono, monospace', fontSize: '17px', fontStyle: 'bold', stroke: '#020711', strokeThickness: 6 }).setOrigin(0.5).setDepth(32)
+    this.tweens.add({ targets: [overlay, frame, label, sukunaArt].filter(Boolean), alpha: 0, delay: 5800, duration: 700, onComplete: () => { overlay.destroy(); frame.destroy(); label.destroy(); sukunaArt?.destroy() } })
     this.cameras.main.flash(180, 170, 220, 255, false)
   }
 
@@ -165,8 +166,8 @@ export class BattleScene extends Phaser.Scene {
   private resolveDomainClash(now: number): void {
     const participants = this.domainClashParticipants
     const remaining = this.domainClashRemaining ?? [0, 0]
-    const firstDamage = this.domainClashDamage[participants?.[0].slot ?? 'P1']
-    const secondDamage = this.domainClashDamage[participants?.[1].slot ?? 'P2']
+    const firstDamage = this.domainClashDamage[participants?.[0].slot ?? 'P1'] * (participants?.[0].definition.id === 'sukuna' ? 1.35 : 1)
+    const secondDamage = this.domainClashDamage[participants?.[1].slot ?? 'P2'] * (participants?.[1].definition.id === 'sukuna' ? 1.35 : 1)
     let winnerIndex: 0 | 1 | -1 = -1
     if (participants) {
       if (firstDamage !== secondDamage) winnerIndex = firstDamage > secondDamage ? 0 : 1
@@ -199,6 +200,19 @@ export class BattleScene extends Phaser.Scene {
   private clearDomainClash(): void {
     this.domainClashGraphic?.destroy(); this.domainClashGraphic = undefined
     this.domainClashLabel?.destroy(); this.domainClashLabel = undefined
+  }
+
+  private createSukunaDomainEffect(): Phaser.GameObjects.Graphics {
+    const art = this.add.graphics().setDepth(31)
+    art.fillStyle(0x21040d, 0.62); art.fillRect(118, 105, ARENA_WIDTH - 236, GROUND_Y - 145)
+    art.lineStyle(3, 0xf04464, 0.75); art.strokeRect(118, 105, ARENA_WIDTH - 236, GROUND_Y - 145)
+    art.lineStyle(2, 0xff6b80, 0.55)
+    for (let index = 0; index < 15; index += 1) { const x = 145 + index * 76; art.lineBetween(x, 118, x + 135, GROUND_Y - 55); art.lineBetween(x + 32, GROUND_Y - 55, x + 168, 118) }
+    art.lineStyle(7, 0x8d1837, 0.9); art.strokeRect(ARENA_WIDTH / 2 - 105, 205, 210, 230)
+    art.lineStyle(5, 0xff5772, 0.9); art.lineBetween(ARENA_WIDTH / 2 - 130, 205, ARENA_WIDTH / 2 + 130, 205); art.lineBetween(ARENA_WIDTH / 2 - 92, 205, ARENA_WIDTH / 2 - 92, 440); art.lineBetween(ARENA_WIDTH / 2 + 92, 205, ARENA_WIDTH / 2 + 92, 440)
+    art.lineStyle(4, 0xff9aaa, 0.8); art.beginPath(); art.moveTo(ARENA_WIDTH / 2 - 145, 205); art.lineTo(ARENA_WIDTH / 2, 150); art.lineTo(ARENA_WIDTH / 2 + 145, 205); art.strokePath()
+    art.fillStyle(0xff3855, 0.7); art.fillCircle(ARENA_WIDTH / 2, 292, 24); art.lineStyle(3, 0xffc2cc, 0.7); art.strokeCircle(ARENA_WIDTH / 2, 292, 34)
+    return art
   }
 
   private processCharacterSkills(owner: BaseCharacter, opponent: BaseCharacter, input: InputSnapshot, now: number): void {
