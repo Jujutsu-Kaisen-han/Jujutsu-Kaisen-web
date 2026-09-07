@@ -43,7 +43,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, id: CharacterId, slot: PlayerSlot, x: number, y: number, facing: 1 | -1) {
     super(scene, x, y)
-    this.definition = CHARACTER_DEFINITIONS[id]; this.slot = slot; this.facing = facing; this.energyCostMultiplier = id === 'gojo' ? 0.12 : 1
+    this.definition = CHARACTER_DEFINITIONS[id]; this.slot = slot; this.facing = facing; this.energyCostMultiplier = id === 'gojo' ? 0.05 : 1
     this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy
     this.bodyGraphic = scene.add.graphics(); this.auraGraphic = scene.add.graphics(); this.signatureGraphic = scene.add.graphics()
     this.drawBody()
@@ -76,7 +76,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     const comboIndex = this.combo.next(kind, now)
     const isStrong = kind === 'strong'; const finalHit = !isStrong && comboIndex === 2
     this.attackDuration = isStrong ? 540 : finalHit ? 460 : 300; this.attackStartedAt = now; this.attackUntil = now + this.attackDuration
-    this.energy = Math.max(0, this.energy - (isStrong ? 8 : 1)); this.ultimate = Math.min(100, this.ultimate + (isStrong ? 7 : 2)); this.updateVisuals(now)
+    this.energy = Math.max(0, this.energy - Math.max(0.1, (isStrong ? 8 : 1) * this.energyCostMultiplier)); this.ultimate = Math.min(100, this.ultimate + (isStrong ? 7 : 2)); this.updateVisuals(now)
     const range = isStrong ? 98 : finalHit ? 84 : 70
     const domainPower = this.domainActive(now) ? 1.28 : 1; const manifestPower = this.fullManifestActive(now) ? 1.2 : 1
     const damage = (isStrong ? this.definition.stats.strongDamage : this.definition.stats.attackDamage * (finalHit ? 1.45 : comboIndex === 1 ? 1.08 : 1)) * domainPower * manifestPower
@@ -108,7 +108,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   fullManifestActive(now: number): boolean { return this.fullManifestUntil > now }
   heal(amount: number): void { this.hp = Math.min(this.definition.stats.maxHp, this.hp + amount) }
   spendEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; const actualCost = Math.max(0.1, amount * this.energyCostMultiplier); if (this.energy < actualCost) return false; this.energy -= actualCost; return true }
-  spendFixedEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; if (this.energy < amount) return false; this.energy -= amount; return true }
+  spendFixedEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; const actualCost = Math.max(0.1, amount * this.energyCostMultiplier); if (this.energy < actualCost) return false; this.energy -= actualCost; return true }
 
   resetForRound(x: number, facing: 1 | -1): void {
     this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.fullManifestUsed = false; this.infinityUntil = 0; this.unlimitedEnergy = false; this.mahoragaSummoned = false; this.adaptedTechnique = null; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
