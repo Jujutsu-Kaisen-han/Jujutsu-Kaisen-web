@@ -217,7 +217,7 @@ export class BattleScene extends Phaser.Scene {
 
   private processCharacterSkills(owner: BaseCharacter, opponent: BaseCharacter, input: InputSnapshot, now: number): void {
     if (input.reversePressed) {
-      const healed = owner.definition.id === 'yuta' ? this.yutaSkills.reverseTechnique(owner) : this.characterSkills.reverseTechnique(owner)
+      const healed = owner.definition.id === 'yuta' ? this.yutaSkills.reverseTechnique(owner, now) : this.characterSkills.reverseTechnique(owner, now)
       void healed
     }
     const inputs = [input.skill1Pressed, input.skill2Pressed, input.skill3Pressed, input.skill4Pressed, input.skill5Pressed] as const

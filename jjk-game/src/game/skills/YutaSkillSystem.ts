@@ -20,13 +20,14 @@ export class YutaSkillSystem {
 
   cast(index: 0 | 1 | 2 | 3 | 4, owner: BaseCharacter, opponent: BaseCharacter, now: number): YutaCopiedSkill | '완전현현' | '리카 공격' | null {
     if (owner.definition.id !== 'yuta') return null
-    if (index === 0 && owner.spendEnergy(16)) { this.combat.rikaAttack(owner, opponent, now); return '리카 공격' }
-    if (index === 1 && !owner.fullManifestActive(now) && owner.activateFullManifest(now)) { this.combat.manifestEffect(owner); return '완전현현' }
-    if (index >= 2 && owner.fullManifestActive(now)) return this.useRandomCopy(owner, opponent, now)
+    if (!owner.canAct(now)) return null
+    if (index === 0 && owner.spendEnergy(16)) { owner.beginAction(now, 390); this.combat.rikaAttack(owner, opponent, now); return '리카 공격' }
+    if (index === 1 && !owner.fullManifestActive(now) && owner.activateFullManifest(now)) { owner.beginAction(now, 560); this.combat.manifestEffect(owner); return '완전현현' }
+    if (index >= 2 && owner.fullManifestActive(now)) { owner.beginAction(now, 430); return this.useRandomCopy(owner, opponent, now) }
     return null
   }
 
-  reverseTechnique(owner: BaseCharacter): boolean { if (owner.definition.id !== 'yuta' || !owner.spendFixedEnergy(15)) return false; owner.heal(28); this.combat.healEffect(owner); return true }
+  reverseTechnique(owner: BaseCharacter, now: number): boolean { if (owner.definition.id !== 'yuta' || !owner.canAct(now) || !owner.spendFixedEnergy(15)) return false; owner.beginAction(now, 300); owner.heal(28); this.combat.healEffect(owner); return true }
 
   useRandomCopy(owner: BaseCharacter, opponent: BaseCharacter, now: number): YutaCopiedSkill | null {
     if (!owner.fullManifestActive(now)) return null

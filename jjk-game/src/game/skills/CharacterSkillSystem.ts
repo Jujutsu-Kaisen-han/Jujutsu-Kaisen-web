@@ -31,20 +31,23 @@ export class CharacterSkillSystem {
   cast(index: 0 | 1 | 2 | 3 | 4, owner: BaseCharacter, opponent: BaseCharacter, now: number): boolean {
     if (owner.definition.id === 'yuta') return false
     const technique = TECHNIQUES[owner.definition.id][index]
-    if (!technique) return false
+    if (!technique || !owner.canAct(now)) return false
     if (technique.barrier) {
       if (owner.definition.id !== 'gojo' || owner.infinityActive(now) || !owner.spendEnergy(technique.energy) || !owner.activateInfinity(now)) return false
+      owner.beginAction(now, 320)
       this.combat.infinityEffect(owner)
       return true
     }
     if (!owner.spendEnergy(technique.energy)) return false
+    owner.beginAction(now, technique.ranged ? 360 : 430)
     if (technique.ranged) this.combat.rangedStrike(owner, opponent, technique.width, technique.damage, now, technique.label, technique.fixedDamage !== undefined ? () => technique.fixedDamage ?? 0 : technique.nearDeath ? (target) => Math.max(1, target.hp - Math.max(1, Math.round(target.definition.stats.maxHp * 0.08))) : undefined, technique.bypassInfinity)
     else this.combat.specialStrike(owner, opponent, technique.width, technique.damage, now, technique.label)
     return true
   }
 
-  reverseTechnique(owner: BaseCharacter): boolean {
-    if (owner.definition.id === 'yuta' || !owner.spendFixedEnergy(15)) return false
+  reverseTechnique(owner: BaseCharacter, now: number): boolean {
+    if (owner.definition.id === 'yuta' || !owner.canAct(now) || !owner.spendFixedEnergy(15)) return false
+    owner.beginAction(now, 300)
     owner.heal(owner.definition.id === 'gojo' ? 34 : 28)
     this.combat.healEffect(owner, REVERSE_LABELS[owner.definition.id])
     return true

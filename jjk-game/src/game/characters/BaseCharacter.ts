@@ -73,10 +73,10 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   }
 
   startAttack(kind: AttackKind, now: number): Hitbox | null {
-    if (now < this.hitstunUntil || now < this.attackUntil || this.isGuarding) return null
+    if (!this.canAct(now)) return null
     const comboIndex = this.combo.next(kind, now)
     const isStrong = kind === 'strong'; const finalHit = !isStrong && comboIndex === 2
-    this.attackDuration = isStrong ? 540 : finalHit ? 460 : 300; this.attackStartedAt = now; this.attackUntil = now + this.attackDuration
+    this.attackDuration = isStrong ? 520 : finalHit ? 430 : comboIndex === 1 ? 265 : 235; this.attackStartedAt = now; this.attackUntil = now + this.attackDuration
     this.energy = Math.max(0, this.energy - this.energyCost(isStrong ? 8 : 1)); this.ultimate = Math.min(100, this.ultimate + (isStrong ? 7 : 2)); this.updateVisuals(now)
     const range = isStrong ? 98 : finalHit ? 84 : 70
     const domainPower = this.domainActive(now) ? 1.28 : 1; const manifestPower = this.fullManifestActive(now) ? 1.2 : 1
@@ -95,8 +95,8 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   }
 
   activateDomain(now: number): boolean {
-    if (this.domainActive(now) || this.domainBlocked(now) || !this.spendFixedEnergy(20)) return false
-    this.ultimate = 0; this.domainUntil = now + 6500; this.invulnerableUntil = now + 420; this.hitstunUntil = now + 260
+    if (!this.canAct(now) || this.domainActive(now) || this.domainBlocked(now) || !this.spendFixedEnergy(20)) return false
+    this.ultimate = 0; this.domainUntil = now + 6500; this.invulnerableUntil = now + 420; this.hitstunUntil = now + 260; this.attackStartedAt = now; this.attackDuration = 520; this.attackUntil = now + this.attackDuration
     return true
   }
 
@@ -111,6 +111,11 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   activateFullManifest(now: number): boolean { if (this.definition.id !== 'yuta' || this.fullManifestUsed || this.fullManifestActive(now)) return false; this.fullManifestUsed = true; this.fullManifestUntil = now + 30000; this.unlimitedEnergy = true; this.energy = this.definition.stats.maxEnergy; return true }
   fullManifestActive(now: number): boolean { return this.fullManifestUntil > now }
   heal(amount: number): void { this.hp = Math.min(this.definition.stats.maxHp, this.hp + amount) }
+  canAct(now: number): boolean { return this.hp > 0 && now >= this.hitstunUntil && now >= this.attackUntil && now >= this.immobilizedUntil && !this.isGuarding }
+  beginAction(now: number, duration: number): boolean {
+    if (!this.canAct(now)) return false
+    this.attackStartedAt = now; this.attackDuration = duration; this.attackUntil = now + duration; this.updateVisuals(now); return true
+  }
   spendEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; const actualCost = this.energyCost(amount); if (this.energy < actualCost) return false; this.energy -= actualCost; return true }
   spendFixedEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; const actualCost = this.energyCost(amount); if (this.energy < actualCost) return false; this.energy -= actualCost; return true }
 
@@ -122,7 +127,17 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
 
   private updateVisuals(now: number): void {
     const attacking = now < this.attackUntil; const stunned = now < this.hitstunUntil; const progress = this.attackDuration > 0 ? Phaser.Math.Clamp((now - this.attackStartedAt) / this.attackDuration, 0, 1) : 0
-    this.bodyGraphic.setAlpha(stunned ? 0.45 : 1); this.bodyGraphic.setScale(this.definition.id === 'yuji' && attacking ? 1.08 : 1, this.definition.id === 'yuji' && attacking ? 0.92 : 1); this.auraGraphic.clear(); this.signatureGraphic.clear(); this.drawSignature(attacking, progress)
+    this.bodyGraphic.setAlpha(stunned ? 0.45 : 1); this.bodyGraphic.setPosition(0, 0); this.bodyGraphic.setRotation(0); this.bodyGraphic.setScale(1, 1)
+    if (attacking) {
+      const swing = Math.sin(progress * Math.PI)
+      if (this.definition.id === 'yuta') { this.bodyGraphic.setRotation((this.facing === 1 ? 1 : -1) * -0.08 * swing); this.bodyGraphic.setPosition(this.facing * 5 * swing, -3 * swing) }
+      if (this.definition.id === 'uro') { this.bodyGraphic.setRotation((this.facing === 1 ? 1 : -1) * 0.14 * swing); this.bodyGraphic.setPosition(this.facing * 8 * swing, -5 * swing) }
+      if (this.definition.id === 'gojo') { this.bodyGraphic.setScale(1 + 0.05 * swing, 1 - 0.04 * swing); this.bodyGraphic.setPosition(this.facing * 4 * swing, -2 * swing) }
+      if (this.definition.id === 'sukuna') { this.bodyGraphic.setRotation((this.facing === 1 ? 1 : -1) * -0.12 * swing); this.bodyGraphic.setPosition(this.facing * 7 * swing, -4 * swing) }
+      if (this.definition.id === 'yuji') { this.bodyGraphic.setScale(1 + 0.08 * swing, 1 - 0.07 * swing); this.bodyGraphic.setPosition(this.facing * 11 * swing, -5 * swing) }
+      if (this.definition.id === 'megumi') { this.bodyGraphic.setRotation((this.facing === 1 ? 1 : -1) * 0.1 * swing); this.bodyGraphic.setPosition(this.facing * 5 * swing, -2 * swing) }
+    }
+    this.auraGraphic.clear(); this.signatureGraphic.clear(); this.drawSignature(attacking, progress)
     if (this.isGuarding) { this.auraGraphic.lineStyle(4, 0x8fe9ff, 0.65); this.auraGraphic.strokeCircle(0, -62, 48) }
     if (attacking) { this.auraGraphic.lineStyle(5, this.definition.color, 0.85); this.auraGraphic.beginPath(); this.auraGraphic.arc(22, -70, 58, -1.25, 1.25, false); this.auraGraphic.strokePath() }
     if (this.domainUntil > now) { this.auraGraphic.lineStyle(2, this.definition.color, 0.7); this.auraGraphic.strokeCircle(0, -62, 80); this.auraGraphic.lineStyle(1, 0xffffff, 0.25); this.auraGraphic.strokeCircle(0, -62, 91) }
