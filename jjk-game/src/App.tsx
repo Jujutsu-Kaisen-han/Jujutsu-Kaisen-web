@@ -29,6 +29,7 @@ function App() {
   const [result, setResult] = useState<MatchResult | null>(null);
   const [soloQueue, setSoloQueue] = useState<CharacterId[]>([]);
   const [soloIndex, setSoloIndex] = useState(0);
+  const [networkStatus, setNetworkStatus] = useState("TWO OPERATORS ONLINE");
   const startGame = (
     p1: CharacterId,
     p2: CharacterId,
@@ -40,6 +41,7 @@ function App() {
       setSoloIndex(0);
     }
     setHud(null);
+    setNetworkStatus(mode === "online" ? "MATCHMAKING // READY" : "TWO OPERATORS ONLINE");
     setScreen("battle");
   };
   const advanceSolo = (): void => {
@@ -99,13 +101,14 @@ function App() {
           </div>
         </div>
         <span className="header-status">
-          <span className="status-dot" /> TWO OPERATORS ONLINE
+          <span className="status-dot" /> {networkStatus}
         </span>
       </header>
       <section className="battle-stage">
         <GameCanvas
           selection={selection}
           onHudUpdate={setHud}
+          onNetworkStatus={setNetworkStatus}
           onMatchOver={(matchResult) => {
             setResult(matchResult);
             setScreen("result");

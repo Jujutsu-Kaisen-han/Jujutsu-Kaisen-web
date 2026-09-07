@@ -1,6 +1,6 @@
 export type CharacterId = 'yuta' | 'uro' | 'gojo' | 'sukuna' | 'yuji' | 'megumi'
 export type PlayerSlot = 'P1' | 'P2'
-export type GameMode = 'local' | 'solo'
+export type GameMode = 'local' | 'solo' | 'online'
 
 export interface CharacterStats {
   maxHp: number

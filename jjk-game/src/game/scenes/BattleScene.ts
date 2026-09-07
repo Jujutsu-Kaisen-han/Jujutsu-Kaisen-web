@@ -12,14 +12,16 @@ import { CooldownSystem } from '../systems/CooldownSystem'
 import { RikaSummon } from '../entities/Summon'
 import type { CharacterId, GameMode } from '../types/CharacterTypes'
 import type { BattleHudState } from '../types/CombatTypes'
+import type { PlayerSlot } from '../types/CharacterTypes'
+import type { OnlineClient } from '../network/OnlineClient'
 
-export interface BattleInitData { p1: CharacterId; p2: CharacterId; mode?: GameMode }
+export interface BattleInitData { p1: CharacterId; p2: CharacterId; mode?: GameMode; onlineRole?: PlayerSlot; onlineClient?: OnlineClient }
 
 export class BattleScene extends Phaser.Scene {
   static readonly key = 'BattleScene'
   private p1!: BaseCharacter
   private p2!: BaseCharacter
-  private p1Input!: InputManager
+  private p1Input?: InputManager
   private p2Input?: InputManager
   private aiBrain?: AIBrain
   private combat!: CombatSystem
@@ -35,6 +37,8 @@ export class BattleScene extends Phaser.Scene {
   private roundMessage = ''
   private matchMessage = ''
   private mode: GameMode = 'local'
+  private onlineRole?: PlayerSlot
+  private onlineClient?: OnlineClient
   private domainOwner?: BaseCharacter
   private domainClashUntil = 0
   private domainClashParticipants?: [BaseCharacter, BaseCharacter]
@@ -51,11 +55,13 @@ export class BattleScene extends Phaser.Scene {
 
   constructor() { super(BattleScene.key) }
 
-  init(data?: BattleInitData): void { this.p1Id = data?.p1 ?? 'yuta'; this.p2Id = data?.p2 ?? 'yuji'; this.mode = data?.mode ?? 'local' }
+  init(data?: BattleInitData): void { this.p1Id = data?.p1 ?? 'yuta'; this.p2Id = data?.p2 ?? 'yuji'; this.mode = data?.mode ?? 'local'; this.onlineRole = data?.onlineRole; this.onlineClient = data?.onlineClient }
 
   create(): void {
     this.drawArena(); this.p1 = createCharacter(this, this.p1Id, 'P1', 390, GROUND_Y, 1); this.p2 = createCharacter(this, this.p2Id, 'P2', 890, GROUND_Y, -1); this.p2.aiControlled = this.mode === 'solo'
-    this.p1Input = new InputManager(this, 'P1', 'solo'); if (this.mode === 'local') this.p2Input = new InputManager(this, 'P2'); else this.aiBrain = new AIBrain(this.p2, this.p1)
+    this.p1Input = this.mode !== 'online' || this.onlineRole === 'P1' ? new InputManager(this, 'P1', 'solo') : undefined
+    this.p2Input = this.mode === 'local' || (this.mode === 'online' && this.onlineRole === 'P2') ? new InputManager(this, 'P2') : undefined
+    if (this.mode === 'solo') this.aiBrain = new AIBrain(this.p2, this.p1)
     this.combat = new CombatSystem(this, (attacker, defender, damage) => { if (this.domainClashUntil > this.time.now) this.domainClashDamage[attacker.slot] += damage; attacker.ultimate = Math.min(100, attacker.ultimate + 3); defender.ultimate = Math.min(100, defender.ultimate + 1) })
     this.yutaSkills = new YutaSkillSystem(this.combat)
     this.characterSkills = new CharacterSkillSystem(this.combat)
@@ -65,7 +71,18 @@ export class BattleScene extends Phaser.Scene {
   update(time: number, delta: number): void {
     if (this.matchOver) { if (time >= this.matchEndAt) this.events.emit('match-over', { winner: this.getMatchWinner(), p1Rounds: this.rounds.p1Rounds, p2Rounds: this.rounds.p2Rounds }); this.emitHud(time); return }
     if (this.roundFinished) { if (time >= this.roundEndAt && !this.matchOver) { this.rounds.nextRound(); this.startRound(time) } this.emitHud(time); return }
-    const leftInput = this.p1Input.read(time); const rightInput = this.mode === 'solo' ? this.aiBrain?.decide(time) ?? this.emptyInput() : this.p2Input?.read(time) ?? this.emptyInput()
+    let leftInput: InputSnapshot
+    let rightInput: InputSnapshot
+    if (this.mode === 'online') {
+      const localInput = (this.onlineRole === 'P2' ? this.p2Input?.read(time) : this.p1Input?.read(time)) ?? this.emptyInput()
+      this.onlineClient?.sendInput(localInput)
+      const remoteInput = this.onlineClient?.consumeRemoteInput() ?? this.emptyInput()
+      leftInput = this.onlineRole === 'P2' ? remoteInput : localInput
+      rightInput = this.onlineRole === 'P2' ? localInput : remoteInput
+    } else {
+      leftInput = this.p1Input?.read(time) ?? this.emptyInput()
+      rightInput = this.mode === 'solo' ? this.aiBrain?.decide(time) ?? this.emptyInput() : this.p2Input?.read(time) ?? this.emptyInput()
+    }
     this.p1.updateCharacter(leftInput, time, delta, GROUND_Y, ARENA_WIDTH); this.p2.updateCharacter(rightInput, time, delta, GROUND_Y, ARENA_WIDTH); this.resolveFighterCollision()
     this.yutaSkills.update(this.p1, time); this.yutaSkills.update(this.p2, time)
     this.processCharacterSkills(this.p1, this.p2, leftInput, time); this.processCharacterSkills(this.p2, this.p1, rightInput, time)

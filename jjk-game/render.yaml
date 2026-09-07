@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: jjk-online
+    runtime: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /health

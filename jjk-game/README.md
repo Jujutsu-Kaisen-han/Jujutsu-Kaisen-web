@@ -1,5 +1,16 @@
 # React + TypeScript + Vite
 
+## Online 1v1
+
+The project includes a Node.js WebSocket matchmaking server. Build the client and run the server with:
+
+    npm run build
+    npm start
+
+Open http://localhost:3001 in two browser windows, select ONLINE 1 VS 1, choose a character, and press START DUEL in both windows. For Vite development, run npm run dev and npm run server in separate terminals.
+
+render.yaml contains the Render deployment configuration. The Node server serves dist and exposes /health for the health check. Set VITE_WS_URL only when the WebSocket server is hosted on a different origin.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
