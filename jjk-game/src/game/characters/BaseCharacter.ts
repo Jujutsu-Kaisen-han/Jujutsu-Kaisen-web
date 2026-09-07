@@ -85,7 +85,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
 
   receiveDamage(damage: number, knockbackX: number, knockbackY: number, now: number, technique = 'basic', bypassInfinity = false): void {
     if ((now < this.invulnerableUntil && !(bypassInfinity && this.infinityActive(now))) || this.hp <= 0) return
-    if (this.definition.id === 'sukuna' && this.hp <= damage && !this.mahoragaSummoned) {
+    if (this.definition.id === 'sukuna' && this.hp - damage <= this.definition.stats.maxHp * 0.25 && !this.mahoragaSummoned) {
       this.mahoragaSummoned = true; this.adaptedTechnique = technique; this.ultimate = 0; this.hp = Math.max(1, Math.round(this.definition.stats.maxHp * 0.45)); this.velocityX = 0; this.velocityY = -180; this.isGrounded = false; this.hitstunUntil = now + 500; this.invulnerableUntil = now + 900; this.updateVisuals(now); return
     }
     const adaptedDamage = this.mahoragaSummoned && this.adaptedTechnique === technique ? Math.max(1, Math.round(damage * 0.25)) : damage

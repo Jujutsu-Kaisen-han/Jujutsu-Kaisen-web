@@ -52,6 +52,7 @@ export class BattleScene extends Phaser.Scene {
   private yutaSwords: Array<{ graphic: Phaser.GameObjects.Graphics; x: number; y: number; triggered: boolean }> = []
   private readonly rikaSummons: Partial<Record<'P1' | 'P2', RikaSummon>> = {}
   private readonly nextRikaAttackAt: Record<'P1' | 'P2', number> = { P1: 0, P2: 0 }
+  private readonly nextMahoragaAttackAt: Record<'P1' | 'P2', number> = { P1: 0, P2: 0 }
 
   constructor() { super(BattleScene.key) }
 
@@ -87,6 +88,7 @@ export class BattleScene extends Phaser.Scene {
     this.yutaSkills.update(this.p1, time); this.yutaSkills.update(this.p2, time)
     this.processCharacterSkills(this.p1, this.p2, leftInput, time); this.processCharacterSkills(this.p2, this.p1, rightInput, time)
     this.updateRikaSummons(time)
+    this.updateMahoragaSupport(time)
     if (leftInput.ultimatePressed) this.activateDomain(this.p1, this.p2, time)
     if (rightInput.ultimatePressed) this.activateDomain(this.p2, this.p1, time)
     if (leftInput.simpleDomainPressed) this.activateSimpleDomain(this.p1, time)
@@ -256,6 +258,18 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private clearRikaSummons(): void { Object.values(this.rikaSummons).forEach((summon) => summon?.destroy()); delete this.rikaSummons.P1; delete this.rikaSummons.P2; this.nextRikaAttackAt.P1 = 0; this.nextRikaAttackAt.P2 = 0 }
+
+  private updateMahoragaSupport(now: number): void {
+    ;[this.p1, this.p2].forEach((owner) => {
+      const key = owner.slot; const opponent = owner === this.p1 ? this.p2 : this.p1
+      if (owner.definition.id !== 'sukuna' || !owner.mahoragaSummoned || owner.hp <= 0) { this.nextMahoragaAttackAt[key] = 0; return }
+      if (opponent.hp > 0 && now >= this.nextMahoragaAttackAt[key] && Phaser.Math.Distance.Between(owner.x, owner.y, opponent.x, opponent.y) < 260) {
+        const direction = opponent.x >= owner.x ? 1 : -1
+        this.combat.companionStrike(owner, opponent, owner.x + direction * 70, owner.y, 22, now, '마허라 // 스쿠나 참격')
+        this.nextMahoragaAttackAt[key] = now + 900
+      }
+    })
+  }
 
   private cooldownId(owner: BaseCharacter, action: string): string { return `${owner.slot}:${action}` }
 
