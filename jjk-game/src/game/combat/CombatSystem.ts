@@ -35,6 +35,15 @@ export class CombatSystem {
 
   rikaAttack(attacker: BaseCharacter, defender: BaseCharacter, now: number): boolean { return this.specialStrike(attacker, defender, 150, 24, now, 'RIKA') }
 
+  companionStrike(attacker: BaseCharacter, defender: BaseCharacter, x: number, y: number, damage: number, now: number, label = 'RIKA // 동시 공격'): boolean {
+    const direction = defender.x >= x ? 1 : -1
+    const hitbox = new Hitbox({ owner: attacker.slot, x: x + direction * 48, y: y - 78, width: 96, height: 108, damage, knockbackX: direction * 230, knockbackY: -35, activeUntil: now + 100 })
+    const attackRect = new Phaser.Geom.Rectangle(hitbox.bounds.x, hitbox.bounds.y, hitbox.bounds.width, hitbox.bounds.height)
+    const hurtRect = new Phaser.Geom.Rectangle(defender.hurtbox.bounds.x, defender.hurtbox.bounds.y, defender.hurtbox.bounds.width, defender.hurtbox.bounds.height)
+    if (!Phaser.Geom.Intersects.RectangleToRectangle(attackRect, hurtRect)) return false
+    const actualDamage = calculateDamage(attacker, defender, hitbox); defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, 0xd9c2ff); this.showTechniqueLabel(defender.x, defender.y - 112, label); return true
+  }
+
   rangedStrike(attacker: BaseCharacter, defender: BaseCharacter, range: number, damage: number, now: number, label: string): boolean {
     const direction = defender.x >= attacker.x ? 1 : -1
     const aimedAtTarget = direction === attacker.facing

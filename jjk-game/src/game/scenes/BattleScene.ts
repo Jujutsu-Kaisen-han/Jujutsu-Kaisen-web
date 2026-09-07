@@ -9,6 +9,7 @@ import { YutaSkillSystem } from '../skills/YutaSkillSystem'
 import { CharacterSkillSystem } from '../skills/CharacterSkillSystem'
 import { AIBrain } from '../systems/AIBrain'
 import { CooldownSystem } from '../systems/CooldownSystem'
+import { RikaSummon } from '../entities/Summon'
 import type { CharacterId, GameMode } from '../types/CharacterTypes'
 import type { BattleHudState } from '../types/CombatTypes'
 
@@ -45,6 +46,8 @@ export class BattleScene extends Phaser.Scene {
   private yutaSkills!: YutaSkillSystem
   private characterSkills!: CharacterSkillSystem
   private yutaSwords: Array<{ graphic: Phaser.GameObjects.Graphics; x: number; y: number; triggered: boolean }> = []
+  private readonly rikaSummons: Partial<Record<'P1' | 'P2', RikaSummon>> = {}
+  private readonly nextRikaAttackAt: Record<'P1' | 'P2', number> = { P1: 0, P2: 0 }
 
   constructor() { super(BattleScene.key) }
 
@@ -66,6 +69,7 @@ export class BattleScene extends Phaser.Scene {
     this.p1.updateCharacter(leftInput, time, delta, GROUND_Y, ARENA_WIDTH); this.p2.updateCharacter(rightInput, time, delta, GROUND_Y, ARENA_WIDTH); this.resolveFighterCollision()
     this.yutaSkills.update(this.p1, time); this.yutaSkills.update(this.p2, time)
     this.processCharacterSkills(this.p1, this.p2, leftInput, time); this.processCharacterSkills(this.p2, this.p1, rightInput, time)
+    this.updateRikaSummons(time)
     if (leftInput.ultimatePressed) this.activateDomain(this.p1, this.p2, time)
     if (rightInput.ultimatePressed) this.activateDomain(this.p2, this.p1, time)
     if (leftInput.simpleDomainPressed) this.activateSimpleDomain(this.p1, time)
@@ -87,7 +91,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private startRound(now: number): void {
-    this.clearYutaSwords(); this.clearDomainClash(); this.domainOwner = undefined; this.domainClashUntil = 0; this.domainClashParticipants = undefined; this.domainClashRemaining = undefined; this.domainClashDamage = { P1: 0, P2: 0 }; this.p1.resetForRound(390, 1); this.p2.resetForRound(890, -1); this.aiBrain?.reset(now); this.roundStartedAt = now; this.roundFinished = false; this.roundMessage = `ROUND ${this.rounds.round}`; this.matchMessage = ''; this.time.delayedCall(900, () => { this.roundMessage = '' })
+    this.clearYutaSwords(); this.clearRikaSummons(); this.clearDomainClash(); this.domainOwner = undefined; this.domainClashUntil = 0; this.domainClashParticipants = undefined; this.domainClashRemaining = undefined; this.domainClashDamage = { P1: 0, P2: 0 }; this.p1.resetForRound(390, 1); this.p2.resetForRound(890, -1); this.aiBrain?.reset(now); this.roundStartedAt = now; this.roundFinished = false; this.roundMessage = `ROUND ${this.rounds.round}`; this.matchMessage = ''; this.time.delayedCall(900, () => { this.roundMessage = '' })
   }
 
   private activateSimpleDomain(owner: BaseCharacter, now: number): void {
@@ -210,6 +214,17 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private clearYutaSwords(): void { this.yutaSwords.forEach((sword) => sword.graphic.destroy()); this.yutaSwords = [] }
+
+  private updateRikaSummons(now: number): void {
+    ;[this.p1, this.p2].forEach((owner) => {
+      const key = owner.slot; const opponent = owner === this.p1 ? this.p2 : this.p1; const current = this.rikaSummons[key]
+      if (owner.definition.id !== 'yuta' || !owner.fullManifestActive(now) || owner.hp <= 0) { current?.destroy(); delete this.rikaSummons[key]; return }
+      const summon = current ?? new RikaSummon(this, owner.x + owner.facing * 86, owner.y - 4); this.rikaSummons[key] = summon; summon.follow(owner.x, owner.y, owner.facing, now, ARENA_WIDTH)
+      if (opponent.hp > 0 && now >= this.nextRikaAttackAt[key] && Phaser.Math.Distance.Between(summon.x, summon.y, opponent.x, opponent.y) < 170) { summon.triggerAttack(now); this.combat.companionStrike(owner, opponent, summon.x, summon.y, 18, now); this.nextRikaAttackAt[key] = now + 850 }
+    })
+  }
+
+  private clearRikaSummons(): void { Object.values(this.rikaSummons).forEach((summon) => summon?.destroy()); delete this.rikaSummons.P1; delete this.rikaSummons.P2; this.nextRikaAttackAt.P1 = 0; this.nextRikaAttackAt.P2 = 0 }
 
   private cooldownId(owner: BaseCharacter, action: string): string { return `${owner.slot}:${action}` }
 
