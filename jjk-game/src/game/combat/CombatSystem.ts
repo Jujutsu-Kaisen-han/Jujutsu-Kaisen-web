@@ -44,7 +44,7 @@ export class CombatSystem {
     const actualDamage = calculateDamage(attacker, defender, hitbox); defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, 0xd9c2ff); this.showTechniqueLabel(defender.x, defender.y - 112, label); return true
   }
 
-  rangedStrike(attacker: BaseCharacter, defender: BaseCharacter, range: number, damage: number, now: number, label: string): boolean {
+  rangedStrike(attacker: BaseCharacter, defender: BaseCharacter, range: number, damage: number, now: number, label: string, damageResolver?: (defender: BaseCharacter) => number): boolean {
     const direction = defender.x >= attacker.x ? 1 : -1
     const aimedAtTarget = direction === attacker.facing
     const distance = Math.abs(defender.x - attacker.x)
@@ -56,7 +56,7 @@ export class CombatSystem {
     this.scene.tweens.add({ targets: projectile, x: destination, duration: 150, onComplete: () => projectile.destroy() })
     if (!aimedAtTarget || distance > range || Math.abs(defender.y - attacker.y) > 105) return false
     const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 42, y: defender.y - 108, width: 84, height: 120, damage, knockbackX: attacker.facing * 210, knockbackY: -35, activeUntil: now + 80 })
-    const actualDamage = calculateDamage(attacker, defender, hitbox)
+    const actualDamage = damageResolver ? damageResolver(defender) : calculateDamage(attacker, defender, hitbox)
     defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color); this.showTechniqueLabel(defender.x, defender.y - 112, label)
     return true
   }
@@ -78,6 +78,7 @@ export class CombatSystem {
   copiedTechniqueEffect(attacker: BaseCharacter, defender: BaseCharacter, label: string): void { this.showTechniqueLabel(defender.x, defender.y - 110, label); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color) }
 
   healEffect(owner: BaseCharacter, label = '반전술식'): void { const effect = this.scene.add.graphics(); effect.lineStyle(4, 0x9effcb, 0.9); effect.strokeCircle(owner.x, owner.y - 65, 26); this.scene.tweens.add({ targets: effect, scale: 1.7, alpha: 0, duration: 420, onComplete: () => effect.destroy() }); this.showTechniqueLabel(owner.x, owner.y - 130, label) }
+  infinityEffect(owner: BaseCharacter): void { const effect = this.scene.add.graphics(); effect.lineStyle(5, 0xb7f3ff, 0.95); effect.strokeCircle(owner.x, owner.y - 64, 52); effect.lineStyle(2, 0xffffff, 0.8); effect.strokeCircle(owner.x, owner.y - 64, 65); this.scene.tweens.add({ targets: effect, scale: 1.25, alpha: 0, duration: 600, onComplete: () => effect.destroy() }); this.showTechniqueLabel(owner.x, owner.y - 130, '무하한 // 5초 배리어') }
   manifestEffect(owner: BaseCharacter): void { const effect = this.scene.add.graphics(); effect.lineStyle(5, 0xd8c5ff, 0.95); effect.strokeCircle(owner.x, owner.y - 64, 42); this.scene.tweens.add({ targets: effect, scale: 1.8, alpha: 0, duration: 500, onComplete: () => effect.destroy() }); this.showTechniqueLabel(owner.x, owner.y - 130, 'RIKA // COMPLETE') }
   simpleDomainEffect(owner: BaseCharacter): void { const effect = this.scene.add.graphics(); effect.lineStyle(5, 0xf3dc92, 0.95); effect.strokeCircle(owner.x, owner.y - 62, 68); this.scene.tweens.add({ targets: effect, scale: 1.15, alpha: 0, duration: 500, onComplete: () => effect.destroy() }); this.showTechniqueLabel(owner.x, owner.y - 130, '간이영역 // DOMAIN NULL') }
 

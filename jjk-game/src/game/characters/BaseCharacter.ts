@@ -18,6 +18,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   simpleDomainUntil = 0
   fullManifestUntil = 0
   fullManifestUsed = false
+  infinityUntil = 0
   private unlimitedEnergy = false
   aiControlled = false
   mahoragaSummoned = false
@@ -99,6 +100,8 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   }
 
   domainActive(now: number): boolean { return this.domainUntil > now }
+  activateInfinity(now: number): boolean { if (this.definition.id !== 'gojo' || this.infinityActive(now)) return false; this.infinityUntil = now + 5000; this.invulnerableUntil = Math.max(this.invulnerableUntil, this.infinityUntil); return true }
+  infinityActive(now: number): boolean { return this.infinityUntil > now }
   activateSimpleDomain(now: number): boolean { if (this.simpleDomainActive(now) || !this.spendEnergy(20)) return false; this.simpleDomainUntil = now + 3800; return true }
   simpleDomainActive(now: number): boolean { return this.simpleDomainUntil > now }
   activateFullManifest(now: number): boolean { if (this.definition.id !== 'yuta' || this.fullManifestUsed || this.fullManifestActive(now)) return false; this.fullManifestUsed = true; this.fullManifestUntil = now + 30000; this.unlimitedEnergy = true; this.energy = this.definition.stats.maxEnergy; return true }
@@ -108,7 +111,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   spendFixedEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; if (this.energy < amount) return false; this.energy -= amount; return true }
 
   resetForRound(x: number, facing: 1 | -1): void {
-    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.fullManifestUsed = false; this.unlimitedEnergy = false; this.mahoragaSummoned = false; this.adaptedTechnique = null; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
+    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.fullManifestUsed = false; this.infinityUntil = 0; this.unlimitedEnergy = false; this.mahoragaSummoned = false; this.adaptedTechnique = null; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
   }
 
   private updateVisuals(now: number): void {
@@ -118,6 +121,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     if (attacking) { this.auraGraphic.lineStyle(5, this.definition.color, 0.85); this.auraGraphic.beginPath(); this.auraGraphic.arc(22, -70, 58, -1.25, 1.25, false); this.auraGraphic.strokePath() }
     if (this.domainUntil > now) { this.auraGraphic.lineStyle(2, this.definition.color, 0.7); this.auraGraphic.strokeCircle(0, -62, 80); this.auraGraphic.lineStyle(1, 0xffffff, 0.25); this.auraGraphic.strokeCircle(0, -62, 91) }
     if (this.simpleDomainUntil > now) { this.auraGraphic.lineStyle(4, 0xf3dc92, 0.9); this.auraGraphic.strokeCircle(0, -62, 68); this.auraGraphic.lineStyle(1, 0xfff3bf, 0.75); this.auraGraphic.strokeCircle(0, -62, 76) }
+    if (this.infinityUntil > now) { this.auraGraphic.lineStyle(5, 0xb7f3ff, 0.9); this.auraGraphic.strokeCircle(0, -62, 53); this.auraGraphic.lineStyle(2, 0xffffff, 0.8); this.auraGraphic.strokeCircle(0, -62, 63) }
     if (this.fullManifestUntil > now) { this.auraGraphic.lineStyle(3, 0xd7c6ff, 0.85); this.auraGraphic.strokeCircle(0, -62, 56); this.auraGraphic.lineStyle(2, this.definition.color, 0.65); this.auraGraphic.strokeCircle(0, -62, 66) }
     if (this.mahoragaSummoned && this.definition.id === 'megumi') { this.auraGraphic.lineStyle(4, 0xffd56f, 0.9); this.auraGraphic.strokeCircle(0, -62, 88); this.auraGraphic.lineStyle(2, 0xfff1b0, 0.85); this.auraGraphic.strokeCircle(0, -62, 98) }
   }
