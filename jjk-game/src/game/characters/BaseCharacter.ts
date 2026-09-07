@@ -85,10 +85,10 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
 
   receiveDamage(damage: number, knockbackX: number, knockbackY: number, now: number, technique = 'basic', bypassInfinity = false): void {
     if ((now < this.invulnerableUntil && !(bypassInfinity && this.infinityActive(now))) || this.hp <= 0) return
-    if (this.definition.id === 'megumi' && this.hp <= damage && this.ultimate >= 100 && !this.mahoragaSummoned) {
+    if (this.definition.id === 'sukuna' && this.hp <= damage && !this.mahoragaSummoned) {
       this.mahoragaSummoned = true; this.adaptedTechnique = technique; this.ultimate = 0; this.hp = Math.max(1, Math.round(this.definition.stats.maxHp * 0.45)); this.velocityX = 0; this.velocityY = -180; this.isGrounded = false; this.hitstunUntil = now + 500; this.invulnerableUntil = now + 900; this.updateVisuals(now); return
     }
-    const adaptedDamage = this.mahoragaSummoned && this.adaptedTechnique === technique ? Math.max(1, Math.round(damage * 0.45)) : damage
+    const adaptedDamage = this.mahoragaSummoned && this.adaptedTechnique === technique ? Math.max(1, Math.round(damage * 0.25)) : damage
     if (this.mahoragaSummoned && this.adaptedTechnique === null) this.adaptedTechnique = technique
     this.hp = Math.max(0, this.hp - adaptedDamage); this.velocityX = knockbackX; this.velocityY = knockbackY; this.isGrounded = false; this.hitstunUntil = now + 260; this.invulnerableUntil = now + 420; this.ultimate = Math.min(100, this.ultimate + 4); this.updateVisuals(now)
   }
@@ -125,7 +125,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     if (this.simpleDomainUntil > now) { this.auraGraphic.lineStyle(4, 0xf3dc92, 0.9); this.auraGraphic.strokeCircle(0, -62, 68); this.auraGraphic.lineStyle(1, 0xfff3bf, 0.75); this.auraGraphic.strokeCircle(0, -62, 76) }
     if (this.infinityUntil > now) { this.auraGraphic.lineStyle(5, 0xb7f3ff, 0.9); this.auraGraphic.strokeCircle(0, -62, 53); this.auraGraphic.lineStyle(2, 0xffffff, 0.8); this.auraGraphic.strokeCircle(0, -62, 63) }
     if (this.fullManifestUntil > now) { this.auraGraphic.lineStyle(3, 0xd7c6ff, 0.85); this.auraGraphic.strokeCircle(0, -62, 56); this.auraGraphic.lineStyle(2, this.definition.color, 0.65); this.auraGraphic.strokeCircle(0, -62, 66) }
-    if (this.mahoragaSummoned && this.definition.id === 'megumi') { this.auraGraphic.lineStyle(4, 0xffd56f, 0.9); this.auraGraphic.strokeCircle(0, -62, 88); this.auraGraphic.lineStyle(2, 0xfff1b0, 0.85); this.auraGraphic.strokeCircle(0, -62, 98) }
+    if (this.mahoragaSummoned && this.definition.id === 'sukuna') { this.auraGraphic.lineStyle(4, 0xffd56f, 0.9); this.auraGraphic.strokeCircle(0, -62, 88); this.auraGraphic.lineStyle(2, 0xfff1b0, 0.85); this.auraGraphic.strokeCircle(0, -62, 98) }
   }
 
   private drawBody(): void {
@@ -159,6 +159,6 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
       this.signatureGraphic.lineStyle(3, 0x9bb5ff, 0.85); this.signatureGraphic.beginPath(); this.signatureGraphic.moveTo(-12, -58); this.signatureGraphic.lineTo(-4, -72); this.signatureGraphic.lineTo(4, -58); this.signatureGraphic.moveTo(12, -58); this.signatureGraphic.lineTo(4, -72); this.signatureGraphic.lineTo(-4, -58); this.signatureGraphic.strokePath(); this.signatureGraphic.fillStyle(0x161832, 0.9); this.signatureGraphic.fillEllipse(0, 0, 62, 15)
       if (attacking) { this.auraGraphic.lineStyle(4, color, 0.85); this.auraGraphic.beginPath(); this.auraGraphic.arc(0, -54, 76, -1.2, 1.2, false); this.auraGraphic.strokePath() }
     }
-    if (this.mahoragaSummoned && this.definition.id === 'megumi') { this.signatureGraphic.lineStyle(3, 0xffd56f, 0.9); this.signatureGraphic.strokeCircle(0, -122, 27); this.signatureGraphic.lineStyle(2, 0xfff1b0, 0.9); for (let index = 0; index < 8; index += 1) { const angle = index * Math.PI / 4; this.signatureGraphic.lineBetween(0, -122, Math.cos(angle) * 42, -122 + Math.sin(angle) * 42) } }
+    if (this.mahoragaSummoned && this.definition.id === 'sukuna') { this.signatureGraphic.lineStyle(3, 0xffd56f, 0.9); this.signatureGraphic.strokeCircle(0, -122, 27); this.signatureGraphic.lineStyle(2, 0xfff1b0, 0.9); for (let index = 0; index < 8; index += 1) { const angle = index * Math.PI / 4; this.signatureGraphic.lineBetween(0, -122, Math.cos(angle) * 42, -122 + Math.sin(angle) * 42) } }
   }
 }
