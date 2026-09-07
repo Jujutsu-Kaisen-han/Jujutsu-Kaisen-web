@@ -60,7 +60,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     if (now < this.immobilizedUntil) { this.velocityX = 0; this.velocityY = 0 } else { this.velocityY += 1450 * dt; this.x += this.velocityX * dt; this.y += this.velocityY * dt }
     if (this.y >= groundY) { this.y = groundY; this.velocityY = 0; this.isGrounded = true }
     this.x = Phaser.Math.Clamp(this.x, 45, arenaWidth - 45); this.setDepth(this.y); this.hurtbox.update(this.x, this.y)
-    this.energy = Math.min(this.definition.stats.maxEnergy, this.energy + delta * 0.008); this.ultimate = Math.min(100, this.ultimate + delta * 0.0035)
+    this.energy = Math.min(this.definition.stats.maxEnergy, this.energy + delta * 0.0028); this.ultimate = Math.min(100, this.ultimate + delta * 0.0035)
     this.updateVisuals(now)
   }
 

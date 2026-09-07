@@ -180,9 +180,9 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private processCharacterSkills(owner: BaseCharacter, opponent: BaseCharacter, input: InputSnapshot, now: number): void {
-    if (input.reversePressed && this.cooldowns.ready(this.cooldownId(owner, 'reverse'), now)) {
+    if (input.reversePressed) {
       const healed = owner.definition.id === 'yuta' ? this.yutaSkills.reverseTechnique(owner) : this.characterSkills.reverseTechnique(owner)
-      if (healed) this.cooldowns.start(this.cooldownId(owner, 'reverse'), now, 4200)
+      void healed
     }
     const inputs = [input.skill1Pressed, input.skill2Pressed, input.skill3Pressed, input.skill4Pressed, input.skill5Pressed] as const
     inputs.forEach((pressed, index) => {
