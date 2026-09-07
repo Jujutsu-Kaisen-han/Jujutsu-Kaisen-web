@@ -7,7 +7,7 @@ type InputLayout = 'solo' | 'versus'
 
 const bindings = {
   P1: { left: 'A', right: 'D', jump: 'W', guard: 'F', attack: 'F', strong: 'G', simpleDomain: 'G', reverse: 'NINE', skill1: 'E', skill2: 'R', skill3: 'T', skill4: 'Y', skill5: 'U', ultimate: 'H' },
-  P2: { left: 'LEFT', right: 'RIGHT', jump: 'UP', guard: 'TWO', attack: 'ONE', strong: 'K', simpleDomain: 'THREE', reverse: 'NINE', skill1: 'FOUR', skill2: 'FIVE', skill3: 'SIX', skill4: 'SEVEN', skill5: 'EIGHT', ultimate: 'L' },
+  P2: { left: 'LEFT', right: 'RIGHT', jump: 'UP', guard: 'TWO', attack: 'ONE', strong: 'K', simpleDomain: 'THREE', reverse: 'NINE', skill1: 'FOUR', skill2: 'FIVE', skill3: 'SIX', skill4: 'SEVEN', skill5: 'EIGHT', ultimate: 'ZERO' },
 } as const
 const soloP1Bindings = bindings.P1
 
