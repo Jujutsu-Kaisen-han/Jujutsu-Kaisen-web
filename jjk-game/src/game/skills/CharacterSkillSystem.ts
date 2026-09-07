@@ -1,23 +1,23 @@
 import type { BaseCharacter } from '../characters/BaseCharacter'
 import type { CombatSystem } from '../combat/CombatSystem'
 
-interface Technique { label: string; energy: number; width: number; damage: number; cooldown: number; ranged?: boolean; barrier?: boolean; bypassInfinity?: boolean }
+interface Technique { label: string; energy: number; width: number; damage: number; cooldown: number; duration: number; ranged?: boolean; barrier?: boolean; bypassInfinity?: boolean }
 
 const TECHNIQUES: Record<Exclude<BaseCharacter['definition']['id'], 'yuta'>, Technique[]> = {
   uro: [
-    { label: '하늘 왜곡', energy: 12, width: 430, damage: 17, cooldown: 2200, ranged: true }, { label: '공간 굴절', energy: 20, width: 500, damage: 27, cooldown: 4200, ranged: true }, { label: '천역모', energy: 24, width: 145, damage: 26, cooldown: 4000 }, { label: '공간 반전', energy: 17, width: 460, damage: 19, cooldown: 2800, ranged: true }, { label: '우주 단절', energy: 31, width: 560, damage: 38, cooldown: 6800, ranged: true },
+    { label: '하늘 왜곡', energy: 12, width: 430, damage: 17, cooldown: 2200, duration: 320, ranged: true }, { label: '공간 굴절', energy: 20, width: 500, damage: 27, cooldown: 4200, duration: 420, ranged: true }, { label: '천역모', energy: 24, width: 145, damage: 26, cooldown: 4000, duration: 430 }, { label: '공간 반전', energy: 17, width: 460, damage: 19, cooldown: 2800, duration: 340, ranged: true }, { label: '우주 단절', energy: 31, width: 560, damage: 38, cooldown: 6800, duration: 560, ranged: true },
   ],
   gojo: [
-    { label: '술식 순전', energy: 15, width: 420, damage: 18, cooldown: 1900, ranged: true }, { label: '아오', energy: 20, width: 500, damage: 25, cooldown: 3000, ranged: true }, { label: '아카', energy: 22, width: 460, damage: 30, cooldown: 4200, ranged: true }, { label: '무하한', energy: 18, width: 0, damage: 0, cooldown: 6500, barrier: true }, { label: '무라사키', energy: 34, width: 620, damage: 90, cooldown: 9000, ranged: true },
+    { label: '술식 순전', energy: 15, width: 420, damage: 18, cooldown: 1900, duration: 300, ranged: true }, { label: '아오', energy: 20, width: 500, damage: 25, cooldown: 3000, duration: 380, ranged: true }, { label: '아카', energy: 22, width: 460, damage: 30, cooldown: 4200, duration: 410, ranged: true }, { label: '무하한', energy: 18, width: 0, damage: 0, cooldown: 6500, duration: 300, barrier: true }, { label: '무라사키', energy: 34, width: 620, damage: 90, cooldown: 9000, duration: 620, ranged: true },
   ],
   sukuna: [
-    { label: '해', energy: 13, width: 460, damage: 20, cooldown: 1600, ranged: true }, { label: '팔', energy: 19, width: 250, damage: 29, cooldown: 3200 }, { label: '참격 난무', energy: 23, width: 520, damage: 34, cooldown: 4000, ranged: true }, { label: '불화', energy: 25, width: 480, damage: 38, cooldown: 4600, ranged: true }, { label: '세계를 가르는 해', energy: 36, width: 650, damage: 90, cooldown: 9000, ranged: true, bypassInfinity: true },
+    { label: '해', energy: 13, width: 460, damage: 20, cooldown: 1600, duration: 300, ranged: true }, { label: '팔', energy: 19, width: 250, damage: 29, cooldown: 3200, duration: 390 }, { label: '참격 난무', energy: 23, width: 520, damage: 34, cooldown: 4000, duration: 460, ranged: true }, { label: '불화', energy: 25, width: 480, damage: 38, cooldown: 4600, duration: 500, ranged: true }, { label: '세계를 가르는 해', energy: 36, width: 650, damage: 90, cooldown: 9000, duration: 640, ranged: true, bypassInfinity: true },
   ],
   yuji: [
-    { label: '연속 타격', energy: 10, width: 150, damage: 16, cooldown: 1700 }, { label: '흑섬', energy: 18, width: 175, damage: 30, cooldown: 3400 }, { label: '붕권', energy: 16, width: 190, damage: 24, cooldown: 3000 }, { label: '혼신의 일격', energy: 23, width: 230, damage: 36, cooldown: 4700 }, { label: '흑섬 연쇄', energy: 30, width: 420, damage: 44, cooldown: 6200, ranged: true },
+    { label: '연속 타격', energy: 10, width: 150, damage: 16, cooldown: 1700, duration: 280 }, { label: '흑섬', energy: 18, width: 175, damage: 30, cooldown: 3400, duration: 340 }, { label: '붕권', energy: 16, width: 190, damage: 24, cooldown: 3000, duration: 330 }, { label: '혼신의 일격', energy: 23, width: 230, damage: 36, cooldown: 4700, duration: 460 }, { label: '흑섬 연쇄', energy: 30, width: 420, damage: 44, cooldown: 6200, duration: 520, ranged: true },
   ],
   megumi: [
-    { label: '옥견', energy: 12, width: 430, damage: 18, cooldown: 2200, ranged: true }, { label: '누에', energy: 17, width: 500, damage: 23, cooldown: 3700, ranged: true }, { label: '탈토', energy: 15, width: 460, damage: 17, cooldown: 2800, ranged: true }, { label: '만상', energy: 23, width: 520, damage: 32, cooldown: 4600, ranged: true }, { label: '식신 연성', energy: 32, width: 600, damage: 44, cooldown: 7600, ranged: true },
+    { label: '옥견', energy: 12, width: 430, damage: 18, cooldown: 2200, duration: 340, ranged: true }, { label: '누에', energy: 17, width: 500, damage: 23, cooldown: 3700, duration: 400, ranged: true }, { label: '탈토', energy: 15, width: 460, damage: 17, cooldown: 2800, duration: 330, ranged: true }, { label: '만상', energy: 23, width: 520, damage: 32, cooldown: 4600, duration: 480, ranged: true }, { label: '식신 연성', energy: 32, width: 600, damage: 44, cooldown: 7600, duration: 560, ranged: true },
   ],
 }
 
@@ -39,7 +39,7 @@ export class CharacterSkillSystem {
       return true
     }
     if (!owner.spendEnergy(technique.energy)) return false
-    owner.beginAction(now, technique.ranged ? 360 : 430)
+    owner.beginAction(now, technique.duration)
     if (technique.ranged) this.combat.rangedStrike(owner, opponent, technique.width, technique.damage, now, technique.label, undefined, technique.bypassInfinity)
     else this.combat.specialStrike(owner, opponent, technique.width, technique.damage, now, technique.label)
     return true
