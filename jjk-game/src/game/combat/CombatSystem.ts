@@ -31,7 +31,7 @@ export class CombatSystem {
     const attackRect = new Phaser.Geom.Rectangle(hitbox.bounds.x, hitbox.bounds.y, hitbox.bounds.width, hitbox.bounds.height)
     const hurtRect = new Phaser.Geom.Rectangle(defender.hurtbox.bounds.x, defender.hurtbox.bounds.y, defender.hurtbox.bounds.width, defender.hurtbox.bounds.height)
     if (!Phaser.Geom.Intersects.RectangleToRectangle(attackRect, hurtRect)) return false
-    const damage = calculateDamage(attacker, defender, hitbox); defender.receiveDamage(damage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, 'domain'); this.onHit(attacker, defender, damage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color); return true
+    const damage = calculateDamage(attacker, defender, hitbox); defender.receiveDamage(damage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, 'domain'); this.onHit(attacker, defender, damage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color); if (attacker.definition.id === 'sukuna') { this.createSlashHitEffect(defender.x, defender.y - 70); this.scene.cameras.main.shake(90, 0.004) } return true
   }
 
   rikaAttack(attacker: BaseCharacter, defender: BaseCharacter, now: number): boolean { return this.specialStrike(attacker, defender, 150, 24, now, 'RIKA') }
@@ -88,6 +88,13 @@ export class CombatSystem {
     this.scene.tweens.add({ targets: effect, scale: 1.6, alpha: 0, duration: 180, onComplete: () => effect.destroy() })
     const text = this.scene.add.text(x, y - 10, 'HIT', { color: '#effcff', fontFamily: 'Space Mono, monospace', fontSize: '12px', stroke: '#06101d', strokeThickness: 3 }).setOrigin(0.5).setDepth(20)
     this.scene.tweens.add({ targets: text, y: y - 40, alpha: 0, duration: 420, onComplete: () => text.destroy() })
+  }
+
+  private createSlashHitEffect(x: number, y: number): void {
+    const slash = this.scene.add.graphics().setPosition(x, y).setDepth(22)
+    slash.lineStyle(6, 0xff5574, 0.95); slash.beginPath(); slash.moveTo(-42, -35); slash.lineTo(30, 37); slash.moveTo(42, -35); slash.lineTo(-30, 37); slash.strokePath()
+    slash.lineStyle(2, 0xffd1d9, 0.9); slash.beginPath(); slash.moveTo(-28, -42); slash.lineTo(37, 23); slash.moveTo(28, -42); slash.lineTo(-37, 23); slash.strokePath()
+    this.scene.tweens.add({ targets: slash, scale: 1.45, alpha: 0, duration: 260, ease: 'Cubic.Out', onComplete: () => slash.destroy() })
   }
 
   private showTechniqueLabel(x: number, y: number, label: string): void {
