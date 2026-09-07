@@ -22,6 +22,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   isGrounded = true
   facing: 1 | -1
   hitstunUntil = 0
+  immobilizedUntil = 0
   invulnerableUntil = 0
   attackUntil = 0
   velocityX = 0
@@ -56,7 +57,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
       if (input.jumpPressed && this.isGrounded && !this.isGuarding) { this.velocityY = -this.definition.stats.jumpPower; this.isGrounded = false }
       if ((input.dashLeft || input.dashRight) && !this.isGuarding && now >= this.dashUntil) { this.facing = input.dashRight ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1); this.velocityX = this.facing * 620; this.dashUntil = now + 180; this.invulnerableUntil = now + 240 }
     }
-    this.velocityY += 1450 * dt; this.x += this.velocityX * dt; this.y += this.velocityY * dt
+    if (now < this.immobilizedUntil) { this.velocityX = 0; this.velocityY = 0 } else { this.velocityY += 1450 * dt; this.x += this.velocityX * dt; this.y += this.velocityY * dt }
     if (this.y >= groundY) { this.y = groundY; this.velocityY = 0; this.isGrounded = true }
     this.x = Phaser.Math.Clamp(this.x, 45, arenaWidth - 45); this.setDepth(this.y); this.hurtbox.update(this.x, this.y)
     this.energy = Math.min(this.definition.stats.maxEnergy, this.energy + delta * 0.008); this.ultimate = Math.min(100, this.ultimate + delta * 0.0035)
@@ -95,7 +96,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   spendEnergy(amount: number): boolean { if (this.energy < amount) return false; this.energy -= amount; return true }
 
   resetForRound(x: number, facing: 1 | -1): void {
-    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
+    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
   }
 
   private updateVisuals(now: number): void {

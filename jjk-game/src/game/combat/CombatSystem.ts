@@ -35,6 +35,23 @@ export class CombatSystem {
 
   rikaAttack(attacker: BaseCharacter, defender: BaseCharacter, now: number): boolean { return this.specialStrike(attacker, defender, 150, 24, now, 'RIKA') }
 
+  rangedStrike(attacker: BaseCharacter, defender: BaseCharacter, range: number, damage: number, now: number, label: string): boolean {
+    const direction = defender.x >= attacker.x ? 1 : -1
+    const aimedAtTarget = direction === attacker.facing
+    const distance = Math.abs(defender.x - attacker.x)
+    const projectile = this.scene.add.graphics().setDepth(18)
+    projectile.fillStyle(attacker.definition.color, 0.95); projectile.fillCircle(0, 0, 10)
+    projectile.lineStyle(3, 0xf5fbff, 0.85); projectile.strokeCircle(0, 0, 15)
+    projectile.setPosition(attacker.x + attacker.facing * 42, attacker.y - 62)
+    const destination = attacker.x + attacker.facing * Math.min(range, distance)
+    this.scene.tweens.add({ targets: projectile, x: destination, duration: 150, onComplete: () => projectile.destroy() })
+    if (!aimedAtTarget || distance > range || Math.abs(defender.y - attacker.y) > 105) return false
+    const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 42, y: defender.y - 108, width: 84, height: 120, damage, knockbackX: attacker.facing * 210, knockbackY: -35, activeUntil: now + 80 })
+    const actualDamage = calculateDamage(attacker, defender, hitbox)
+    defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color); this.showTechniqueLabel(defender.x, defender.y - 112, label)
+    return true
+  }
+
   specialStrike(attacker: BaseCharacter, defender: BaseCharacter, width: number, damage: number, now: number, label: string): boolean {
     const hitbox = new Hitbox({ owner: attacker.slot, x: attacker.x + attacker.facing * width / 2, y: defender.y - 86, width, height: 108, damage, knockbackX: attacker.facing * 280, knockbackY: -45, activeUntil: now + 120 })
     const attackRect = new Phaser.Geom.Rectangle(hitbox.bounds.x, hitbox.bounds.y, hitbox.bounds.width, hitbox.bounds.height)

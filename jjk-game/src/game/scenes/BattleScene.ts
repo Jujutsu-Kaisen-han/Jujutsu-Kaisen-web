@@ -78,7 +78,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.domainOwner) {
       const target = this.domainOwner === this.p1 ? this.p2 : this.p1
       if (this.domainOwner.definition.id === 'yuta') { this.checkYutaSwordProximity(this.domainOwner, target, time); if (time >= this.nextDomainStrikeAt) { this.combat.guaranteedStrike(this.domainOwner, target, 12, time, '야곱의 사다리 // 필중', true); this.nextDomainStrikeAt = time + 900 } }
-      else if (time >= this.nextDomainStrikeAt) { this.combat.domainStrike(this.domainOwner, target, time); this.nextDomainStrikeAt = time + 850 }
+      else if (this.domainOwner.definition.id !== 'gojo' && time >= this.nextDomainStrikeAt) { this.combat.domainStrike(this.domainOwner, target, time); this.nextDomainStrikeAt = time + 850 }
     }
     const timeLeft = Math.max(0, 90 - (time - this.roundStartedAt) / 1000)
     if (this.p1.hp <= 0 || this.p2.hp <= 0 || timeLeft <= 0) this.finishRound(this.getRoundWinner(), time)
@@ -108,10 +108,11 @@ export class BattleScene extends Phaser.Scene {
     if (!owner.activateDomain(now)) return
     this.cooldowns.start(this.cooldownId(owner, 'domain'), now, 15000)
     this.domainOwner = owner; this.nextDomainStrikeAt = now + 450; opponent.hitstunUntil = Math.max(opponent.hitstunUntil, now + 550); opponent.velocityX = 0
+    if (owner.definition.id === 'gojo') { opponent.immobilizedUntil = now + 5000; opponent.hitstunUntil = Math.max(opponent.hitstunUntil, opponent.immobilizedUntil); opponent.velocityY = 0 }
     if (owner.definition.id === 'yuta') this.spawnYutaSwords(owner)
     const overlay = this.add.rectangle(ARENA_WIDTH / 2, ARENA_HEIGHT / 2, ARENA_WIDTH, ARENA_HEIGHT, owner.definition.color, 0.13).setDepth(30)
     const frame = this.add.graphics().setDepth(31); frame.lineStyle(3, owner.definition.color, 0.9); frame.strokeRect(28, 78, ARENA_WIDTH - 56, GROUND_Y - 78)
-    const label = this.add.text(ARENA_WIDTH / 2, 175, owner.definition.name + ' // 영역전개', { color: owner.definition.accent, fontFamily: 'Space Mono, monospace', fontSize: '17px', fontStyle: 'bold', stroke: '#020711', strokeThickness: 6 }).setOrigin(0.5).setDepth(32)
+    const label = this.add.text(ARENA_WIDTH / 2, 175, owner.definition.id === 'gojo' ? '무량공처 // 5초 정지' : owner.definition.name + ' // 영역전개', { color: owner.definition.accent, fontFamily: 'Space Mono, monospace', fontSize: '17px', fontStyle: 'bold', stroke: '#020711', strokeThickness: 6 }).setOrigin(0.5).setDepth(32)
     this.tweens.add({ targets: [overlay, frame, label], alpha: 0, delay: 5800, duration: 700, onComplete: () => { overlay.destroy(); frame.destroy(); label.destroy() } })
     this.cameras.main.flash(180, 170, 220, 255, false)
   }
@@ -126,6 +127,10 @@ export class BattleScene extends Phaser.Scene {
     this.domainClashDamage = { P1: 0, P2: 0 }
     first.domainUntil = Number.MAX_SAFE_INTEGER
     second.domainUntil = Number.MAX_SAFE_INTEGER
+    first.immobilizedUntil = now
+    second.immobilizedUntil = now
+    first.hitstunUntil = now
+    second.hitstunUntil = now
     this.domainClashGraphic = this.add.graphics().setDepth(31)
     this.domainClashGraphic.lineStyle(5, first.definition.color, 0.9); this.domainClashGraphic.strokeCircle(ARENA_WIDTH / 2 - 90, 340, 165)
     this.domainClashGraphic.lineStyle(5, second.definition.color, 0.9); this.domainClashGraphic.strokeCircle(ARENA_WIDTH / 2 + 90, 340, 165)
@@ -155,6 +160,7 @@ export class BattleScene extends Phaser.Scene {
       this.domainOwner = winner
       this.nextDomainStrikeAt = now + 450
       if (winner.definition.id === 'yuta') this.spawnYutaSwords(winner)
+      if (winner.definition.id === 'gojo') { loser.immobilizedUntil = now + 5000; loser.hitstunUntil = Math.max(loser.hitstunUntil, loser.immobilizedUntil); loser.velocityX = 0; loser.velocityY = 0 }
       this.roundMessage = `${winner.slot} 영역 우세 // ${loser.slot} 영역 밀림`
     } else if (participants) {
       participants[0].domainUntil = now; participants[1].domainUntil = now; this.domainOwner = undefined; this.roundMessage = '영역 충돌 // 동시 상쇄'
