@@ -16,7 +16,7 @@ export class YutaSkillSystem {
     return null
   }
 
-  reverseTechnique(owner: BaseCharacter): boolean { if (owner.definition.id !== 'yuta' || !owner.spendEnergy(35)) return false; owner.heal(28); this.combat.healEffect(owner); return true }
+  reverseTechnique(owner: BaseCharacter): boolean { if (owner.definition.id !== 'yuta' || !owner.spendEnergyPercent(0.42)) return false; owner.heal(28); this.combat.healEffect(owner); return true }
 
   useRandomCopy(owner: BaseCharacter, opponent: BaseCharacter, now: number): YutaCopiedSkill | null {
     if (!owner.fullManifestActive(now)) return null

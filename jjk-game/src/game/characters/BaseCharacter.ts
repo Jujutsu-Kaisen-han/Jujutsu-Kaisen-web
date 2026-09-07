@@ -18,6 +18,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   simpleDomainUntil = 0
   fullManifestUntil = 0
   aiControlled = false
+  readonly energyCostMultiplier: number
   isGuarding = false
   isGrounded = true
   facing: 1 | -1
@@ -37,7 +38,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, id: CharacterId, slot: PlayerSlot, x: number, y: number, facing: 1 | -1) {
     super(scene, x, y)
-    this.definition = CHARACTER_DEFINITIONS[id]; this.slot = slot; this.facing = facing
+    this.definition = CHARACTER_DEFINITIONS[id]; this.slot = slot; this.facing = facing; this.energyCostMultiplier = id === 'gojo' ? 0.12 : 1
     this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy
     this.bodyGraphic = scene.add.graphics(); this.auraGraphic = scene.add.graphics(); this.signatureGraphic = scene.add.graphics()
     this.drawBody()
@@ -93,7 +94,8 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   activateFullManifest(now: number): boolean { if (this.definition.id !== 'yuta' || this.fullManifestActive(now) || !this.spendEnergy(28)) return false; this.fullManifestUntil = now + 8000; return true }
   fullManifestActive(now: number): boolean { return this.fullManifestUntil > now }
   heal(amount: number): void { this.hp = Math.min(this.definition.stats.maxHp, this.hp + amount) }
-  spendEnergy(amount: number): boolean { if (this.energy < amount) return false; this.energy -= amount; return true }
+  spendEnergy(amount: number): boolean { const actualCost = Math.max(0.1, amount * this.energyCostMultiplier); if (this.energy < actualCost) return false; this.energy -= actualCost; return true }
+  spendEnergyPercent(percent: number): boolean { const amount = this.definition.stats.maxEnergy * percent; if (this.energy < amount) return false; this.energy -= amount; return true }
 
   resetForRound(x: number, facing: 1 | -1): void {
     this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()

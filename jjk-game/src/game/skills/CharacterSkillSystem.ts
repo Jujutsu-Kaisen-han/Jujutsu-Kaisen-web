@@ -38,7 +38,7 @@ export class CharacterSkillSystem {
   }
 
   reverseTechnique(owner: BaseCharacter): boolean {
-    if (owner.definition.id === 'yuta' || !owner.spendEnergy(30)) return false
+    if (owner.definition.id === 'yuta' || !owner.spendEnergyPercent(0.42)) return false
     owner.heal(owner.definition.id === 'gojo' ? 34 : 28)
     this.combat.healEffect(owner, REVERSE_LABELS[owner.definition.id])
     return true
