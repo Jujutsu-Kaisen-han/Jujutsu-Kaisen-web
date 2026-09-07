@@ -100,7 +100,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   domainActive(now: number): boolean { return this.domainUntil > now }
   activateSimpleDomain(now: number): boolean { if (this.simpleDomainActive(now) || !this.spendEnergy(20)) return false; this.simpleDomainUntil = now + 3800; return true }
   simpleDomainActive(now: number): boolean { return this.simpleDomainUntil > now }
-  activateFullManifest(now: number): boolean { if (this.definition.id !== 'yuta' || this.fullManifestActive(now) || !this.spendEnergy(28)) return false; this.fullManifestUntil = now + 30000; this.unlimitedEnergy = true; this.energy = this.definition.stats.maxEnergy; return true }
+  activateFullManifest(now: number): boolean { if (this.definition.id !== 'yuta' || this.fullManifestActive(now)) return false; this.fullManifestUntil = now + 30000; this.unlimitedEnergy = true; this.energy = this.definition.stats.maxEnergy; return true }
   fullManifestActive(now: number): boolean { return this.fullManifestUntil > now }
   heal(amount: number): void { this.hp = Math.min(this.definition.stats.maxHp, this.hp + amount) }
   spendEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; const actualCost = Math.max(0.1, amount * this.energyCostMultiplier); if (this.energy < actualCost) return false; this.energy -= actualCost; return true }

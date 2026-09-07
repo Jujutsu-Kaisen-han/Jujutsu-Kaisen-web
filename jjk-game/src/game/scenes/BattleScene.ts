@@ -60,7 +60,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
-    if (this.matchOver) { if (time >= this.matchEndAt) this.events.emit('match-over', { winner: this.rounds.p1Rounds > this.rounds.p2Rounds ? 'P1' : 'P2', p1Rounds: this.rounds.p1Rounds, p2Rounds: this.rounds.p2Rounds }); this.emitHud(time); return }
+    if (this.matchOver) { if (time >= this.matchEndAt) this.events.emit('match-over', { winner: this.getMatchWinner(), p1Rounds: this.rounds.p1Rounds, p2Rounds: this.rounds.p2Rounds }); this.emitHud(time); return }
     if (this.roundFinished) { if (time >= this.roundEndAt && !this.matchOver) { this.rounds.nextRound(); this.startRound(time) } this.emitHud(time); return }
     const leftInput = this.p1Input.read(time); const rightInput = this.mode === 'solo' ? this.aiBrain?.decide(time) ?? this.emptyInput() : this.p2Input?.read(time) ?? this.emptyInput()
     this.p1.updateCharacter(leftInput, time, delta, GROUND_Y, ARENA_WIDTH); this.p2.updateCharacter(rightInput, time, delta, GROUND_Y, ARENA_WIDTH); this.resolveFighterCollision()
@@ -216,8 +216,13 @@ export class BattleScene extends Phaser.Scene {
 
   private finishRound(winner: 'P1' | 'P2' | 'DRAW', now: number): void {
     if (this.roundFinished) return
-    this.roundFinished = true; const result = this.rounds.record(winner); this.roundEndAt = now + 1700; this.roundMessage = winner === 'DRAW' ? 'DRAW ROUND' : `${winner} TAKES THE ROUND`
-    if (result.matchOver) { this.matchOver = true; this.matchEndAt = now + 1700; this.matchMessage = winner === 'DRAW' ? 'MATCH DRAW' : `${winner} WINS THE MATCH` }
+    this.roundFinished = true; const result = this.rounds.record(winner, this.mode === 'solo' ? 2 : 3); this.roundEndAt = now + 1700; this.roundMessage = winner === 'DRAW' ? 'DRAW ROUND' : `${winner} TAKES THE ROUND`
+    if (result.matchOver) { this.matchOver = true; this.matchEndAt = now + 1700; const matchWinner = this.getMatchWinner(); this.matchMessage = `${matchWinner} WINS THE MATCH` }
+  }
+
+  private getMatchWinner(): 'P1' | 'P2' {
+    if (this.rounds.p1Rounds !== this.rounds.p2Rounds) return this.rounds.p1Rounds > this.rounds.p2Rounds ? 'P1' : 'P2'
+    return this.p1.hp >= this.p2.hp ? 'P1' : 'P2'
   }
 
   private getRoundWinner(): 'P1' | 'P2' | 'DRAW' {
