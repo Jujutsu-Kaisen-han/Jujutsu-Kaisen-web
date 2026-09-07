@@ -37,7 +37,7 @@ export class AIBrain {
       this.nextAttackAt = now + 230
     }
     if (this.ai.hp < this.ai.definition.stats.maxHp * 0.52 && now >= this.nextReverseAt) { input.reversePressed = true; this.nextReverseAt = now + 900 }
-    if (this.ai.ultimate >= 100 && !this.ai.domainActive(now) && now >= this.nextSkillAt) { input.ultimatePressed = true; this.nextSkillAt = now + 900 }
+    if (!this.ai.domainActive(now) && !this.ai.domainBlocked(now) && now >= this.nextSkillAt) { input.ultimatePressed = true; this.nextSkillAt = now + 900 }
     if (this.target.domainActive(now) && !this.ai.domainActive(now) && now >= this.nextSkillAt) { input.simpleDomainPressed = true; this.nextSkillAt = now + 900 }
     if (now >= this.nextSkillAt && distance < 330 && now >= this.ai.hitstunUntil) {
       const skill = this.skillCursor % 5
