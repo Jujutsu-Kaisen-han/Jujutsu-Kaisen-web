@@ -64,6 +64,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.roundFinished) { if (time >= this.roundEndAt && !this.matchOver) { this.rounds.nextRound(); this.startRound(time) } this.emitHud(time); return }
     const leftInput = this.p1Input.read(time); const rightInput = this.mode === 'solo' ? this.aiBrain?.decide(time) ?? this.emptyInput() : this.p2Input?.read(time) ?? this.emptyInput()
     this.p1.updateCharacter(leftInput, time, delta, GROUND_Y, ARENA_WIDTH); this.p2.updateCharacter(rightInput, time, delta, GROUND_Y, ARENA_WIDTH); this.resolveFighterCollision()
+    this.yutaSkills.update(this.p1, time); this.yutaSkills.update(this.p2, time)
     this.processCharacterSkills(this.p1, this.p2, leftInput, time); this.processCharacterSkills(this.p2, this.p1, rightInput, time)
     if (leftInput.ultimatePressed) this.activateDomain(this.p1, this.p2, time)
     if (rightInput.ultimatePressed) this.activateDomain(this.p2, this.p1, time)

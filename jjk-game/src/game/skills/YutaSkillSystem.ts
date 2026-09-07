@@ -6,7 +6,17 @@ export const YUTA_COPIED_SKILLS: YutaCopiedSkill[] = ['주언', '우수나타', 
 
 export class YutaSkillSystem {
   private readonly combat: CombatSystem
+  private readonly nextAutoReverseAt: Record<'P1' | 'P2', number> = { P1: 0, P2: 0 }
   constructor(combat: CombatSystem) { this.combat = combat }
+
+  update(owner: BaseCharacter, now: number): void {
+    if (!owner.fullManifestActive(now)) { this.nextAutoReverseAt[owner.slot] = now; return }
+    if (owner.hp <= 0) return
+    if (now < this.nextAutoReverseAt[owner.slot]) return
+    owner.heal(12)
+    this.combat.healEffect(owner, '완전현현 // 자동 반전술식')
+    this.nextAutoReverseAt[owner.slot] = now + 1000
+  }
 
   cast(index: 0 | 1 | 2 | 3 | 4, owner: BaseCharacter, opponent: BaseCharacter, now: number): YutaCopiedSkill | '완전현현' | '리카 공격' | null {
     if (owner.definition.id !== 'yuta') return null

@@ -17,6 +17,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   domainUntil = 0
   simpleDomainUntil = 0
   fullManifestUntil = 0
+  fullManifestUsed = false
   private unlimitedEnergy = false
   aiControlled = false
   mahoragaSummoned = false
@@ -100,14 +101,14 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   domainActive(now: number): boolean { return this.domainUntil > now }
   activateSimpleDomain(now: number): boolean { if (this.simpleDomainActive(now) || !this.spendEnergy(20)) return false; this.simpleDomainUntil = now + 3800; return true }
   simpleDomainActive(now: number): boolean { return this.simpleDomainUntil > now }
-  activateFullManifest(now: number): boolean { if (this.definition.id !== 'yuta' || this.fullManifestActive(now)) return false; this.fullManifestUntil = now + 30000; this.unlimitedEnergy = true; this.energy = this.definition.stats.maxEnergy; return true }
+  activateFullManifest(now: number): boolean { if (this.definition.id !== 'yuta' || this.fullManifestUsed || this.fullManifestActive(now)) return false; this.fullManifestUsed = true; this.fullManifestUntil = now + 30000; this.unlimitedEnergy = true; this.energy = this.definition.stats.maxEnergy; return true }
   fullManifestActive(now: number): boolean { return this.fullManifestUntil > now }
   heal(amount: number): void { this.hp = Math.min(this.definition.stats.maxHp, this.hp + amount) }
   spendEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; const actualCost = Math.max(0.1, amount * this.energyCostMultiplier); if (this.energy < actualCost) return false; this.energy -= actualCost; return true }
   spendFixedEnergy(amount: number): boolean { if (this.unlimitedEnergy) return true; if (this.energy < amount) return false; this.energy -= amount; return true }
 
   resetForRound(x: number, facing: 1 | -1): void {
-    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.unlimitedEnergy = false; this.mahoragaSummoned = false; this.adaptedTechnique = null; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
+    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.fullManifestUsed = false; this.unlimitedEnergy = false; this.mahoragaSummoned = false; this.adaptedTechnique = null; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
   }
 
   private updateVisuals(now: number): void {
