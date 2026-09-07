@@ -17,7 +17,7 @@ export class CombatSystem {
     const hurtRect = new Phaser.Geom.Rectangle(defender.hurtbox.bounds.x, defender.hurtbox.bounds.y, defender.hurtbox.bounds.width, defender.hurtbox.bounds.height)
     if (!Phaser.Geom.Intersects.RectangleToRectangle(attackRect, hurtRect)) return false
     const damage = calculateDamage(attacker, defender, hitbox)
-    defender.receiveDamage(damage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, kind)
+    if (!defender.receiveDamage(damage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, kind)) return false
     this.onHit(attacker, defender, damage)
     this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color, damage)
     this.scene.cameras.main.shake(kind === 'strong' ? 125 : 65, kind === 'strong' ? 0.006 : 0.0025)
@@ -32,7 +32,7 @@ export class CombatSystem {
     const attackRect = new Phaser.Geom.Rectangle(hitbox.bounds.x, hitbox.bounds.y, hitbox.bounds.width, hitbox.bounds.height)
     const hurtRect = new Phaser.Geom.Rectangle(defender.hurtbox.bounds.x, defender.hurtbox.bounds.y, defender.hurtbox.bounds.width, defender.hurtbox.bounds.height)
     if (!Phaser.Geom.Intersects.RectangleToRectangle(attackRect, hurtRect)) return false
-    const damage = calculateDamage(attacker, defender, hitbox); defender.receiveDamage(damage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, 'domain'); this.onHit(attacker, defender, damage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color, damage); if (attacker.definition.id === 'sukuna') { this.createSlashHitEffect(defender.x, defender.y - 70); this.scene.cameras.main.shake(90, 0.004) } return true
+    const damage = calculateDamage(attacker, defender, hitbox); if (!defender.receiveDamage(damage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, 'domain')) return false; this.onHit(attacker, defender, damage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color, damage); if (attacker.definition.id === 'sukuna') { this.createSlashHitEffect(defender.x, defender.y - 70); this.scene.cameras.main.shake(90, 0.004) } return true
   }
 
   rikaAttack(attacker: BaseCharacter, defender: BaseCharacter, now: number): boolean { return this.specialStrike(attacker, defender, 150, 24, now, 'RIKA') }
@@ -43,7 +43,7 @@ export class CombatSystem {
     const attackRect = new Phaser.Geom.Rectangle(hitbox.bounds.x, hitbox.bounds.y, hitbox.bounds.width, hitbox.bounds.height)
     const hurtRect = new Phaser.Geom.Rectangle(defender.hurtbox.bounds.x, defender.hurtbox.bounds.y, defender.hurtbox.bounds.width, defender.hurtbox.bounds.height)
     if (!Phaser.Geom.Intersects.RectangleToRectangle(attackRect, hurtRect)) return false
-    const actualDamage = calculateDamage(attacker, defender, hitbox); defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, 0xd9c2ff, actualDamage); if (label.includes('마허라')) this.createSlashHitEffect(defender.x, defender.y - 70); this.showTechniqueLabel(defender.x, defender.y - 112, label); this.scene.cameras.main.shake(90, 0.003); return true
+    const actualDamage = calculateDamage(attacker, defender, hitbox); if (!defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label)) return false; this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, 0xd9c2ff, actualDamage); if (label.includes('마허라')) this.createSlashHitEffect(defender.x, defender.y - 70); this.showTechniqueLabel(defender.x, defender.y - 112, label); this.scene.cameras.main.shake(90, 0.003); return true
   }
 
   rangedStrike(attacker: BaseCharacter, defender: BaseCharacter, range: number, damage: number, now: number, label: string, damageResolver?: (defender: BaseCharacter) => number, bypassInfinity = false): boolean {
@@ -52,15 +52,25 @@ export class CombatSystem {
     const distance = Math.abs(defender.x - attacker.x)
     const projectile = this.scene.add.graphics().setDepth(18)
     projectile.fillStyle(attacker.definition.color, 0.95); projectile.fillCircle(0, 0, 10)
-    projectile.lineStyle(3, 0xf5fbff, 0.85); projectile.strokeCircle(0, 0, 15)
-    projectile.setPosition(attacker.x + attacker.facing * 42, attacker.y - 62)
+    projectile.lineStyle(3, 0xf5fbff, 0.85); projectile.strokeCircle(0, 0, 15); projectile.lineBetween(-22, 0, 22, 0)
+    projectile.setPosition(attacker.x + attacker.facing * 42, attacker.y - 62); projectile.setScale(attacker.facing, 1)
     const destination = attacker.x + attacker.facing * Math.min(range, distance)
-    this.scene.tweens.add({ targets: projectile, x: destination, duration: 150, onComplete: () => projectile.destroy() })
-    if (!aimedAtTarget || distance > range || Math.abs(defender.y - attacker.y) > 105) return false
-    const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 42, y: defender.y - 108, width: 84, height: 120, damage, knockbackX: attacker.facing * 210, knockbackY: -35, activeUntil: now + 80 })
-    const actualDamage = damageResolver ? damageResolver(defender) : calculateDamage(attacker, defender, hitbox)
-    defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label, bypassInfinity); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color, actualDamage); if (bypassInfinity) { this.createSlashHitEffect(defender.x, defender.y - 70); this.scene.cameras.main.shake(180, 0.008) } else this.scene.cameras.main.shake(85, 0.0035); this.showTechniqueLabel(defender.x, defender.y - 112, label)
-    return true
+    const canReachTarget = aimedAtTarget && distance <= range && Math.abs(defender.y - attacker.y) <= 105
+    const travelDuration = Phaser.Math.Clamp(150 + distance * 0.35, 180, 380)
+    this.scene.tweens.add({
+      targets: projectile,
+      x: destination,
+      duration: travelDuration,
+      onComplete: () => {
+        projectile.destroy()
+        if (!canReachTarget || defender.hp <= 0 || Math.abs(defender.x - attacker.x) > range + 24 || Math.abs(defender.y - attacker.y) > 120) return
+        const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 42, y: defender.y - 108, width: 84, height: 120, damage, knockbackX: attacker.facing * 210, knockbackY: -35, activeUntil: now + travelDuration })
+        const actualDamage = damageResolver ? damageResolver(defender) : calculateDamage(attacker, defender, hitbox)
+        if (!defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, this.scene.time.now, label, bypassInfinity)) return
+        this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color, actualDamage); if (bypassInfinity) { this.createSlashHitEffect(defender.x, defender.y - 70); this.scene.cameras.main.shake(180, 0.008) } else this.scene.cameras.main.shake(85, 0.0035); this.showTechniqueLabel(defender.x, defender.y - 112, label)
+      },
+    })
+    return canReachTarget
   }
 
   specialStrike(attacker: BaseCharacter, defender: BaseCharacter, width: number, damage: number, now: number, label: string): boolean {
@@ -68,13 +78,14 @@ export class CombatSystem {
     const attackRect = new Phaser.Geom.Rectangle(hitbox.bounds.x, hitbox.bounds.y, hitbox.bounds.width, hitbox.bounds.height)
     const hurtRect = new Phaser.Geom.Rectangle(defender.hurtbox.bounds.x, defender.hurtbox.bounds.y, defender.hurtbox.bounds.width, defender.hurtbox.bounds.height)
     if (!Phaser.Geom.Intersects.RectangleToRectangle(attackRect, hurtRect)) return false
-    const actualDamage = calculateDamage(attacker, defender, hitbox); defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color, actualDamage); this.scene.cameras.main.shake(95, 0.0035); this.showTechniqueLabel(defender.x, defender.y - 112, label); return true
+    const actualDamage = calculateDamage(attacker, defender, hitbox); if (!defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now, label)) return false; this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color, actualDamage); this.scene.cameras.main.shake(95, 0.0035); this.showTechniqueLabel(defender.x, defender.y - 112, label); return true
   }
 
   guaranteedStrike(attacker: BaseCharacter, defender: BaseCharacter, damage: number, now: number, label: string, isDomainDamage = false): void {
     if (defender.hp <= 0) return
     if (isDomainDamage && defender.simpleDomainActive(now)) { this.showTechniqueLabel(defender.x, defender.y - 112, '간이영역 // 필중 무효'); return }
-    defender.receiveDamage(Math.round(damage), attacker.facing * 90, -25, now, isDomainDamage ? 'domain' : label); this.onHit(attacker, defender, Math.round(damage)); this.createHitEffect(defender.x, defender.y - 70, 0xffe9a6, Math.round(damage)); this.showTechniqueLabel(defender.x, defender.y - 112, label)
+    if (!defender.receiveDamage(Math.round(damage), attacker.facing * 90, -25, now, isDomainDamage ? 'domain' : label)) return
+    this.onHit(attacker, defender, Math.round(damage)); this.createHitEffect(defender.x, defender.y - 70, 0xffe9a6, Math.round(damage)); this.showTechniqueLabel(defender.x, defender.y - 112, label)
   }
 
   copiedTechniqueEffect(attacker: BaseCharacter, defender: BaseCharacter, label: string): void { this.showTechniqueLabel(defender.x, defender.y - 110, label); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color) }
