@@ -25,6 +25,7 @@ export class CombatSystem {
 
   domainStrike(attacker: BaseCharacter, defender: BaseCharacter, now: number): boolean {
     if (!attacker.domainActive(now) || defender.hp <= 0) return false
+    if (defender.simpleDomainActive(now)) { this.showTechniqueLabel(defender.x, defender.y - 112, '간이영역 // 필중 무효'); return false }
     const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 105, y: defender.y - 118, width: 210, height: 120, damage: attacker.definition.stats.attackDamage * 0.85, knockbackX: attacker.facing * 100, knockbackY: -35, activeUntil: now + 80 })
     const attackRect = new Phaser.Geom.Rectangle(hitbox.bounds.x, hitbox.bounds.y, hitbox.bounds.width, hitbox.bounds.height)
     const hurtRect = new Phaser.Geom.Rectangle(defender.hurtbox.bounds.x, defender.hurtbox.bounds.y, defender.hurtbox.bounds.width, defender.hurtbox.bounds.height)
@@ -42,8 +43,9 @@ export class CombatSystem {
     const actualDamage = calculateDamage(attacker, defender, hitbox); defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, now); this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color); this.showTechniqueLabel(defender.x, defender.y - 112, label); return true
   }
 
-  guaranteedStrike(attacker: BaseCharacter, defender: BaseCharacter, damage: number, now: number, label: string): void {
+  guaranteedStrike(attacker: BaseCharacter, defender: BaseCharacter, damage: number, now: number, label: string, isDomainDamage = false): void {
     if (defender.hp <= 0) return
+    if (isDomainDamage && defender.simpleDomainActive(now)) { this.showTechniqueLabel(defender.x, defender.y - 112, '간이영역 // 필중 무효'); return }
     defender.receiveDamage(Math.round(damage), attacker.facing * 90, -25, now); this.onHit(attacker, defender, Math.round(damage)); this.createHitEffect(defender.x, defender.y - 70, 0xffe9a6); this.showTechniqueLabel(defender.x, defender.y - 112, label)
   }
 
@@ -51,6 +53,7 @@ export class CombatSystem {
 
   healEffect(owner: BaseCharacter): void { const effect = this.scene.add.graphics(); effect.lineStyle(4, 0x9effcb, 0.9); effect.strokeCircle(owner.x, owner.y - 65, 26); this.scene.tweens.add({ targets: effect, scale: 1.7, alpha: 0, duration: 420, onComplete: () => effect.destroy() }); this.showTechniqueLabel(owner.x, owner.y - 130, '반전술식') }
   manifestEffect(owner: BaseCharacter): void { const effect = this.scene.add.graphics(); effect.lineStyle(5, 0xd8c5ff, 0.95); effect.strokeCircle(owner.x, owner.y - 64, 42); this.scene.tweens.add({ targets: effect, scale: 1.8, alpha: 0, duration: 500, onComplete: () => effect.destroy() }); this.showTechniqueLabel(owner.x, owner.y - 130, 'RIKA // COMPLETE') }
+  simpleDomainEffect(owner: BaseCharacter): void { const effect = this.scene.add.graphics(); effect.lineStyle(5, 0xf3dc92, 0.95); effect.strokeCircle(owner.x, owner.y - 62, 68); this.scene.tweens.add({ targets: effect, scale: 1.15, alpha: 0, duration: 500, onComplete: () => effect.destroy() }); this.showTechniqueLabel(owner.x, owner.y - 130, '간이영역 // DOMAIN NULL') }
 
   private createHitEffect(x: number, y: number, color: number): void {
     const effect = this.scene.add.graphics(); effect.lineStyle(4, color, 0.95); effect.strokeCircle(x, y, 18)

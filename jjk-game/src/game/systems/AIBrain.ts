@@ -15,7 +15,7 @@ export class AIBrain {
   decide(now: number): InputSnapshot {
     const distance = Math.abs(this.target.x - this.ai.x)
     const targetToAi = this.ai.x - this.target.x
-    const input: InputSnapshot = { left: false, right: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null }
+    const input: InputSnapshot = { left: false, right: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, simpleDomainPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null }
     const reactionWindow = this.target.attackUntil > now && distance < 185
     const targetFacingAi = this.target.facing === (targetToAi >= 0 ? 1 : -1)
 

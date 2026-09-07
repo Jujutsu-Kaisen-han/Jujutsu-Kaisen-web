@@ -15,6 +15,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   energy: number
   ultimate = 0
   domainUntil = 0
+  simpleDomainUntil = 0
   fullManifestUntil = 0
   isGuarding = false
   isGrounded = true
@@ -85,13 +86,15 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   }
 
   domainActive(now: number): boolean { return this.domainUntil > now }
+  activateSimpleDomain(now: number): boolean { if (this.simpleDomainActive(now) || !this.spendEnergy(20)) return false; this.simpleDomainUntil = now + 3800; return true }
+  simpleDomainActive(now: number): boolean { return this.simpleDomainUntil > now }
   activateFullManifest(now: number): boolean { if (this.definition.id !== 'yuta' || this.fullManifestActive(now) || !this.spendEnergy(28)) return false; this.fullManifestUntil = now + 8000; return true }
   fullManifestActive(now: number): boolean { return this.fullManifestUntil > now }
   heal(amount: number): void { this.hp = Math.min(this.definition.stats.maxHp, this.hp + amount) }
   spendEnergy(amount: number): boolean { if (this.energy < amount) return false; this.energy -= amount; return true }
 
   resetForRound(x: number, facing: 1 | -1): void {
-    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.fullManifestUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
+    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.combo.reset()
   }
 
   private updateVisuals(now: number): void {
@@ -100,6 +103,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     if (this.isGuarding) { this.auraGraphic.lineStyle(4, 0x8fe9ff, 0.65); this.auraGraphic.strokeCircle(0, -62, 48) }
     if (attacking) { this.auraGraphic.lineStyle(5, this.definition.color, 0.85); this.auraGraphic.beginPath(); this.auraGraphic.arc(22, -70, 58, -1.25, 1.25, false); this.auraGraphic.strokePath() }
     if (this.domainUntil > now) { this.auraGraphic.lineStyle(2, this.definition.color, 0.7); this.auraGraphic.strokeCircle(0, -62, 80); this.auraGraphic.lineStyle(1, 0xffffff, 0.25); this.auraGraphic.strokeCircle(0, -62, 91) }
+    if (this.simpleDomainUntil > now) { this.auraGraphic.lineStyle(4, 0xf3dc92, 0.9); this.auraGraphic.strokeCircle(0, -62, 68); this.auraGraphic.lineStyle(1, 0xfff3bf, 0.75); this.auraGraphic.strokeCircle(0, -62, 76) }
     if (this.fullManifestUntil > now) { this.auraGraphic.lineStyle(3, 0xd7c6ff, 0.85); this.auraGraphic.strokeCircle(0, -62, 56); this.auraGraphic.lineStyle(2, this.definition.color, 0.65); this.auraGraphic.strokeCircle(0, -62, 66) }
   }
 

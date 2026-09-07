@@ -56,6 +56,7 @@ export class BattleScene extends Phaser.Scene {
     this.processCharacterSkills(this.p1, this.p2, leftInput, time); this.processCharacterSkills(this.p2, this.p1, rightInput, time)
     if (leftInput.ultimatePressed) this.activateDomain(this.p1, this.p2, time)
     if (rightInput.ultimatePressed) this.activateDomain(this.p2, this.p1, time)
+    if (leftInput.simpleDomainPressed) this.activateSimpleDomain(this.p1, time)
     if (leftInput.attackPressed) this.combat.attack(this.p1, this.p2, 'basic', time)
     if (leftInput.strongPressed) this.combat.attack(this.p1, this.p2, 'strong', time)
     if (rightInput.attackPressed) this.combat.attack(this.p2, this.p1, 'basic', time)
@@ -63,7 +64,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.domainOwner && !this.domainOwner.domainActive(time)) { this.clearYutaSwords(); this.domainOwner = undefined }
     if (this.domainOwner) {
       const target = this.domainOwner === this.p1 ? this.p2 : this.p1
-      if (this.domainOwner.definition.id === 'yuta') { this.checkYutaSwordProximity(this.domainOwner, target, time); if (time >= this.nextDomainStrikeAt) { this.combat.guaranteedStrike(this.domainOwner, target, 12, time, '야곱의 사다리 // 필중'); this.nextDomainStrikeAt = time + 900 } }
+      if (this.domainOwner.definition.id === 'yuta') { this.checkYutaSwordProximity(this.domainOwner, target, time); if (time >= this.nextDomainStrikeAt) { this.combat.guaranteedStrike(this.domainOwner, target, 12, time, '야곱의 사다리 // 필중', true); this.nextDomainStrikeAt = time + 900 } }
       else if (time >= this.nextDomainStrikeAt) { this.combat.domainStrike(this.domainOwner, target, time); this.nextDomainStrikeAt = time + 850 }
     }
     const timeLeft = Math.max(0, 90 - (time - this.roundStartedAt) / 1000)
@@ -73,6 +74,11 @@ export class BattleScene extends Phaser.Scene {
 
   private startRound(now: number): void {
     this.clearYutaSwords(); this.domainOwner = undefined; this.p1.resetForRound(390, 1); this.p2.resetForRound(890, -1); this.aiBrain?.reset(now); this.roundStartedAt = now; this.roundFinished = false; this.roundMessage = `ROUND ${this.rounds.round}`; this.matchMessage = ''; this.time.delayedCall(900, () => { this.roundMessage = '' })
+  }
+
+  private activateSimpleDomain(owner: BaseCharacter, now: number): void {
+    if (!owner.activateSimpleDomain(now)) return
+    this.combat.simpleDomainEffect(owner)
   }
 
   private activateDomain(owner: BaseCharacter, opponent: BaseCharacter, now: number): void {
@@ -114,7 +120,7 @@ export class BattleScene extends Phaser.Scene {
 
   private clearYutaSwords(): void { this.yutaSwords.forEach((sword) => sword.graphic.destroy()); this.yutaSwords = [] }
 
-  private emptyInput(): InputSnapshot { return { left: false, right: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null } }
+  private emptyInput(): InputSnapshot { return { left: false, right: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, simpleDomainPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null } }
 
   private finishRound(winner: 'P1' | 'P2' | 'DRAW', now: number): void {
     if (this.roundFinished) return
@@ -138,7 +144,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private fighterHud(fighter: BaseCharacter): BattleHudState['p1'] {
-    return { name: fighter.definition.name, hp: fighter.hp, maxHp: fighter.definition.stats.maxHp, energy: fighter.energy, maxEnergy: fighter.definition.stats.maxEnergy, ultimate: fighter.ultimate, ultimateReady: fighter.ultimate >= 100, domainActive: fighter.domainActive(this.time.now), fullManifestActive: fighter.fullManifestActive(this.time.now), guard: fighter.isGuarding, combo: fighter.combo.index }
+    return { name: fighter.definition.name, hp: fighter.hp, maxHp: fighter.definition.stats.maxHp, energy: fighter.energy, maxEnergy: fighter.definition.stats.maxEnergy, ultimate: fighter.ultimate, ultimateReady: fighter.ultimate >= 100, domainActive: fighter.domainActive(this.time.now), simpleDomainActive: fighter.simpleDomainActive(this.time.now), fullManifestActive: fighter.fullManifestActive(this.time.now), guard: fighter.isGuarding, combo: fighter.combo.index }
   }
 
   private drawArena(): void {
