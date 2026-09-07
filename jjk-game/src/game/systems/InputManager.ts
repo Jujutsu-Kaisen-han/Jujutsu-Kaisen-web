@@ -1,0 +1,49 @@
+import Phaser from 'phaser'
+import type { PlayerSlot } from '../types/CharacterTypes'
+
+export interface InputSnapshot { left: boolean; right: boolean; jumpPressed: boolean; guard: boolean; attackPressed: boolean; reversePressed: boolean; strongPressed: boolean; skill1Pressed: boolean; skill2Pressed: boolean; skill3Pressed: boolean; skill4Pressed: boolean; skill5Pressed: boolean; ultimatePressed: boolean; dashLeft: boolean; dashRight: boolean }
+
+type InputLayout = 'solo' | 'versus'
+
+const bindings = {
+  P1: { left: 'A', right: 'D', jump: 'W', guard: 'S', attack: 'F', strong: 'G', skill1: 'R', skill2: 'T', skill3: 'Y', skill4: 'V', skill5: 'B', ultimate: 'H' },
+  P2: { left: 'LEFT', right: 'RIGHT', jump: 'UP', guard: 'DOWN', attack: 'J', strong: 'K', skill1: 'U', skill2: 'I', skill3: 'O', skill4: 'P', skill5: 'N', ultimate: 'L' },
+} as const
+const soloP1Bindings = { left: 'A', right: 'D', jump: 'W', guard: 'F', attack: 'F', strong: 'G', skill1: 'ONE', skill2: 'TWO', skill3: 'THREE', skill4: 'FOUR', skill5: 'FIVE', ultimate: 'H' } as const
+
+export class InputManager {
+  private readonly keys: Record<string, Phaser.Input.Keyboard.Key>
+  private readonly layout: InputLayout
+  private mouseAttackPressed = false
+  private mouseReversePressed = false
+  private lastLeftAt = -Infinity
+  private lastRightAt = -Infinity
+  private readonly slot: PlayerSlot
+
+  constructor(scene: Phaser.Scene, slot: PlayerSlot, layout: InputLayout = 'versus') {
+    this.slot = slot
+    this.layout = layout
+    const keyboard = scene.input.keyboard
+    if (!keyboard) throw new Error('Keyboard input is unavailable')
+    const map = layout === 'solo' && slot === 'P1' ? soloP1Bindings : bindings[slot]
+    this.keys = keyboard.addKeys(`${map.left},${map.right},${map.jump},${map.guard},${map.attack},${map.strong},${map.skill1},${map.skill2},${map.skill3},${map.skill4},${map.skill5},${map.ultimate}`) as Record<string, Phaser.Input.Keyboard.Key>
+    if (layout === 'solo' && slot === 'P1') {
+      scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => { if (pointer.button === 0) this.mouseAttackPressed = true; if (pointer.button === 2) this.mouseReversePressed = true })
+      scene.input.mouse?.disableContextMenu()
+    }
+  }
+
+  read(now: number): InputSnapshot {
+    const map = this.layout === 'solo' && this.slot === 'P1' ? soloP1Bindings : bindings[this.slot]
+    const leftKey = this.keys[map.left]
+    const rightKey = this.keys[map.right]
+    const dashLeft = Phaser.Input.Keyboard.JustDown(leftKey) && now - this.lastLeftAt < 260
+    const dashRight = Phaser.Input.Keyboard.JustDown(rightKey) && now - this.lastRightAt < 260
+    if (leftKey.isDown) this.lastLeftAt = now
+    if (rightKey.isDown) this.lastRightAt = now
+    const attackPressed = this.layout === 'solo' && this.slot === 'P1' ? this.mouseAttackPressed : Phaser.Input.Keyboard.JustDown(this.keys[map.attack])
+    const reversePressed = this.layout === 'solo' && this.slot === 'P1' ? this.mouseReversePressed : false
+    this.mouseAttackPressed = false; this.mouseReversePressed = false
+    return { left: leftKey.isDown, right: rightKey.isDown, jumpPressed: Phaser.Input.Keyboard.JustDown(this.keys[map.jump]), guard: this.layout === 'solo' && this.slot === 'P1' ? this.keys[map.guard].isDown : this.keys[map.guard].isDown, attackPressed, reversePressed, strongPressed: this.layout === 'solo' && this.slot === 'P1' ? false : Phaser.Input.Keyboard.JustDown(this.keys[map.strong]), skill1Pressed: Phaser.Input.Keyboard.JustDown(this.keys[map.skill1]), skill2Pressed: Phaser.Input.Keyboard.JustDown(this.keys[map.skill2]), skill3Pressed: Phaser.Input.Keyboard.JustDown(this.keys[map.skill3]), skill4Pressed: Phaser.Input.Keyboard.JustDown(this.keys[map.skill4]), skill5Pressed: Phaser.Input.Keyboard.JustDown(this.keys[map.skill5]), ultimatePressed: Phaser.Input.Keyboard.JustDown(this.keys[map.ultimate]), dashLeft, dashRight }
+  }
+}

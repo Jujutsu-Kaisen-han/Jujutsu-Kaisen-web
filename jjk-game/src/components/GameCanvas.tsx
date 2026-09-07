@@ -1,36 +1,28 @@
 import { useEffect, useRef, type ReactElement } from 'react'
 import Phaser from 'phaser'
 import { gameConfig } from '../game/config/gameConfig'
-import { GameScene } from '../game/scenes/GameScene'
-import type { HudState } from '../game/types/gameTypes'
+import { BattleScene, type BattleInitData } from '../game/scenes/BattleScene'
+import type { BattleHudState } from '../game/types/CombatTypes'
 
-interface GameCanvasProps { onHudUpdate: (state: HudState) => void; onGameOver: () => void; restartToken: number }
+interface MatchResult { winner: 'P1' | 'P2'; p1Rounds: number; p2Rounds: number }
+interface GameCanvasProps { selection: BattleInitData; onHudUpdate: (state: BattleHudState) => void; onMatchOver: (result: MatchResult) => void }
 
-export function GameCanvas({ onHudUpdate, onGameOver, restartToken }: GameCanvasProps): ReactElement {
-  const hostRef = useRef<HTMLDivElement>(null)
-  const gameRef = useRef<Phaser.Game | null>(null)
-  const callbacksRef = useRef({ onHudUpdate, onGameOver })
-
-  useEffect(() => {
-    callbacksRef.current = { onHudUpdate, onGameOver }
-  }, [onHudUpdate, onGameOver])
-
+export function GameCanvas({ selection, onHudUpdate, onMatchOver }: GameCanvasProps): ReactElement {
+  const hostRef = useRef<HTMLDivElement>(null); const callbacksRef = useRef({ onHudUpdate, onMatchOver })
+  useEffect(() => { callbacksRef.current = { onHudUpdate, onMatchOver } }, [onHudUpdate, onMatchOver])
   useEffect(() => {
     if (!hostRef.current) return undefined
-    const game = new Phaser.Game({ ...gameConfig, parent: hostRef.current, scene: GameScene })
-    gameRef.current = game
-    game.events.once('ready', () => {
-      const scene = game.scene.getScene(GameScene.key) as unknown as GameScene
-      scene.events.on('hud-update', (state: HudState) => callbacksRef.current.onHudUpdate(state))
-      scene.events.on('game-over', () => callbacksRef.current.onGameOver())
-    })
-    return () => { game.destroy(true); gameRef.current = null }
-  }, [])
-
-  useEffect(() => {
-    if (restartToken === 0 || !gameRef.current) return
-    gameRef.current.scene.stop(GameScene.key); gameRef.current.scene.start(GameScene.key)
-  }, [restartToken])
-
-  return <div ref={hostRef} id="game-canvas" aria-label="Cursed Blade game canvas" />
+    let disposed = false
+    const game = new Phaser.Game({ ...gameConfig, parent: hostRef.current, scene: BattleScene })
+    const handleReady = () => {
+      if (disposed) return
+      const scene = game.scene.getScene(BattleScene.key) as unknown as BattleScene
+      scene.events.on('hud-update', (state: BattleHudState) => callbacksRef.current.onHudUpdate(state))
+      scene.events.once('match-over', (result: MatchResult) => callbacksRef.current.onMatchOver(result))
+      scene.scene.restart(selection)
+    }
+    game.events.once('ready', handleReady)
+    return () => { disposed = true; game.events.off('ready', handleReady); game.destroy(true) }
+  }, [selection])
+  return <div ref={hostRef} id="game-canvas" aria-label="Local 1 versus 1 battle arena" />
 }
