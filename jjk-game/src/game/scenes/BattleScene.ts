@@ -120,17 +120,17 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private activateDomain(owner: BaseCharacter, opponent: BaseCharacter, now: number): void {
-    if (!this.cooldowns.ready(this.cooldownId(owner, 'domain'), now)) return
+    if (owner.aiControlled && !this.cooldowns.ready(this.cooldownId(owner, 'domain'), now)) return
     if (this.domainOwner && !this.domainOwner.domainActive(now)) this.domainOwner = undefined
     if (this.domainOwner && this.domainOwner !== owner) {
       if (!owner.activateDomain(now)) return
-      this.cooldowns.start(this.cooldownId(owner, 'domain'), now, 15000)
+      if (owner.aiControlled) this.cooldowns.start(this.cooldownId(owner, 'domain'), now, 15000)
       this.startDomainClash(this.domainOwner, owner, now)
       return
     }
     if (this.domainOwner) return
     if (!owner.activateDomain(now)) return
-    this.cooldowns.start(this.cooldownId(owner, 'domain'), now, 15000)
+    if (owner.aiControlled) this.cooldowns.start(this.cooldownId(owner, 'domain'), now, 15000)
     this.domainOwner = owner; this.nextDomainStrikeAt = now + (owner.definition.id === 'sukuna' ? 240 : 450); opponent.hitstunUntil = Math.max(opponent.hitstunUntil, now + 550); opponent.velocityX = 0
     if (owner.definition.id === 'gojo') { opponent.immobilizedUntil = now + 5000; opponent.hitstunUntil = Math.max(opponent.hitstunUntil, opponent.immobilizedUntil); opponent.velocityY = 0 }
     if (owner.definition.id === 'yuta') this.spawnYutaSwords(owner)

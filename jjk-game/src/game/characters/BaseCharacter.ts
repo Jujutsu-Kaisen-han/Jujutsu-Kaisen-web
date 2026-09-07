@@ -94,7 +94,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   }
 
   activateDomain(now: number): boolean {
-    if (this.ultimate < 100 || this.domainActive(now) || !this.spendFixedEnergy(20)) return false
+    if ((!this.aiControlled && this.domainActive(now)) || (this.aiControlled && (this.ultimate < 100 || this.domainActive(now))) || !this.spendFixedEnergy(20)) return false
     this.ultimate = 0; this.domainUntil = now + 6500; this.invulnerableUntil = now + 420; this.hitstunUntil = now + 260
     return true
   }
