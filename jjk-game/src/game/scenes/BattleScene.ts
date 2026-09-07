@@ -7,6 +7,7 @@ import { InputManager, type InputSnapshot } from '../systems/InputManager'
 import { RoundManager } from '../systems/RoundManager'
 import { YutaSkillSystem } from '../skills/YutaSkillSystem'
 import { AIBrain } from '../systems/AIBrain'
+import { CooldownSystem } from '../systems/CooldownSystem'
 import type { CharacterId, GameMode } from '../types/CharacterTypes'
 import type { BattleHudState } from '../types/CombatTypes'
 
@@ -21,6 +22,7 @@ export class BattleScene extends Phaser.Scene {
   private aiBrain?: AIBrain
   private combat!: CombatSystem
   private readonly rounds = new RoundManager()
+  private readonly cooldowns = new CooldownSystem()
   private roundStartedAt = 0
   private roundFinished = false
   private roundEndAt = 0
@@ -78,12 +80,14 @@ export class BattleScene extends Phaser.Scene {
 
   private activateSimpleDomain(owner: BaseCharacter, now: number): void {
     if (!owner.activateSimpleDomain(now)) return
+    this.cooldowns.start(this.cooldownId(owner, 'simpleDomain'), now, 6500)
     this.combat.simpleDomainEffect(owner)
   }
 
   private activateDomain(owner: BaseCharacter, opponent: BaseCharacter, now: number): void {
     if (this.domainOwner) return
     if (!owner.activateDomain(now)) return
+    this.cooldowns.start(this.cooldownId(owner, 'domain'), now, 15000)
     this.domainOwner = owner; this.nextDomainStrikeAt = now + 450; opponent.hitstunUntil = Math.max(opponent.hitstunUntil, now + 550); opponent.velocityX = 0
     if (owner.definition.id === 'yuta') this.spawnYutaSwords(owner)
     const overlay = this.add.rectangle(ARENA_WIDTH / 2, ARENA_HEIGHT / 2, ARENA_WIDTH, ARENA_HEIGHT, owner.definition.color, 0.13).setDepth(30)
@@ -95,12 +99,12 @@ export class BattleScene extends Phaser.Scene {
 
   private processCharacterSkills(owner: BaseCharacter, opponent: BaseCharacter, input: InputSnapshot, now: number): void {
     if (owner.definition.id !== 'yuta') return
-    if (input.reversePressed) this.yutaSkills.reverseTechnique(owner)
-    if (input.skill1Pressed) this.yutaSkills.cast(0, owner, opponent, now)
-    if (input.skill2Pressed) this.yutaSkills.cast(1, owner, opponent, now)
-    if (input.skill3Pressed) this.yutaSkills.cast(2, owner, opponent, now)
-    if (input.skill4Pressed) this.yutaSkills.cast(3, owner, opponent, now)
-    if (input.skill5Pressed) this.yutaSkills.cast(4, owner, opponent, now)
+    if (input.reversePressed && this.cooldowns.ready(this.cooldownId(owner, 'reverse'), now) && this.yutaSkills.reverseTechnique(owner)) this.cooldowns.start(this.cooldownId(owner, 'reverse'), now, 4200)
+    const inputs = [input.skill1Pressed, input.skill2Pressed, input.skill3Pressed, input.skill4Pressed, input.skill5Pressed] as const
+    inputs.forEach((pressed, index) => {
+      const action = `skill${index + 1}` as const
+      if (pressed && this.cooldowns.ready(this.cooldownId(owner, action), now) && this.yutaSkills.cast(index as 0 | 1 | 2 | 3 | 4, owner, opponent, now)) this.cooldowns.start(this.cooldownId(owner, action), now, index === 0 ? 2400 : index === 1 ? 8500 : 3200)
+    })
   }
 
   private spawnYutaSwords(owner: BaseCharacter): void {
@@ -119,6 +123,8 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private clearYutaSwords(): void { this.yutaSwords.forEach((sword) => sword.graphic.destroy()); this.yutaSwords = [] }
+
+  private cooldownId(owner: BaseCharacter, action: string): string { return `${owner.slot}:${action}` }
 
   private emptyInput(): InputSnapshot { return { left: false, right: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, simpleDomainPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null } }
 
@@ -144,7 +150,8 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private fighterHud(fighter: BaseCharacter): BattleHudState['p1'] {
-    return { name: fighter.definition.name, hp: fighter.hp, maxHp: fighter.definition.stats.maxHp, energy: fighter.energy, maxEnergy: fighter.definition.stats.maxEnergy, ultimate: fighter.ultimate, ultimateReady: fighter.ultimate >= 100, domainActive: fighter.domainActive(this.time.now), simpleDomainActive: fighter.simpleDomainActive(this.time.now), fullManifestActive: fighter.fullManifestActive(this.time.now), guard: fighter.isGuarding, combo: fighter.combo.index }
+    const now = this.time.now
+    return { name: fighter.definition.name, hp: fighter.hp, maxHp: fighter.definition.stats.maxHp, energy: fighter.energy, maxEnergy: fighter.definition.stats.maxEnergy, ultimate: fighter.ultimate, ultimateReady: fighter.ultimate >= 100, domainActive: fighter.domainActive(now), simpleDomainActive: fighter.simpleDomainActive(now), fullManifestActive: fighter.fullManifestActive(now), guard: fighter.isGuarding, combo: fighter.combo.index, cooldowns: { reverse: this.cooldowns.remaining(this.cooldownId(fighter, 'reverse'), now), skill1: this.cooldowns.remaining(this.cooldownId(fighter, 'skill1'), now), skill2: this.cooldowns.remaining(this.cooldownId(fighter, 'skill2'), now), skill3: this.cooldowns.remaining(this.cooldownId(fighter, 'skill3'), now), skill4: this.cooldowns.remaining(this.cooldownId(fighter, 'skill4'), now), skill5: this.cooldowns.remaining(this.cooldownId(fighter, 'skill5'), now), simpleDomain: this.cooldowns.remaining(this.cooldownId(fighter, 'simpleDomain'), now), domain: this.cooldowns.remaining(this.cooldownId(fighter, 'domain'), now) } }
   }
 
   private drawArena(): void {
