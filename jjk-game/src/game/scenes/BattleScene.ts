@@ -34,6 +34,10 @@ export class BattleScene extends Phaser.Scene {
   private matchMessage = ''
   private mode: GameMode = 'local'
   private domainOwner?: BaseCharacter
+  private domainClashUntil = 0
+  private domainClashParticipants?: [BaseCharacter, BaseCharacter]
+  private domainClashGraphic?: Phaser.GameObjects.Graphics
+  private domainClashLabel?: Phaser.GameObjects.Text
   private nextDomainStrikeAt = 0
   private yutaSkills!: YutaSkillSystem
   private yutaSwords: Array<{ graphic: Phaser.GameObjects.Graphics; x: number; y: number; triggered: boolean }> = []
@@ -63,6 +67,11 @@ export class BattleScene extends Phaser.Scene {
     if (leftInput.strongPressed) this.combat.attack(this.p1, this.p2, 'strong', time)
     if (rightInput.attackPressed) this.combat.attack(this.p2, this.p1, 'basic', time)
     if (rightInput.strongPressed) this.combat.attack(this.p2, this.p1, 'strong', time)
+    if (this.domainClashUntil > 0 && time >= this.domainClashUntil) this.resolveDomainClash(time)
+    if (this.domainClashUntil > time) {
+      this.emitHud(time)
+      return
+    }
     if (this.domainOwner && !this.domainOwner.domainActive(time)) { this.clearYutaSwords(); this.domainOwner = undefined }
     if (this.domainOwner) {
       const target = this.domainOwner === this.p1 ? this.p2 : this.p1
@@ -75,7 +84,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private startRound(now: number): void {
-    this.clearYutaSwords(); this.domainOwner = undefined; this.p1.resetForRound(390, 1); this.p2.resetForRound(890, -1); this.aiBrain?.reset(now); this.roundStartedAt = now; this.roundFinished = false; this.roundMessage = `ROUND ${this.rounds.round}`; this.matchMessage = ''; this.time.delayedCall(900, () => { this.roundMessage = '' })
+    this.clearYutaSwords(); this.clearDomainClash(); this.domainOwner = undefined; this.domainClashUntil = 0; this.domainClashParticipants = undefined; this.p1.resetForRound(390, 1); this.p2.resetForRound(890, -1); this.aiBrain?.reset(now); this.roundStartedAt = now; this.roundFinished = false; this.roundMessage = `ROUND ${this.rounds.round}`; this.matchMessage = ''; this.time.delayedCall(900, () => { this.roundMessage = '' })
   }
 
   private activateSimpleDomain(owner: BaseCharacter, now: number): void {
@@ -85,6 +94,14 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private activateDomain(owner: BaseCharacter, opponent: BaseCharacter, now: number): void {
+    if (!this.cooldowns.ready(this.cooldownId(owner, 'domain'), now)) return
+    if (this.domainOwner && !this.domainOwner.domainActive(now)) this.domainOwner = undefined
+    if (this.domainOwner && this.domainOwner !== owner) {
+      if (!owner.activateDomain(now)) return
+      this.cooldowns.start(this.cooldownId(owner, 'domain'), now, 15000)
+      this.startDomainClash(this.domainOwner, owner, now)
+      return
+    }
     if (this.domainOwner) return
     if (!owner.activateDomain(now)) return
     this.cooldowns.start(this.cooldownId(owner, 'domain'), now, 15000)
@@ -95,6 +112,39 @@ export class BattleScene extends Phaser.Scene {
     const label = this.add.text(ARENA_WIDTH / 2, 175, owner.definition.name + ' // 영역전개', { color: owner.definition.accent, fontFamily: 'Space Mono, monospace', fontSize: '17px', fontStyle: 'bold', stroke: '#020711', strokeThickness: 6 }).setOrigin(0.5).setDepth(32)
     this.tweens.add({ targets: [overlay, frame, label], alpha: 0, delay: 5800, duration: 700, onComplete: () => { overlay.destroy(); frame.destroy(); label.destroy() } })
     this.cameras.main.flash(180, 170, 220, 255, false)
+  }
+
+  private startDomainClash(first: BaseCharacter, second: BaseCharacter, now: number): void {
+    const clashDuration = 3600
+    this.clearYutaSwords()
+    this.domainOwner = undefined
+    this.domainClashUntil = now + clashDuration
+    this.domainClashParticipants = [first, second]
+    first.domainUntil = this.domainClashUntil
+    second.domainUntil = this.domainClashUntil
+    this.domainClashGraphic = this.add.graphics().setDepth(31)
+    this.domainClashGraphic.lineStyle(5, first.definition.color, 0.9); this.domainClashGraphic.strokeCircle(ARENA_WIDTH / 2 - 90, 340, 165)
+    this.domainClashGraphic.lineStyle(5, second.definition.color, 0.9); this.domainClashGraphic.strokeCircle(ARENA_WIDTH / 2 + 90, 340, 165)
+    this.domainClashGraphic.lineStyle(3, 0xffffff, 0.9); this.domainClashGraphic.strokeCircle(ARENA_WIDTH / 2, 340, 42)
+    this.domainClashLabel = this.add.text(ARENA_WIDTH / 2, 198, '영역 충돌 // DOMAIN CLASH', { color: '#fff3c1', fontFamily: 'Space Mono, monospace', fontSize: '18px', fontStyle: 'bold', stroke: '#080b18', strokeThickness: 6 }).setOrigin(0.5).setDepth(32)
+    this.tweens.add({ targets: this.domainClashGraphic, angle: 360, duration: clashDuration, ease: 'Linear' })
+    this.cameras.main.shake(260, 0.012)
+  }
+
+  private resolveDomainClash(now: number): void {
+    const participants = this.domainClashParticipants
+    if (participants) { participants[0].domainUntil = now; participants[1].domainUntil = now }
+    this.clearYutaSwords()
+    this.clearDomainClash()
+    this.domainClashUntil = 0
+    this.domainClashParticipants = undefined
+    this.roundMessage = '영역 충돌 // 상쇄'
+    this.time.delayedCall(900, () => { if (!this.roundFinished) this.roundMessage = '' })
+  }
+
+  private clearDomainClash(): void {
+    this.domainClashGraphic?.destroy(); this.domainClashGraphic = undefined
+    this.domainClashLabel?.destroy(); this.domainClashLabel = undefined
   }
 
   private processCharacterSkills(owner: BaseCharacter, opponent: BaseCharacter, input: InputSnapshot, now: number): void {
