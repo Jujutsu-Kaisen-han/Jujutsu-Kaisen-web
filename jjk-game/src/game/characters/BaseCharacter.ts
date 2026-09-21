@@ -152,7 +152,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     if (this.definition.id === 'yuta') { rotation -= impact * 0.08; xOffset += impact * 3 }
     if (this.definition.id === 'gojo') { scaleX += impact * 0.04; scaleY -= impact * 0.04; yOffset -= impact * 2 }
     this.bodyGraphic.setAlpha(stunned ? 0.5 : 1); this.bodyGraphic.setPosition(xOffset, yOffset); this.bodyGraphic.setRotation(rotation); this.bodyGraphic.setScale(scaleX, scaleY)
-    this.auraGraphic.clear(); this.motionGraphic.clear(); this.signatureGraphic.clear(); this.impactGraphic.clear(); this.drawMotionEffects(attacking, impact, speedRatio, forwardSpeed, dashActive, dashProgress, landing); this.drawSignature(attacking, progress, impact)
+    this.auraGraphic.clear(); this.motionGraphic.clear(); this.signatureGraphic.clear(); this.impactGraphic.clear(); this.drawMotionEffects(attacking, impact, speedRatio, forwardSpeed, dashActive, dashProgress, landing); this.drawSignature(attacking, progress, impact, now)
     if (this.isGuarding) { this.auraGraphic.lineStyle(4, 0x8fe9ff, 0.65); this.auraGraphic.strokeCircle(0, -62, 48) }
     if (attacking) { this.auraGraphic.lineStyle(5, this.definition.color, 0.85); this.auraGraphic.beginPath(); this.auraGraphic.arc(22 + impact * 8, -70, 58 + impact * 9, -1.25, 1.25, false); this.auraGraphic.strokePath() }
     if (this.domainUntil > now) { this.auraGraphic.lineStyle(2, this.definition.color, 0.7); this.auraGraphic.strokeCircle(0, -62, 80); this.auraGraphic.lineStyle(1, 0xffffff, 0.25); this.auraGraphic.strokeCircle(0, -62, 91) }
@@ -209,16 +209,20 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     this.bodyGraphic.fillStyle(0xe5fbff, 1); this.bodyGraphic.fillCircle(13, -72, 2); this.bodyGraphic.fillCircle(-11, -72, 2)
   }
 
-  private drawSignature(attacking: boolean, progress: number, impact = 0): void {
+  private drawSignature(attacking: boolean, progress: number, impact = 0, now = 0): void {
     const color = this.definition.color
     if (this.definition.id === 'yuta') {
-      this.signatureGraphic.lineStyle(5, 0xeafcff, 1); this.signatureGraphic.beginPath(); this.signatureGraphic.moveTo(17, -51); this.signatureGraphic.lineTo(attacking ? 65 + impact * 12 : 55, attacking ? -82 - impact * 6 : -63); this.signatureGraphic.strokePath(); this.signatureGraphic.lineStyle(3, color, 1); this.signatureGraphic.beginPath(); this.signatureGraphic.moveTo(10, -57); this.signatureGraphic.lineTo(24, -48); this.signatureGraphic.strokePath()
+      const swordBreath = attacking ? 0 : Math.sin(now * 0.004) * 2.2
+      this.signatureGraphic.lineStyle(5, 0xeafcff, 1); this.signatureGraphic.beginPath(); this.signatureGraphic.moveTo(17, -51); this.signatureGraphic.lineTo(attacking ? 65 + impact * 12 : 55 + swordBreath, attacking ? -82 - impact * 6 : -63 + swordBreath * 0.35); this.signatureGraphic.strokePath(); this.signatureGraphic.lineStyle(3, color, 1); this.signatureGraphic.beginPath(); this.signatureGraphic.moveTo(10, -57); this.signatureGraphic.lineTo(24, -48); this.signatureGraphic.strokePath()
+      if (!attacking) { this.signatureGraphic.lineStyle(2, color, 0.35); this.signatureGraphic.beginPath(); this.signatureGraphic.arc(20, -67, 61, -1.5 + swordBreath * 0.01, -0.85 + swordBreath * 0.01, false); this.signatureGraphic.strokePath() }
       if (attacking) { this.auraGraphic.lineStyle(5, color, 0.9); this.auraGraphic.beginPath(); this.auraGraphic.arc(17, -67, 67, -1.6 + progress * 1.1, -0.5 + progress * 1.1, false); this.auraGraphic.strokePath() }
     } else if (this.definition.id === 'uro') {
       this.signatureGraphic.lineStyle(2, 0xcabaff, 0.85); this.signatureGraphic.strokeCircle(0, -102, 22); this.signatureGraphic.strokeCircle(0, -102, 29); this.signatureGraphic.beginPath(); this.signatureGraphic.arc(0, -102, 37, -2.4, -0.7, false); this.signatureGraphic.strokePath()
       if (attacking) { this.auraGraphic.lineStyle(4, color, 0.85); this.auraGraphic.beginPath(); this.auraGraphic.arc(22, -75, 72, -1.4 + progress * 0.9, 0.1 + progress * 0.9, false); this.auraGraphic.strokePath() }
     } else if (this.definition.id === 'gojo') {
-      this.signatureGraphic.lineStyle(3, 0xb9f6ff, 0.85); this.signatureGraphic.strokeCircle(0, -98, 19); this.signatureGraphic.lineStyle(4, color, 0.9); this.signatureGraphic.beginPath(); this.signatureGraphic.moveTo(13, -63); this.signatureGraphic.lineTo(attacking ? 48 + impact * 18 : 35, -68); this.signatureGraphic.strokePath()
+      const infinityPulse = attacking ? 0 : Math.sin(now * 0.0032) * 2
+      this.signatureGraphic.lineStyle(3, 0xb9f6ff, 0.85); this.signatureGraphic.strokeCircle(0, -98, 19 + infinityPulse); this.signatureGraphic.lineStyle(4, color, 0.9); this.signatureGraphic.beginPath(); this.signatureGraphic.moveTo(13, -63); this.signatureGraphic.lineTo(attacking ? 48 + impact * 18 : 35 + infinityPulse, -68); this.signatureGraphic.strokePath()
+      if (!attacking) { const orbit = now * 0.0017; this.signatureGraphic.lineStyle(2, 0xbdf7ff, 0.42); this.signatureGraphic.beginPath(); this.signatureGraphic.arc(0, -98, 28, orbit, orbit + 1.65, false); this.signatureGraphic.strokePath() }
       if (attacking) { this.auraGraphic.lineStyle(3, 0x8eeeff, 0.8); this.auraGraphic.strokeCircle(50 + impact * 18, -68, 22 + progress * 10 + impact * 12) }
     } else if (this.definition.id === 'sukuna') {
       this.signatureGraphic.lineStyle(2, 0xff9db9, 0.85); this.signatureGraphic.beginPath(); this.signatureGraphic.moveTo(-7, -104); this.signatureGraphic.lineTo(2, -96); this.signatureGraphic.moveTo(7, -104); this.signatureGraphic.lineTo(-2, -96); this.signatureGraphic.moveTo(-11, -88); this.signatureGraphic.lineTo(10, -88); this.signatureGraphic.strokePath()
