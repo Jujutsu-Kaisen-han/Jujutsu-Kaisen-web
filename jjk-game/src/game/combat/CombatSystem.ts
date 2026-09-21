@@ -27,7 +27,7 @@ export class CombatSystem {
   domainStrike(attacker: BaseCharacter, defender: BaseCharacter, now: number): boolean {
     if (!attacker.domainActive(now) || defender.hp <= 0) return false
     if (defender.simpleDomainActive(now)) { this.showTechniqueLabel(defender.x, defender.y - 112, '간이영역 // 필중 무효'); return false }
-    const domainMultiplier = attacker.definition.id === 'sukuna' ? 1.5 : 0.85
+    const domainMultiplier = attacker.definition.id === 'sukuna' ? 1.5 : attacker.definition.id === 'gojo' ? 1.2 : 0.85
     const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 105, y: defender.y - 118, width: 210, height: 120, damage: attacker.definition.stats.attackDamage * domainMultiplier, knockbackX: attacker.facing * (attacker.definition.id === 'sukuna' ? 180 : 100), knockbackY: -35, activeUntil: now + 80 })
     const attackRect = new Phaser.Geom.Rectangle(hitbox.bounds.x, hitbox.bounds.y, hitbox.bounds.width, hitbox.bounds.height)
     const hurtRect = new Phaser.Geom.Rectangle(defender.hurtbox.bounds.x, defender.hurtbox.bounds.y, defender.hurtbox.bounds.width, defender.hurtbox.bounds.height)
@@ -51,9 +51,11 @@ export class CombatSystem {
     const aimedAtTarget = direction === attacker.facing
     const distance = Math.abs(defender.x - attacker.x)
     const projectile = this.scene.add.graphics().setDepth(18)
+    const projectileTrail = this.scene.add.graphics().setDepth(17)
     projectile.fillStyle(attacker.definition.color, 0.95); projectile.fillCircle(0, 0, 10)
     projectile.lineStyle(3, 0xf5fbff, 0.85); projectile.strokeCircle(0, 0, 15); projectile.lineBetween(-22, 0, 22, 0)
-    projectile.setPosition(attacker.x + attacker.facing * 42, attacker.y - 62); projectile.setScale(attacker.facing, 1)
+    projectileTrail.lineStyle(5, attacker.definition.color, 0.28); projectileTrail.beginPath(); projectileTrail.moveTo(-52, 0); projectileTrail.lineTo(-8, 0); projectileTrail.strokePath()
+    projectile.setPosition(attacker.x + attacker.facing * 42, attacker.y - 62); projectile.setScale(attacker.facing, 1); projectileTrail.setPosition(projectile.x, projectile.y).setScale(attacker.facing, 1)
     const destination = attacker.x + attacker.facing * Math.min(range, distance)
     const canReachTarget = aimedAtTarget && distance <= range && Math.abs(defender.y - attacker.y) <= 105
     const travelDuration = Phaser.Math.Clamp(150 + distance * 0.35, 180, 380)
@@ -61,8 +63,13 @@ export class CombatSystem {
       targets: projectile,
       x: destination,
       duration: travelDuration,
+      onUpdate: () => {
+        projectileTrail.setPosition(projectile.x, projectile.y)
+        projectileTrail.setAlpha(0.26 + Math.sin(this.scene.time.now * 0.02) * 0.08)
+      },
       onComplete: () => {
         projectile.destroy()
+        projectileTrail.destroy()
         if (!canReachTarget || defender.hp <= 0 || Math.abs(defender.x - attacker.x) > range + 24 || Math.abs(defender.y - attacker.y) > 120) return
         const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 42, y: defender.y - 108, width: 84, height: 120, damage, knockbackX: attacker.facing * 210, knockbackY: -35, activeUntil: now + travelDuration })
         const actualDamage = damageResolver ? damageResolver(defender) : calculateDamage(attacker, defender, hitbox)
@@ -96,8 +103,15 @@ export class CombatSystem {
   simpleDomainEffect(owner: BaseCharacter): void { const effect = this.scene.add.graphics(); effect.lineStyle(5, 0xf3dc92, 0.95); effect.strokeCircle(owner.x, owner.y - 62, 68); this.scene.tweens.add({ targets: effect, scale: 1.15, alpha: 0, duration: 500, onComplete: () => effect.destroy() }); this.showTechniqueLabel(owner.x, owner.y - 130, '간이영역 // DOMAIN NULL') }
 
   private createHitEffect(x: number, y: number, color: number, damage?: number): void {
-    const effect = this.scene.add.graphics(); effect.lineStyle(4, color, 0.95); effect.strokeCircle(x, y, 18)
-    this.scene.tweens.add({ targets: effect, scale: 1.6, alpha: 0, duration: 180, onComplete: () => effect.destroy() })
+    const heavy = damage !== undefined && damage >= 30
+    const effect = this.scene.add.graphics().setPosition(x, y).setDepth(22); effect.lineStyle(4, color, 0.95); effect.strokeCircle(0, 0, 18)
+    effect.lineStyle(2, 0xf5fbff, heavy ? 0.9 : 0.45); effect.strokeCircle(0, 0, heavy ? 28 : 23)
+    if (heavy) {
+      effect.lineStyle(3, 0xf5fbff, 0.75)
+      for (let index = 0; index < 8; index += 1) { const angle = index * Math.PI / 4; effect.lineBetween(Math.cos(angle) * 26, Math.sin(angle) * 26, Math.cos(angle) * 44, Math.sin(angle) * 44) }
+      this.scene.cameras.main.flash(55, 210, 245, 255, false)
+    }
+    this.scene.tweens.add({ targets: effect, scale: heavy ? 2.05 : 1.6, alpha: 0, duration: heavy ? 270 : 180, ease: 'Cubic.Out', onComplete: () => effect.destroy() })
     const damageText = damage === undefined ? 'HIT' : '-' + Math.round(damage).toString()
     const text = this.scene.add.text(x, y - 10, damageText, { color: '#effcff', fontFamily: 'Space Mono, monospace', fontSize: damage !== undefined && damage >= 30 ? '16px' : '12px', fontStyle: damage !== undefined && damage >= 30 ? 'bold' : 'normal', stroke: '#06101d', strokeThickness: 3 }).setOrigin(0.5).setDepth(20)
     this.scene.tweens.add({ targets: text, y: y - (damage !== undefined && damage >= 30 ? 48 : 40), alpha: 0, duration: 460, ease: 'Cubic.Out', onComplete: () => text.destroy() })
