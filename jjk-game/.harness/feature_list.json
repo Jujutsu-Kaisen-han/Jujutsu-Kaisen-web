@@ -21,6 +21,13 @@
       "verification": "npm run lint --if-present && npm run build && npm test && harness check",
       "state": "passing",
       "evidence": "verified 2026-09-21 19:31 @ f415440"
+    },
+    {
+      "id": "F04",
+      "behavior": "강타·기술 명중 피드백, 원거리 투사체 잔상, 옷코츠·고죠·리카의 시그니처 idle/공격 모션이 추가된다",
+      "verification": "npm run lint --if-present && npm run build && npm test && harness check",
+      "state": "passing",
+      "evidence": "verified 2026-09-21 20:13 @ 384c24d"
     }
   ]
 }
