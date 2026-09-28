@@ -27,6 +27,9 @@ export function CharacterSelectUI({ onStart }: CharacterSelectUIProps): ReactEle
     return <div className={`fighter-readout ${player.toLowerCase()}`} style={{ '--fighter-color': definition.accent } as CSSProperties}><div className="readout-title"><span>ACTIVE TECHNIQUE</span><b>{definition.name}</b></div><p>{definition.style}</p><div className="readout-stats">{stats.map(([label, value]) => <div className="readout-stat" key={label}><span><small>{label}</small><b>{value}</b></span><i><em style={{ width: `${value}%` }} /></i></div>)}</div></div>
   }
   const canStart = mode === 'local' ? p1Ready && p2Ready : p1Ready
+  const requiredReady = mode === 'local' ? 2 : 1
+  const readyCount = Number(p1Ready) + (mode === 'local' && p2Ready ? 1 : 0)
+  const startLabel = canStart ? 'START DUEL' : `READY CHECK // ${readyCount} / ${requiredReady}`
   const panelClass = 'select-panels ' + (mode !== 'local' ? 'solo-select' : '')
   return <main className="select-shell">
     <header className="select-header"><div className="brand-lockup"><span className="brand-mark">◈</span><div><strong>CURSED BLADE</strong><small>DUEL PROTOCOL / CHARACTER SELECT</small></div></div><span className="select-version">BEST OF 3 // 90 SEC</span></header>
@@ -42,7 +45,7 @@ export function CharacterSelectUI({ onStart }: CharacterSelectUIProps): ReactEle
       {mode === 'online' && <div className="solo-opponent-panel"><span className="ai-badge">ONLINE // MATCHMAKING</span><strong>FIND OPPONENT</strong><p>Choose your fighter.<br />The server will pair you with another player.</p><div className="queue-dots"><span style={{ background: '#73e6ff' }} /><span style={{ background: '#ff718f' }} /></div></div>}
       {mode === 'local' && <><div className="versus">VS<span>◈</span></div><div className="select-player p2-panel"><div className="player-heading"><span className="player-chip">P2</span><div><b>PLAYER TWO</b><small>ARROWS / 1 BASIC / 2 GUARD / 3 SD / 4-8 SKILLS / 9 RCT / 0 DOMAIN</small></div><span className={'ready-state ' + (p2Ready ? 'on' : '')}>{p2Ready ? 'READY' : 'SELECT'}</span></div><div className="character-grid">{CHARACTER_ORDER.map((id) => renderCard(id, 'P2'))}</div>{renderReadout(p2, 'P2')}<button type="button" className={'ready-button ' + (p2Ready ? 'confirmed' : '')} onClick={() => setP2Ready((ready) => !ready)}>{p2Ready ? 'P2 READY // CHANGE' : 'P2 READY'}</button></div></>}
     </section>
-    <button type="button" className="start-match" disabled={!canStart} onClick={() => onStart(p1, mode === 'local' ? p2 : 'yuji', mode)}>START DUEL <span>→</span></button>
+    <button type="button" className="start-match" disabled={!canStart} onClick={() => onStart(p1, mode === 'local' ? p2 : 'yuji', mode)}><span className="start-label">{startLabel}</span><span className="start-arrow">→</span></button>
     <footer className="select-footer">{mode === 'solo' ? 'NIGHTMARE AI // ADAPTIVE DEFENSE // ROSTER GAUNTLET' : mode === 'online' ? 'ONLINE // RANDOM OPPONENT MATCHMAKING' : 'SAME CHARACTER MATCHES ALLOWED'} <i /> CURSED ENERGY SYSTEM // INPUT READY</footer>
   </main>
 }

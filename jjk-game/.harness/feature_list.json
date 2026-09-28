@@ -56,6 +56,13 @@
       "verification": "npm run lint --if-present && npm run build && npm test && harness check",
       "state": "passing",
       "evidence": "verified 2026-09-28 21:42 @ d76720e"
+    },
+    {
+      "id": "F09",
+      "behavior": "선택 화면의 시작 CTA가 현재 준비 인원과 필요한 준비 인원을 표시하고 준비 완료 시 START DUEL로 전환된다",
+      "verification": "npm run lint --if-present && npm run build && npm test && harness check",
+      "state": "passing",
+      "evidence": "verified 2026-09-28 22:53 @ f5afca2"
     }
   ]
 }

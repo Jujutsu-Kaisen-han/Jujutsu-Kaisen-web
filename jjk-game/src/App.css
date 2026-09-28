@@ -122,9 +122,10 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 .queue-dots { display: flex; justify-content: center; gap: 9px; margin-top: 22px; }
 .queue-dots span { width: 13px; height: 13px; border: 2px solid rgba(255, 255, 255, .25); border-radius: 50%; box-shadow: 0 0 12px currentColor; }
 .start-match { display: flex; align-items: center; justify-content: center; gap: 38px; width: min(1240px, 100%); margin: 20px auto 0; padding: 17px 24px; border: 1px solid var(--cyan); background: linear-gradient(90deg, rgba(54, 163, 194, .22), rgba(128, 237, 255, .12)); color: var(--cyan); cursor: pointer; font: 800 16px var(--mono); letter-spacing: .2em; box-shadow: 0 12px 35px rgba(36, 143, 169, .12); transition: .2s ease; }
-.start-match span { font-size: 22px; transition: transform .2s ease; }
+.start-match .start-label { font-size: 12px; letter-spacing: .14em; }
+.start-match .start-arrow { font-size: 22px; transition: transform .2s ease; }
 .start-match:not(:disabled):hover { background: var(--cyan); color: var(--ink); box-shadow: 0 0 28px rgba(128, 237, 255, .28); transform: translateY(-2px); }
-.start-match:not(:disabled):hover span { transform: translateX(7px); }
+.start-match:not(:disabled):hover .start-arrow { transform: translateX(7px); }
 .start-match:disabled { border-color: rgba(128, 237, 255, .16); background: rgba(20, 28, 39, .5); color: #536278; cursor: not-allowed; box-shadow: none; }
 .select-footer { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 21px; color: #5f6b7e; font-size: 8px; text-align: center; }
 .select-footer i { width: 4px; height: 4px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
