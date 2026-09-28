@@ -42,6 +42,13 @@
       "verification": "npm run lint --if-present && npm run build && npm test && harness check",
       "state": "passing",
       "evidence": "verified 2026-09-28 15:22 @ c3dbc68"
+    },
+    {
+      "id": "F07",
+      "behavior": "솔로 모드의 첫 상대가 플레이어와 중복되지 않고 매치 종료 직전 승리 메시지가 HUD에 표시된다",
+      "verification": "npm run lint --if-present && npm run build && npm test && harness check",
+      "state": "passing",
+      "evidence": "verified 2026-09-28 20:38 @ 5039bc4"
     }
   ]
 }

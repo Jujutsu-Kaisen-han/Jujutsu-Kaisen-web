@@ -35,9 +35,11 @@ function App() {
     p2: CharacterId,
     mode: GameMode,
   ): void => {
-    setSelection({ p1, p2, mode });
+    const firstSoloOpponent = CHARACTER_ORDER.find((id) => id !== p1) ?? "yuji";
+    setSelection({ p1, p2: mode === "solo" ? firstSoloOpponent : p2, mode });
     if (mode === "solo") {
-      setSoloQueue(CHARACTER_ORDER.filter((id) => id !== p1));
+      const soloQueue = CHARACTER_ORDER.filter((id) => id !== p1);
+      setSoloQueue(soloQueue);
       setSoloIndex(0);
     }
     setHud(null);

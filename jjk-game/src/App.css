@@ -151,6 +151,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 .round-clock strong { display: block; margin: 1px 0; color: #effcff; font: 700 61px/.9 var(--display); }
 .round-clock small { color: #5b8a99; font: 10px var(--mono); }
 .round-banner { position: absolute; top: 44%; left: 50%; transform: translate(-50%,-50%); color: #dffaff; font: 700 23px var(--mono); letter-spacing: .06em; text-shadow: 0 3px 15px #000; }
+.match-banner { position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); padding: 13px 22px; border: 1px solid var(--gold); background: rgba(7, 10, 17, .82); color: var(--gold); font: 700 16px var(--mono); letter-spacing: .1em; white-space: nowrap; text-shadow: 0 2px 15px rgba(242, 204, 123, .36); box-shadow: 0 0 28px rgba(242, 204, 123, .14); }
 .battle-bottom { position: absolute; bottom: 17px; left: 28px; right: 28px; display: flex; align-items: center; gap: 12px 20px; padding: 11px 13px; border-top: 1px solid rgba(128, 237, 255, .18); background: linear-gradient(90deg, rgba(4, 10, 18, .88), rgba(7, 15, 25, .64), rgba(4, 10, 18, .88)); color: #638a98; font-size: 8px; backdrop-filter: blur(8px); }
 .controls-label { color: var(--cyan); font-weight: 700; letter-spacing: .14em; }
 .battle-bottom b { color: #b9e5ed; }
