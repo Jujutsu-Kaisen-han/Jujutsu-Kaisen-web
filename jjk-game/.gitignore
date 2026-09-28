@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# --- harness: 스크래치/개인 설정만 무시 ---
+# (AGENTS.md, feature_list.json, PROGRESS.md, DECISIONS.md, .harness/plans, .harness/records,
+#  .claude/settings.json, .claude/hooks 는 단일 진실 원천이므로 커밋해야 한다)
+.harness/tmp/
+.harness/cache/
+.claude/settings.local.json
+.claude/worktrees/
