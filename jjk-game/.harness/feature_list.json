@@ -49,6 +49,13 @@
       "verification": "npm run lint --if-present && npm run build && npm test && harness check",
       "state": "passing",
       "evidence": "verified 2026-09-28 20:38 @ 5039bc4"
+    },
+    {
+      "id": "F08",
+      "behavior": "캐릭터 선택 패널에 선택한 캐릭터의 전투 성향과 임팩트·기동성·주력 보유량 리드아웃이 표시된다",
+      "verification": "npm run lint --if-present && npm run build && npm test && harness check",
+      "state": "passing",
+      "evidence": "verified 2026-09-28 21:42 @ d76720e"
     }
   ]
 }
