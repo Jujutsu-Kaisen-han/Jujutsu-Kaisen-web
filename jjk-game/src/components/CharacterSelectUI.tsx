@@ -15,7 +15,7 @@ export function CharacterSelectUI({ onStart }: CharacterSelectUIProps): ReactEle
     const definition = CHARACTER_DEFINITIONS[id]
     const cardClass = 'character-card ' + (selected ? 'selected ' + player.toLowerCase() : '')
     const color = '#' + definition.color.toString(16).padStart(6, '0')
-    return <button type="button" key={player + '-' + id} className={cardClass} onClick={() => player === 'P1' ? setP1(id) : setP2(id)} style={{ '--fighter-color': definition.accent } as CSSProperties}><span className="portrait" style={{ background: color }}>{definition.name.slice(0, 1)}</span><span className="character-copy"><b>{definition.name}</b><small>{definition.title}</small></span>{selected && <span className="selected-mark">{player}</span>}</button>
+    return <button type="button" key={player + '-' + id} className={cardClass} aria-pressed={selected} onClick={() => player === 'P1' ? setP1(id) : setP2(id)} style={{ '--fighter-color': definition.accent } as CSSProperties}><span className="portrait" style={{ background: color }}>{definition.name.slice(0, 1)}</span><span className="character-copy"><b>{definition.name}</b><small>{definition.title}</small></span>{selected && <span className="selected-mark">{player}</span>}</button>
   }
   const canStart = mode === 'local' ? p1Ready && p2Ready : p1Ready
   const panelClass = 'select-panels ' + (mode !== 'local' ? 'solo-select' : '')
@@ -34,6 +34,6 @@ export function CharacterSelectUI({ onStart }: CharacterSelectUIProps): ReactEle
       {mode === 'local' && <><div className="versus">VS<span>◈</span></div><div className="select-player p2-panel"><div className="player-heading"><span className="player-chip">P2</span><div><b>PLAYER TWO</b><small>ARROWS / 1 BASIC / 2 GUARD / 3 SD / 4-8 SKILLS / 9 RCT / 0 DOMAIN</small></div><span className={'ready-state ' + (p2Ready ? 'on' : '')}>{p2Ready ? 'READY' : 'SELECT'}</span></div><div className="character-grid">{CHARACTER_ORDER.map((id) => renderCard(id, 'P2'))}</div><button type="button" className={'ready-button ' + (p2Ready ? 'confirmed' : '')} onClick={() => setP2Ready((ready) => !ready)}>{p2Ready ? 'P2 READY // CHANGE' : 'P2 READY'}</button></div></>}
     </section>
     <button type="button" className="start-match" disabled={!canStart} onClick={() => onStart(p1, mode === 'local' ? p2 : 'yuji', mode)}>START DUEL <span>→</span></button>
-    <footer className="select-footer">{mode === 'solo' ? 'NIGHTMARE AI // ADAPTIVE DEFENSE // ROSTER GAUNTLET' : mode === 'online' ? 'ONLINE // RANDOM OPPONENT MATCHMAKING' : 'SAME CHARACTER MATCHES ALLOWED'} <i /> NO EXTERNAL ASSETS / PLACEHOLDER BUILD</footer>
+    <footer className="select-footer">{mode === 'solo' ? 'NIGHTMARE AI // ADAPTIVE DEFENSE // ROSTER GAUNTLET' : mode === 'online' ? 'ONLINE // RANDOM OPPONENT MATCHMAKING' : 'SAME CHARACTER MATCHES ALLOWED'} <i /> CURSED ENERGY SYSTEM // INPUT READY</footer>
   </main>
 }

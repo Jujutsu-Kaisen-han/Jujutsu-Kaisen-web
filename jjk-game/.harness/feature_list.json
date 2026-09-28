@@ -28,6 +28,13 @@
       "verification": "npm run lint --if-present && npm run build && npm test && harness check",
       "state": "passing",
       "evidence": "verified 2026-09-21 20:13 @ 384c24d"
+    },
+    {
+      "id": "F05",
+      "behavior": "캐릭터 선택 화면이 네온 결투 콘솔 스타일로 재구성되고 선택·준비·시작 상태가 명확하게 표시된다",
+      "verification": "npm run lint --if-present && npm run build && npm test && harness check",
+      "state": "passing",
+      "evidence": "verified 2026-09-28 09:32 @ 4c7481d"
     }
   ]
 }
