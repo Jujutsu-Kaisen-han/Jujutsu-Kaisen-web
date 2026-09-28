@@ -61,33 +61,37 @@ function App() {
   if (screen === "result" && result)
     return (
       <main className="result-shell">
-        <span className="eyebrow">
-          {hasNextSolo
-            ? "SOLO GAUNTLET // OPPONENT CLEARED"
-            : "MATCH COMPLETE // BEST OF 3"}
-        </span>
-        <h1>{hasNextSolo ? "NEXT CHALLENGER" : `${result.winner} VICTORY`}</h1>
-        <p>
-          {hasNextSolo
-            ? CHARACTER_DEFINITIONS[soloQueue[soloIndex + 1]].name
-            : `${result.p1Rounds} — ${result.p2Rounds}`}
-        </p>
-        {hasNextSolo ? (
-          <button type="button" onClick={advanceSolo}>
-            NEXT OPPONENT →
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              setResult(null);
-              setHud(null);
-              setScreen("select");
-            }}
-          >
-            RETURN TO SELECT
-          </button>
-        )}
+        <div className="result-card">
+          <span className="result-symbol">◈</span>
+          <span className="eyebrow result-kicker">
+            {hasNextSolo
+              ? "SOLO GAUNTLET // OPPONENT CLEARED"
+              : "MATCH COMPLETE // BEST OF 3"}
+          </span>
+          <h1>{hasNextSolo ? "NEXT CHALLENGER" : `${result.winner} VICTORY`}</h1>
+          <p className="result-score">
+            {hasNextSolo
+              ? CHARACTER_DEFINITIONS[soloQueue[soloIndex + 1]].name
+              : `${result.p1Rounds} — ${result.p2Rounds}`}
+          </p>
+          <span className="result-rule" />
+          {hasNextSolo ? (
+            <button type="button" onClick={advanceSolo}>
+              NEXT OPPONENT <span>→</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setResult(null);
+                setHud(null);
+                setScreen("select");
+              }}
+            >
+              RETURN TO SELECT <span>↗</span>
+            </button>
+          )}
+        </div>
       </main>
     );
   return (

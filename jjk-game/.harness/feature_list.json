@@ -35,6 +35,13 @@
       "verification": "npm run lint --if-present && npm run build && npm test && harness check",
       "state": "passing",
       "evidence": "verified 2026-09-28 09:32 @ 4c7481d"
+    },
+    {
+      "id": "F06",
+      "behavior": "전투 HUD와 결과 화면이 선택 화면과 일관된 시각 계층으로 표시되고 체력·에너지·타이머·승리 CTA를 읽기 쉽게 전달한다",
+      "verification": "npm run lint --if-present && npm run build && npm test && harness check",
+      "state": "passing",
+      "evidence": "verified 2026-09-28 15:22 @ c3dbc68"
     }
   ]
 }
