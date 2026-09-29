@@ -77,6 +77,13 @@
       "verification": "npm run lint --if-present && npm run build && npm test && harness check",
       "state": "passing",
       "evidence": "verified 2026-09-29 11:20 @ 2f554a1"
+    },
+    {
+      "id": "F12",
+      "behavior": "원형 포트레이트가 이름표와 겹치지 않고 색상 프레임·하이라이트·슬롯 표시와 함께 또렷하게 보이며 기존 전투 이펙트와 fallback을 유지한다",
+      "verification": "npm run lint --if-present && npm run build && npm test && harness check",
+      "state": "passing",
+      "evidence": "verified 2026-09-29 13:48 @ 2155fe8"
     }
   ]
 }

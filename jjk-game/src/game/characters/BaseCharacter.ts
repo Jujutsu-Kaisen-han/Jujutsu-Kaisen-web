@@ -42,6 +42,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   private dashDirectionY = 0
   private readonly bodyGraphic: Phaser.GameObjects.Graphics
   private readonly portraitGraphic: Phaser.GameObjects.Image | null
+  private readonly portraitFrameGraphic: Phaser.GameObjects.Graphics
   private readonly auraGraphic: Phaser.GameObjects.Graphics
   private readonly signatureGraphic: Phaser.GameObjects.Graphics
   private readonly motionGraphic: Phaser.GameObjects.Graphics
@@ -59,13 +60,14 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     super(scene, x, y)
     this.definition = CHARACTER_DEFINITIONS[id]; this.slot = slot; this.facing = facing; this.energyCostMultiplier = id === 'gojo' ? 0.05 : id === 'sukuna' ? 0.65 : 1
     this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy
-    this.bodyGraphic = scene.add.graphics(); this.auraGraphic = scene.add.graphics(); this.signatureGraphic = scene.add.graphics(); this.motionGraphic = scene.add.graphics(); this.impactGraphic = scene.add.graphics()
+    this.bodyGraphic = scene.add.graphics(); this.portraitFrameGraphic = scene.add.graphics(); this.auraGraphic = scene.add.graphics(); this.signatureGraphic = scene.add.graphics(); this.motionGraphic = scene.add.graphics(); this.impactGraphic = scene.add.graphics()
     this.drawBody()
     this.portraitGraphic = scene.textures.exists(characterPortraitKey(id))
-      ? scene.add.image(0, -62, characterPortraitKey(id)).setOrigin(0.5, 0.68).setDisplaySize(70, 84).setAlpha(0.98)
+      ? scene.add.image(0, -62, characterPortraitKey(id)).setOrigin(0.5, 0.58).setDisplaySize(62, 70).setAlpha(0.98)
       : null
-    this.nameTag = scene.add.text(0, -62, this.definition.name, { color: '#f5fbff', fontFamily: 'Space Mono, monospace', fontSize: '9px', fontStyle: 'bold', stroke: '#07111f', strokeThickness: 3 }).setOrigin(0.5)
-    this.add([this.auraGraphic, this.motionGraphic, this.bodyGraphic, ...(this.portraitGraphic ? [this.portraitGraphic] : []), this.signatureGraphic, this.impactGraphic, this.nameTag]); this.setSize(76, 92); this.setDepth(y); this.setScale(facing, 1); this.nameTag.setScale(facing, 1); scene.add.existing(this)
+    this.drawPortraitFrame()
+    this.nameTag = scene.add.text(0, -114, `${slot} // ${this.definition.name}`, { color: '#f5fbff', backgroundColor: '#050b16', padding: { left: 5, right: 5, top: 2, bottom: 2 }, fontFamily: 'Space Mono, monospace', fontSize: '8px', fontStyle: 'bold', stroke: '#07111f', strokeThickness: 3 }).setOrigin(0.5)
+    this.add([this.auraGraphic, this.motionGraphic, this.bodyGraphic, ...(this.portraitGraphic ? [this.portraitGraphic] : []), this.portraitFrameGraphic, this.signatureGraphic, this.impactGraphic, this.nameTag]); this.setSize(76, 116); this.setDepth(y); this.setScale(facing, 1); this.nameTag.setScale(facing, 1); scene.add.existing(this)
     this.hurtbox.update(x, y)
   }
 
@@ -174,8 +176,9 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     if (this.definition.id === 'yuta') { rotation -= impact * 0.08; xOffset += impact * 3 }
     if (this.definition.id === 'gojo') { scaleX += impact * 0.04; scaleY -= impact * 0.04; yOffset -= impact * 2 }
     const visibleAlpha = stunned ? 0.5 : 1
-    this.bodyGraphic.setAlpha(this.portraitGraphic ? visibleAlpha * 0.62 : visibleAlpha); this.bodyGraphic.setPosition(xOffset, yOffset); this.bodyGraphic.setRotation(rotation); this.bodyGraphic.setScale(scaleX, scaleY)
+    this.bodyGraphic.setAlpha(this.portraitGraphic ? visibleAlpha * 0.72 : visibleAlpha); this.bodyGraphic.setPosition(xOffset, yOffset); this.bodyGraphic.setRotation(rotation); this.bodyGraphic.setScale(scaleX, scaleY)
     this.portraitGraphic?.setAlpha(visibleAlpha); this.portraitGraphic?.setPosition(xOffset, -62 + yOffset); this.portraitGraphic?.setRotation(rotation); this.portraitGraphic?.setScale(scaleX, scaleY)
+    this.portraitFrameGraphic.setAlpha(visibleAlpha); this.portraitFrameGraphic.setPosition(xOffset, yOffset); this.portraitFrameGraphic.setRotation(rotation); this.portraitFrameGraphic.setScale(scaleX, scaleY)
     this.auraGraphic.clear(); this.motionGraphic.clear(); this.signatureGraphic.clear(); this.impactGraphic.clear(); this.drawMotionEffects(attacking, impact, speedRatio, forwardSpeed, dashActive, dashProgress, landing); this.drawSignature(attacking, progress, impact, now)
     if (this.isGuarding) { this.auraGraphic.lineStyle(4, 0x8fe9ff, 0.65); this.auraGraphic.strokeCircle(0, -62, 48) }
     if (attacking) { this.auraGraphic.lineStyle(5, this.definition.color, 0.85); this.auraGraphic.beginPath(); this.auraGraphic.arc(22 + impact * 8, -70, 58 + impact * 9, -1.25, 1.25, false); this.auraGraphic.strokePath() }
@@ -231,6 +234,15 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     this.bodyGraphic.lineStyle(2, 0xe5fbff, 0.55); this.bodyGraphic.strokeCircle(0, -62, 31)
     this.bodyGraphic.fillStyle(0x07111f, 0.8); this.bodyGraphic.fillCircle(12, -71, 5); this.bodyGraphic.fillCircle(-12, -71, 5)
     this.bodyGraphic.fillStyle(0xe5fbff, 1); this.bodyGraphic.fillCircle(13, -72, 2); this.bodyGraphic.fillCircle(-11, -72, 2)
+  }
+
+  private drawPortraitFrame(): void {
+    const color = this.definition.color
+    const highlight = Phaser.Display.Color.IntegerToColor(color).lighten(42).color
+    this.portraitFrameGraphic.lineStyle(4, 0x06101d, 0.95); this.portraitFrameGraphic.strokeCircle(0, -62, 42)
+    this.portraitFrameGraphic.lineStyle(3, color, 0.98); this.portraitFrameGraphic.strokeCircle(0, -62, 39)
+    this.portraitFrameGraphic.lineStyle(1, highlight, 0.85); this.portraitFrameGraphic.strokeCircle(0, -62, 34)
+    this.portraitFrameGraphic.lineStyle(2, 0xffffff, 0.8); this.portraitFrameGraphic.beginPath(); this.portraitFrameGraphic.arc(0, -62, 39, -2.75, -1.15, false); this.portraitFrameGraphic.strokePath()
   }
 
   private drawSignature(attacking: boolean, progress: number, impact = 0, now = 0): void {
