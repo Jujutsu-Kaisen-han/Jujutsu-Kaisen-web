@@ -76,7 +76,7 @@
       "behavior": "원형 전투 캐릭터에 공식 캐릭터 포트레이트가 표시되어 유지·메구미·고죠·유타·우로·스쿠나를 즉시 구분할 수 있고 이미지 실패 시 벡터 fallback이 유지된다",
       "verification": "npm run lint --if-present && npm run build && npm test && harness check",
       "state": "passing",
-      "evidence": "verified 2026-09-29 11:19 @ ba3b890"
+      "evidence": "verified 2026-09-29 11:20 @ 2f554a1"
     }
   ]
 }
