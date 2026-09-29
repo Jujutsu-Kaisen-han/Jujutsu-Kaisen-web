@@ -15,6 +15,7 @@ import type { BattleHudState } from '../types/CombatTypes'
 import type { PlayerSlot } from '../types/CharacterTypes'
 import type { OnlineClient } from '../network/OnlineClient'
 import { DomainClashSystem, type DomainClashWinner } from '../systems/DomainClashSystem'
+import { CHARACTER_PORTRAIT_URLS, characterPortraitKey } from '../config/characterPortraits'
 
 export interface BattleInitData { p1: CharacterId; p2: CharacterId; mode?: GameMode; onlineRole?: PlayerSlot; onlineClient?: OnlineClient }
 
@@ -58,6 +59,13 @@ export class BattleScene extends Phaser.Scene {
   constructor() { super(BattleScene.key) }
 
   init(data?: BattleInitData): void { this.p1Id = data?.p1 ?? 'yuta'; this.p2Id = data?.p2 ?? 'yuji'; this.mode = data?.mode ?? 'local'; this.onlineRole = data?.onlineRole; this.onlineClient = data?.onlineClient }
+
+  preload(): void {
+    this.load.setCORS('anonymous')
+    Object.entries(CHARACTER_PORTRAIT_URLS).forEach(([id, url]) => {
+      this.load.image(characterPortraitKey(id as CharacterId), url)
+    })
+  }
 
   create(): void {
     this.drawArena(); this.p1 = createCharacter(this, this.p1Id, 'P1', ARENA_CENTER_X - 190, ARENA_CENTER_Y + CHARACTER_BASE_OFFSET, 1); this.p2 = createCharacter(this, this.p2Id, 'P2', ARENA_CENTER_X + 190, ARENA_CENTER_Y + CHARACTER_BASE_OFFSET, -1); this.p2.aiControlled = this.mode === 'solo'

@@ -6,6 +6,7 @@ import { ComboSystem } from '../combat/ComboSystem'
 import type { AttackKind } from '../types/CombatTypes'
 import type { InputSnapshot } from '../systems/InputManager'
 import { attackMotionPhase, clamp01, damp, easeInOutSine, easeOutBack, easeOutCubic } from '../animation/MotionMath'
+import { characterPortraitKey } from '../config/characterPortraits'
 
 export class BaseCharacter extends Phaser.GameObjects.Container {
   readonly definition: CharacterDefinition
@@ -40,6 +41,7 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   private dashDirectionX = 0
   private dashDirectionY = 0
   private readonly bodyGraphic: Phaser.GameObjects.Graphics
+  private readonly portraitGraphic: Phaser.GameObjects.Image | null
   private readonly auraGraphic: Phaser.GameObjects.Graphics
   private readonly signatureGraphic: Phaser.GameObjects.Graphics
   private readonly motionGraphic: Phaser.GameObjects.Graphics
@@ -59,8 +61,11 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy
     this.bodyGraphic = scene.add.graphics(); this.auraGraphic = scene.add.graphics(); this.signatureGraphic = scene.add.graphics(); this.motionGraphic = scene.add.graphics(); this.impactGraphic = scene.add.graphics()
     this.drawBody()
+    this.portraitGraphic = scene.textures.exists(characterPortraitKey(id))
+      ? scene.add.image(0, -62, characterPortraitKey(id)).setOrigin(0.5, 0.68).setDisplaySize(70, 84).setAlpha(0.98)
+      : null
     this.nameTag = scene.add.text(0, -62, this.definition.name, { color: '#f5fbff', fontFamily: 'Space Mono, monospace', fontSize: '9px', fontStyle: 'bold', stroke: '#07111f', strokeThickness: 3 }).setOrigin(0.5)
-    this.add([this.auraGraphic, this.motionGraphic, this.bodyGraphic, this.signatureGraphic, this.impactGraphic, this.nameTag]); this.setSize(76, 92); this.setDepth(y); this.setScale(facing, 1); this.nameTag.setScale(facing, 1); scene.add.existing(this)
+    this.add([this.auraGraphic, this.motionGraphic, this.bodyGraphic, ...(this.portraitGraphic ? [this.portraitGraphic] : []), this.signatureGraphic, this.impactGraphic, this.nameTag]); this.setSize(76, 92); this.setDepth(y); this.setScale(facing, 1); this.nameTag.setScale(facing, 1); scene.add.existing(this)
     this.hurtbox.update(x, y)
   }
 
@@ -168,7 +173,9 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     if (stunned) { xOffset += this.recoilDirection * recoil * 10; rotation += this.recoilDirection * recoil * 0.15; scaleX -= recoil * 0.07; scaleY += recoil * 0.08 }
     if (this.definition.id === 'yuta') { rotation -= impact * 0.08; xOffset += impact * 3 }
     if (this.definition.id === 'gojo') { scaleX += impact * 0.04; scaleY -= impact * 0.04; yOffset -= impact * 2 }
-    this.bodyGraphic.setAlpha(stunned ? 0.5 : 1); this.bodyGraphic.setPosition(xOffset, yOffset); this.bodyGraphic.setRotation(rotation); this.bodyGraphic.setScale(scaleX, scaleY)
+    const visibleAlpha = stunned ? 0.5 : 1
+    this.bodyGraphic.setAlpha(this.portraitGraphic ? visibleAlpha * 0.62 : visibleAlpha); this.bodyGraphic.setPosition(xOffset, yOffset); this.bodyGraphic.setRotation(rotation); this.bodyGraphic.setScale(scaleX, scaleY)
+    this.portraitGraphic?.setAlpha(visibleAlpha); this.portraitGraphic?.setPosition(xOffset, -62 + yOffset); this.portraitGraphic?.setRotation(rotation); this.portraitGraphic?.setScale(scaleX, scaleY)
     this.auraGraphic.clear(); this.motionGraphic.clear(); this.signatureGraphic.clear(); this.impactGraphic.clear(); this.drawMotionEffects(attacking, impact, speedRatio, forwardSpeed, dashActive, dashProgress, landing); this.drawSignature(attacking, progress, impact, now)
     if (this.isGuarding) { this.auraGraphic.lineStyle(4, 0x8fe9ff, 0.65); this.auraGraphic.strokeCircle(0, -62, 48) }
     if (attacking) { this.auraGraphic.lineStyle(5, this.definition.color, 0.85); this.auraGraphic.beginPath(); this.auraGraphic.arc(22 + impact * 8, -70, 58 + impact * 9, -1.25, 1.25, false); this.auraGraphic.strokePath() }
