@@ -47,21 +47,26 @@ export class CombatSystem {
   }
 
   rangedStrike(attacker: BaseCharacter, defender: BaseCharacter, range: number, damage: number, now: number, label: string, damageResolver?: (defender: BaseCharacter) => number, bypassInfinity = false): boolean {
-    const direction = defender.x >= attacker.x ? 1 : -1
-    const aimedAtTarget = direction === attacker.facing
-    const distance = Math.abs(defender.x - attacker.x)
+    const offsetX = defender.x - attacker.x
+    const offsetY = defender.y - attacker.y
+    const distance = Math.hypot(offsetX, offsetY)
+    const directionX = distance > 0 ? offsetX / distance : attacker.facing
+    const directionY = distance > 0 ? offsetY / distance : 0
     const projectile = this.scene.add.graphics().setDepth(18)
     const projectileTrail = this.scene.add.graphics().setDepth(17)
     projectile.fillStyle(attacker.definition.color, 0.95); projectile.fillCircle(0, 0, 10)
     projectile.lineStyle(3, 0xf5fbff, 0.85); projectile.strokeCircle(0, 0, 15); projectile.lineBetween(-22, 0, 22, 0)
     projectileTrail.lineStyle(5, attacker.definition.color, 0.28); projectileTrail.beginPath(); projectileTrail.moveTo(-52, 0); projectileTrail.lineTo(-8, 0); projectileTrail.strokePath()
-    projectile.setPosition(attacker.x + attacker.facing * 42, attacker.y - 62); projectile.setScale(attacker.facing, 1); projectileTrail.setPosition(projectile.x, projectile.y).setScale(attacker.facing, 1)
-    const destination = attacker.x + attacker.facing * Math.min(range, distance)
-    const canReachTarget = aimedAtTarget && distance <= range && Math.abs(defender.y - attacker.y) <= 105
+    projectile.setPosition(attacker.x + directionX * 42, attacker.y - 62 + directionY * 42); projectile.setScale(attacker.facing, 1); projectileTrail.setPosition(projectile.x, projectile.y).setScale(attacker.facing, 1)
+    const travelDistance = Math.min(range, distance)
+    const destinationX = attacker.x + directionX * travelDistance
+    const destinationY = attacker.y + directionY * travelDistance
+    const canReachTarget = distance <= range
     const travelDuration = Phaser.Math.Clamp(150 + distance * 0.35, 180, 380)
     this.scene.tweens.add({
       targets: projectile,
-      x: destination,
+      x: destinationX,
+      y: destinationY - 62,
       duration: travelDuration,
       onUpdate: () => {
         projectileTrail.setPosition(projectile.x, projectile.y)
@@ -70,8 +75,8 @@ export class CombatSystem {
       onComplete: () => {
         projectile.destroy()
         projectileTrail.destroy()
-        if (!canReachTarget || defender.hp <= 0 || Math.abs(defender.x - attacker.x) > range + 24 || Math.abs(defender.y - attacker.y) > 120) return
-        const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 42, y: defender.y - 108, width: 84, height: 120, damage, knockbackX: attacker.facing * 210, knockbackY: -35, activeUntil: now + travelDuration })
+        if (!canReachTarget || defender.hp <= 0 || Math.hypot(defender.x - attacker.x, defender.y - attacker.y) > range + 24) return
+        const hitbox = new Hitbox({ owner: attacker.slot, x: defender.x - 48, y: defender.y - 110, width: 96, height: 96, damage, knockbackX: directionX * 210, knockbackY: directionY * 210, activeUntil: now + travelDuration })
         const actualDamage = damageResolver ? damageResolver(defender) : calculateDamage(attacker, defender, hitbox)
         if (!defender.receiveDamage(actualDamage, hitbox.bounds.knockbackX, hitbox.bounds.knockbackY, this.scene.time.now, label, bypassInfinity)) return
         this.onHit(attacker, defender, actualDamage); this.createHitEffect(defender.x, defender.y - 70, attacker.definition.color, actualDamage); if (bypassInfinity) { this.createSlashHitEffect(defender.x, defender.y - 70); this.scene.cameras.main.shake(180, 0.008) } else this.scene.cameras.main.shake(85, 0.0035); this.showTechniqueLabel(defender.x, defender.y - 112, label)
@@ -81,7 +86,13 @@ export class CombatSystem {
   }
 
   specialStrike(attacker: BaseCharacter, defender: BaseCharacter, width: number, damage: number, now: number, label: string): boolean {
-    const hitbox = new Hitbox({ owner: attacker.slot, x: attacker.x + attacker.facing * width / 2, y: defender.y - 86, width, height: 108, damage, knockbackX: attacker.facing * 280, knockbackY: -45, activeUntil: now + 120 })
+    const offsetX = defender.x - attacker.x
+    const offsetY = defender.y - attacker.y
+    const distance = Math.hypot(offsetX, offsetY) || 1
+    const directionX = offsetX / distance
+    const directionY = offsetY / distance
+    const hitboxSize = Math.min(128, Math.max(84, width * 0.55))
+    const hitbox = new Hitbox({ owner: attacker.slot, x: attacker.x + directionX * width * 0.42 - hitboxSize / 2, y: attacker.y - 62 + directionY * width * 0.42 - hitboxSize / 2, width: hitboxSize, height: hitboxSize, damage, knockbackX: directionX * 280, knockbackY: directionY * 280, activeUntil: now + 120 })
     const attackRect = new Phaser.Geom.Rectangle(hitbox.bounds.x, hitbox.bounds.y, hitbox.bounds.width, hitbox.bounds.height)
     const hurtRect = new Phaser.Geom.Rectangle(defender.hurtbox.bounds.x, defender.hurtbox.bounds.y, defender.hurtbox.bounds.width, defender.hurtbox.bounds.height)
     if (!Phaser.Geom.Intersects.RectangleToRectangle(attackRect, hurtRect)) return false

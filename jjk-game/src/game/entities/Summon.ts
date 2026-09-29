@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_RADIUS } from '../config/gameConfig'
 
 export class Summon extends Phaser.GameObjects.Container {
   expiresAt = 0
@@ -20,11 +21,19 @@ export class RikaSummon extends Summon {
   }
 
   follow(ownerX: number, ownerY: number, facing: 1 | -1, now: number, arenaWidth: number): void {
-    const targetX = Phaser.Math.Clamp(ownerX + facing * 86, 48, arenaWidth - 48)
+    const rawTargetX = Phaser.Math.Clamp(ownerX + facing * 86, 48, arenaWidth - 48)
+    const rawTargetY = ownerY - 4
+    const targetOffsetX = rawTargetX - ARENA_CENTER_X
+    const targetOffsetY = rawTargetY - 62 - ARENA_CENTER_Y
+    const targetDistance = Math.hypot(targetOffsetX, targetOffsetY)
+    const maxDistance = ARENA_RADIUS - 42
+    const targetScale = targetDistance > maxDistance ? maxDistance / targetDistance : 1
+    const targetX = ARENA_CENTER_X + targetOffsetX * targetScale
+    const targetY = ARENA_CENTER_Y + targetOffsetY * targetScale + 62
     const attacking = now < this.attackingUntil
     const attackProgress = attacking ? Phaser.Math.Clamp((now - this.attackStartedAt) / 260, 0, 1) : 1
     const lunge = attacking ? Math.sin(attackProgress * Math.PI) * 24 : 0
-    this.x = Phaser.Math.Linear(this.x, Phaser.Math.Clamp(targetX + facing * lunge, 48, arenaWidth - 48), 0.22); this.y = ownerY - 4 + Math.sin(now * 0.006) * 5 - (attacking ? Math.sin(attackProgress * Math.PI) * 7 : 0); this.setDepth(ownerY + 4); this.setScale(1 + lunge * 0.002, 1 - lunge * 0.001)
+    this.x = Phaser.Math.Linear(this.x, Phaser.Math.Clamp(targetX + facing * lunge, 48, arenaWidth - 48), 0.22); this.y = targetY + Math.sin(now * 0.006) * 5 - (attacking ? Math.sin(attackProgress * Math.PI) * 7 : 0); this.setDepth(this.y + 4); this.setScale(1 + lunge * 0.002, 1 - lunge * 0.001)
     this.auraGraphic.clear(); this.attackGraphic.clear()
     this.auraGraphic.lineStyle(3, 0xd9c2ff, 0.45); this.auraGraphic.strokeCircle(0, -67, 43 + Math.sin(now * 0.008) * 3)
     if (attacking) { this.attackGraphic.lineStyle(6, 0xf3eaff, 0.9); this.attackGraphic.beginPath(); this.attackGraphic.arc(facing * (22 + lunge * 0.35), -70, 66 + lunge * 0.4, facing > 0 ? -1.25 : 1.9, facing > 0 ? 1.25 : 4.35, facing < 0); this.attackGraphic.strokePath() }

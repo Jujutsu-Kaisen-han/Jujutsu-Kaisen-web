@@ -3,7 +3,6 @@ import type { InputSnapshot } from './InputManager'
 
 export class AIBrain {
   private nextAttackAt = 0
-  private nextJumpAt = 0
   private nextDashAt = 0
   private nextSkillAt = 0
   private nextReverseAt = 0
@@ -14,25 +13,25 @@ export class AIBrain {
   constructor(ai: BaseCharacter, target: BaseCharacter) { this.ai = ai; this.target = target }
 
   decide(now: number): InputSnapshot {
-    const distance = Math.abs(this.target.x - this.ai.x)
-    const targetToAi = this.ai.x - this.target.x
-    const input: InputSnapshot = { left: false, right: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, simpleDomainPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null }
+    const offsetX = this.target.x - this.ai.x
+    const offsetY = this.target.y - this.ai.y
+    const distance = Math.hypot(offsetX, offsetY)
+    const input: InputSnapshot = { left: false, right: false, up: false, down: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, simpleDomainPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null }
     input.aimX = this.target.x
     const reactionWindow = this.target.attackUntil > now && distance < 185
-    const targetFacingAi = this.target.facing === (targetToAi >= 0 ? 1 : -1)
+    const targetFacingAi = this.target.facing === (offsetX >= 0 ? 1 : -1)
 
     if (reactionWindow && targetFacingAi) {
       input.guard = true
-      if (distance < 120 && now >= this.nextDashAt) { if (targetToAi >= 0) input.dashRight = true; else input.dashLeft = true; this.nextDashAt = now + 700 }
+      if (distance < 120 && now >= this.nextDashAt) { if (offsetX >= 0) input.dashRight = true; else input.dashLeft = true; this.nextDashAt = now + 700 }
     } else if (distance > 108) {
-      if (this.target.x > this.ai.x) input.right = true; else input.left = true
-      if (distance > 230 && now >= this.nextDashAt) { if (this.target.x > this.ai.x) input.dashRight = true; else input.dashLeft = true; this.nextDashAt = now + 700 }
+      input.right = offsetX > 0; input.left = offsetX < 0; input.down = offsetY > 0; input.up = offsetY < 0
+      if (distance > 230 && now >= this.nextDashAt) { if (offsetX > 0) input.dashRight = true; else input.dashLeft = true; this.nextDashAt = now + 700 }
     } else if (distance < 58) {
-      if (this.target.x > this.ai.x) input.left = true; else input.right = true
+      input.right = offsetX < 0; input.left = offsetX > 0; input.down = offsetY < 0; input.up = offsetY > 0
     }
 
-    if (this.target.velocityY < -100 && distance < 170 && now >= this.nextJumpAt) { input.jumpPressed = true; this.nextJumpAt = now + 900 }
-    if (now >= this.nextAttackAt && distance < 145 && this.ai.isGrounded && now >= this.ai.hitstunUntil) {
+    if (now >= this.nextAttackAt && distance < 145 && now >= this.ai.hitstunUntil) {
       if (this.skillCursor % 3 === 0) input.strongPressed = true; else input.attackPressed = true
       this.nextAttackAt = now + 230
     }
@@ -53,5 +52,5 @@ export class AIBrain {
     return input
   }
 
-  reset(now: number): void { this.nextAttackAt = now + 350; this.nextJumpAt = now; this.nextDashAt = now; this.nextSkillAt = now + 600; this.nextReverseAt = now + 500; this.skillCursor = 0 }
+  reset(now: number): void { this.nextAttackAt = now + 350; this.nextDashAt = now; this.nextSkillAt = now + 600; this.nextReverseAt = now + 500; this.skillCursor = 0 }
 }

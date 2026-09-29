@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { ARENA_HEIGHT, ARENA_WIDTH, GROUND_Y } from '../config/gameConfig'
+import { ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_HEIGHT, ARENA_RADIUS, ARENA_WIDTH, CHARACTER_BASE_OFFSET } from '../config/gameConfig'
 import { createCharacter } from '../characters/CharacterFactory'
 import type { BaseCharacter } from '../characters/BaseCharacter'
 import { CombatSystem } from '../combat/CombatSystem'
@@ -60,7 +60,7 @@ export class BattleScene extends Phaser.Scene {
   init(data?: BattleInitData): void { this.p1Id = data?.p1 ?? 'yuta'; this.p2Id = data?.p2 ?? 'yuji'; this.mode = data?.mode ?? 'local'; this.onlineRole = data?.onlineRole; this.onlineClient = data?.onlineClient }
 
   create(): void {
-    this.drawArena(); this.p1 = createCharacter(this, this.p1Id, 'P1', 390, GROUND_Y, 1); this.p2 = createCharacter(this, this.p2Id, 'P2', 890, GROUND_Y, -1); this.p2.aiControlled = this.mode === 'solo'
+    this.drawArena(); this.p1 = createCharacter(this, this.p1Id, 'P1', ARENA_CENTER_X - 190, ARENA_CENTER_Y + CHARACTER_BASE_OFFSET, 1); this.p2 = createCharacter(this, this.p2Id, 'P2', ARENA_CENTER_X + 190, ARENA_CENTER_Y + CHARACTER_BASE_OFFSET, -1); this.p2.aiControlled = this.mode === 'solo'
     this.p1Input = this.mode !== 'online' || this.onlineRole === 'P1' ? new InputManager(this, 'P1', 'solo') : undefined
     this.p2Input = this.mode === 'local' || (this.mode === 'online' && this.onlineRole === 'P2') ? new InputManager(this, 'P2') : undefined
     if (this.mode === 'solo') this.aiBrain = new AIBrain(this.p2, this.p1)
@@ -91,7 +91,7 @@ export class BattleScene extends Phaser.Scene {
       leftInput = this.p1Input?.read(time) ?? this.emptyInput()
       rightInput = this.mode === 'solo' ? this.aiBrain?.decide(time) ?? this.emptyInput() : this.p2Input?.read(time) ?? this.emptyInput()
     }
-    this.p1.updateCharacter(leftInput, time, delta, GROUND_Y, ARENA_WIDTH); this.p2.updateCharacter(rightInput, time, delta, GROUND_Y, ARENA_WIDTH); this.resolveFighterCollision()
+    this.p1.updateCharacter(leftInput, time, delta, ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_RADIUS); this.p2.updateCharacter(rightInput, time, delta, ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_RADIUS); this.resolveFighterCollision()
     this.yutaSkills.update(this.p1, time); this.yutaSkills.update(this.p2, time)
     this.processCharacterSkills(this.p1, this.p2, leftInput, time); this.processCharacterSkills(this.p2, this.p1, rightInput, time)
     this.updateRikaSummons(time)
@@ -117,7 +117,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private startRound(now: number): void {
-    this.clearYutaSwords(); this.clearRikaSummons(); this.clearDomainClash(); this.domainOwner = undefined; this.domainClashUntil = 0; this.domainClashParticipants = undefined; this.domainClashRemaining = undefined; this.domainClashGauge.reset(); this.p1.resetForRound(390, 1); this.p2.resetForRound(890, -1); this.aiBrain?.reset(now); this.roundStartedAt = now; this.roundFinished = false; this.roundMessage = `ROUND ${this.rounds.round}`; this.matchMessage = ''; this.time.delayedCall(900, () => { this.roundMessage = '' })
+    this.clearYutaSwords(); this.clearRikaSummons(); this.clearDomainClash(); this.domainOwner = undefined; this.domainClashUntil = 0; this.domainClashParticipants = undefined; this.domainClashRemaining = undefined; this.domainClashGauge.reset(); this.p1.resetForRound(ARENA_CENTER_X - 190, ARENA_CENTER_Y + CHARACTER_BASE_OFFSET, 1); this.p2.resetForRound(ARENA_CENTER_X + 190, ARENA_CENTER_Y + CHARACTER_BASE_OFFSET, -1); this.aiBrain?.reset(now); this.roundStartedAt = now; this.roundFinished = false; this.roundMessage = `ROUND ${this.rounds.round}`; this.matchMessage = ''; this.time.delayedCall(900, () => { this.roundMessage = '' })
   }
 
   private activateSimpleDomain(owner: BaseCharacter, now: number): void {
@@ -138,8 +138,8 @@ export class BattleScene extends Phaser.Scene {
     this.domainOwner = owner; this.nextDomainStrikeAt = now + (owner.definition.id === 'sukuna' ? 240 : 450); opponent.hitstunUntil = Math.max(opponent.hitstunUntil, now + 550); opponent.velocityX = 0
     if (owner.definition.id === 'gojo') { opponent.immobilizedUntil = now + 5000; opponent.hitstunUntil = Math.max(opponent.hitstunUntil, opponent.immobilizedUntil); opponent.velocityY = 0 }
     if (owner.definition.id === 'yuta') this.spawnYutaSwords(owner)
-    const overlay = this.add.rectangle(ARENA_WIDTH / 2, ARENA_HEIGHT / 2, ARENA_WIDTH, ARENA_HEIGHT, owner.definition.color, 0.13).setDepth(30)
-    const frame = this.add.graphics().setDepth(31); frame.lineStyle(3, owner.definition.color, 0.9); frame.strokeRect(28, 78, ARENA_WIDTH - 56, GROUND_Y - 78)
+    const overlay = this.add.circle(ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_RADIUS, owner.definition.color, 0.13).setDepth(30)
+    const frame = this.add.graphics().setDepth(31); frame.lineStyle(3, owner.definition.color, 0.9); frame.strokeCircle(ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_RADIUS - 12)
     const sukunaArt = owner.definition.id === 'sukuna' ? this.createSukunaDomainEffect() : undefined
     const label = this.add.text(ARENA_WIDTH / 2, 175, owner.definition.id === 'gojo' ? '무량공처 // 5초 정지' : owner.definition.id === 'sukuna' ? '복마어주자 // MALEVOLENT SHRINE' : owner.definition.name + ' // 영역전개', { color: owner.definition.accent, fontFamily: 'Space Mono, monospace', fontSize: '17px', fontStyle: 'bold', stroke: '#020711', strokeThickness: 6 }).setOrigin(0.5).setDepth(32)
     this.tweens.add({ targets: [overlay, frame, label, sukunaArt].filter(Boolean), alpha: 0, delay: 5800, duration: 700, onComplete: () => { overlay.destroy(); frame.destroy(); label.destroy(); sukunaArt?.destroy() } })
@@ -161,10 +161,10 @@ export class BattleScene extends Phaser.Scene {
     first.hitstunUntil = now
     second.hitstunUntil = now
     this.domainClashGraphic = this.add.graphics().setDepth(31)
-    this.domainClashGraphic.lineStyle(5, first.definition.color, 0.9); this.domainClashGraphic.strokeCircle(ARENA_WIDTH / 2 - 90, 340, 165)
-    this.domainClashGraphic.lineStyle(5, second.definition.color, 0.9); this.domainClashGraphic.strokeCircle(ARENA_WIDTH / 2 + 90, 340, 165)
-    this.domainClashGraphic.lineStyle(3, 0xffffff, 0.9); this.domainClashGraphic.strokeCircle(ARENA_WIDTH / 2, 340, 42)
-    this.domainClashLabel = this.add.text(ARENA_WIDTH / 2, 198, '영역 충돌 // DOMAIN CLASH', { color: '#fff3c1', fontFamily: 'Space Mono, monospace', fontSize: '18px', fontStyle: 'bold', stroke: '#080b18', strokeThickness: 6 }).setOrigin(0.5).setDepth(32)
+    this.domainClashGraphic.lineStyle(5, first.definition.color, 0.9); this.domainClashGraphic.strokeCircle(ARENA_CENTER_X - 90, ARENA_CENTER_Y, 165)
+    this.domainClashGraphic.lineStyle(5, second.definition.color, 0.9); this.domainClashGraphic.strokeCircle(ARENA_CENTER_X + 90, ARENA_CENTER_Y, 165)
+    this.domainClashGraphic.lineStyle(3, 0xffffff, 0.9); this.domainClashGraphic.strokeCircle(ARENA_CENTER_X, ARENA_CENTER_Y, 42)
+    this.domainClashLabel = this.add.text(ARENA_CENTER_X, ARENA_CENTER_Y - ARENA_RADIUS + 34, '영역 충돌 // DOMAIN CLASH', { color: '#fff3c1', fontFamily: 'Space Mono, monospace', fontSize: '18px', fontStyle: 'bold', stroke: '#080b18', strokeThickness: 6 }).setOrigin(0.5).setDepth(32)
     this.tweens.add({ targets: this.domainClashGraphic, angle: 360, duration: clashDuration, ease: 'Linear' })
     this.cameras.main.shake(260, 0.012)
   }
@@ -206,14 +206,14 @@ export class BattleScene extends Phaser.Scene {
 
   private createSukunaDomainEffect(): Phaser.GameObjects.Graphics {
     const art = this.add.graphics().setDepth(31)
-    art.fillStyle(0x21040d, 0.62); art.fillRect(118, 105, ARENA_WIDTH - 236, GROUND_Y - 145)
-    art.lineStyle(3, 0xf04464, 0.75); art.strokeRect(118, 105, ARENA_WIDTH - 236, GROUND_Y - 145)
+    art.fillStyle(0x21040d, 0.62); art.fillCircle(ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_RADIUS - 34)
+    art.lineStyle(3, 0xf04464, 0.75); art.strokeCircle(ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_RADIUS - 34)
     art.lineStyle(2, 0xff6b80, 0.55)
-    for (let index = 0; index < 15; index += 1) { const x = 145 + index * 76; art.lineBetween(x, 118, x + 135, GROUND_Y - 55); art.lineBetween(x + 32, GROUND_Y - 55, x + 168, 118) }
-    art.lineStyle(7, 0x8d1837, 0.9); art.strokeRect(ARENA_WIDTH / 2 - 105, 205, 210, 230)
-    art.lineStyle(5, 0xff5772, 0.9); art.lineBetween(ARENA_WIDTH / 2 - 130, 205, ARENA_WIDTH / 2 + 130, 205); art.lineBetween(ARENA_WIDTH / 2 - 92, 205, ARENA_WIDTH / 2 - 92, 440); art.lineBetween(ARENA_WIDTH / 2 + 92, 205, ARENA_WIDTH / 2 + 92, 440)
-    art.lineStyle(4, 0xff9aaa, 0.8); art.beginPath(); art.moveTo(ARENA_WIDTH / 2 - 145, 205); art.lineTo(ARENA_WIDTH / 2, 150); art.lineTo(ARENA_WIDTH / 2 + 145, 205); art.strokePath()
-    art.fillStyle(0xff3855, 0.7); art.fillCircle(ARENA_WIDTH / 2, 292, 24); art.lineStyle(3, 0xffc2cc, 0.7); art.strokeCircle(ARENA_WIDTH / 2, 292, 34)
+    for (let index = 0; index < 16; index += 1) { const angle = index * Math.PI / 8; art.lineBetween(ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_CENTER_X + Math.cos(angle) * (ARENA_RADIUS - 34), ARENA_CENTER_Y + Math.sin(angle) * (ARENA_RADIUS - 34)) }
+    art.lineStyle(7, 0x8d1837, 0.9); art.strokeCircle(ARENA_CENTER_X, ARENA_CENTER_Y, 105)
+    art.lineStyle(5, 0xff5772, 0.9); art.strokeCircle(ARENA_CENTER_X, ARENA_CENTER_Y, 78)
+    art.lineStyle(4, 0xff9aaa, 0.8); art.lineBetween(ARENA_CENTER_X - 145, ARENA_CENTER_Y, ARENA_CENTER_X + 145, ARENA_CENTER_Y); art.lineBetween(ARENA_CENTER_X, ARENA_CENTER_Y - 145, ARENA_CENTER_X, ARENA_CENTER_Y + 145)
+    art.fillStyle(0xff3855, 0.7); art.fillCircle(ARENA_CENTER_X, ARENA_CENTER_Y, 24); art.lineStyle(3, 0xffc2cc, 0.7); art.strokeCircle(ARENA_CENTER_X, ARENA_CENTER_Y, 34)
     return art
   }
 
@@ -236,9 +236,9 @@ export class BattleScene extends Phaser.Scene {
 
   private spawnYutaSwords(owner: BaseCharacter): void {
     this.clearYutaSwords()
-    const positions = [owner.x - 170, owner.x - 72, owner.x + 42, owner.x + 152, owner.x + 250].map((x) => Phaser.Math.Clamp(x, 75, ARENA_WIDTH - 75))
+    const positions = [owner.x - 170, owner.x - 72, owner.x + 42, owner.x + 152, owner.x + 250].map((x) => Phaser.Math.Clamp(x, ARENA_CENTER_X - ARENA_RADIUS + 55, ARENA_CENTER_X + ARENA_RADIUS - 55))
     this.yutaSwords = positions.map((x, index) => {
-      const y = GROUND_Y - 24 - (index % 2) * 6; const graphic = this.add.graphics().setDepth(8); graphic.lineStyle(4, 0xf4fbff, 0.95); graphic.beginPath(); graphic.moveTo(x, y - 36); graphic.lineTo(x + 11, y + 31); graphic.strokePath(); graphic.lineStyle(2, owner.definition.color, 0.9); graphic.beginPath(); graphic.moveTo(x - 11, y - 3); graphic.lineTo(x + 13, y - 3); graphic.strokePath(); graphic.fillStyle(0xd7c5ff, 0.9); graphic.fillCircle(x, y - 37, 4); return { graphic, x, y, triggered: false }
+      const y = owner.y - 24 - (index % 2) * 6; const graphic = this.add.graphics().setDepth(8); graphic.lineStyle(4, 0xf4fbff, 0.95); graphic.beginPath(); graphic.moveTo(x, y - 36); graphic.lineTo(x + 11, y + 31); graphic.strokePath(); graphic.lineStyle(2, owner.definition.color, 0.9); graphic.beginPath(); graphic.moveTo(x - 11, y - 3); graphic.lineTo(x + 13, y - 3); graphic.strokePath(); graphic.fillStyle(0xd7c5ff, 0.9); graphic.fillCircle(x, y - 37, 4); return { graphic, x, y, triggered: false }
     })
   }
 
@@ -276,7 +276,7 @@ export class BattleScene extends Phaser.Scene {
 
   private cooldownId(owner: BaseCharacter, action: string): string { return `${owner.slot}:${action}` }
 
-  private emptyInput(): InputSnapshot { return { left: false, right: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, simpleDomainPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null } }
+  private emptyInput(): InputSnapshot { return { left: false, right: false, up: false, down: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, simpleDomainPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null } }
 
   private finishRound(winner: 'P1' | 'P2' | 'DRAW', now: number): void {
     if (this.roundFinished) return
@@ -294,8 +294,16 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private resolveFighterCollision(): void {
-    const distance = this.p2.x - this.p1.x; if (Math.abs(distance) >= 44 || Math.abs(this.p2.y - this.p1.y) > 72) return
-    const push = (44 - Math.abs(distance)) / 2; if (distance >= 0) { this.p1.x -= push; this.p2.x += push } else { this.p1.x += push; this.p2.x -= push }
+    const offsetX = this.p2.x - this.p1.x
+    const offsetY = this.p2.y - this.p1.y
+    const distance = Math.hypot(offsetX, offsetY)
+    if (distance >= 70) return
+    const safeDistance = distance || 1
+    const push = (70 - safeDistance) / 2
+    const normalX = offsetX / safeDistance
+    const normalY = offsetY / safeDistance
+    this.p1.x -= normalX * push; this.p1.y -= normalY * push
+    this.p2.x += normalX * push; this.p2.y += normalY * push
   }
 
   private emitHud(time: number): void {
@@ -317,15 +325,16 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private drawArena(): void {
-    const background = this.add.graphics(); background.fillStyle(0x071321, 1); background.fillRect(0, 0, ARENA_WIDTH, ARENA_HEIGHT); background.lineStyle(1, 0x15354d, 0.55)
-    for (let x = 0; x < ARENA_WIDTH; x += 64) background.lineBetween(x, 80, x, GROUND_Y)
-    for (let y = 110; y < GROUND_Y; y += 64) background.lineBetween(0, y, ARENA_WIDTH, y)
-    background.fillStyle(0x0b2031, 0.94); background.fillCircle(ARENA_WIDTH / 2, 340, 300)
-    background.lineStyle(4, 0x54c4d8, 0.8); background.strokeCircle(ARENA_WIDTH / 2, 340, 300)
-    background.lineStyle(1, 0x2e7085, 0.75); background.strokeCircle(ARENA_WIDTH / 2, 340, 284)
-    background.fillStyle(0x0d2637, 1); background.fillRect(0, GROUND_Y, ARENA_WIDTH, ARENA_HEIGHT - GROUND_Y); background.lineStyle(3, 0x49b5cf, 0.7); background.lineBetween(0, GROUND_Y, ARENA_WIDTH, GROUND_Y)
-    background.lineStyle(2, 0x1e536c, 0.75); background.strokeRect(28, 78, ARENA_WIDTH - 56, GROUND_Y - 78)
-    this.add.text(40, 38, 'BINDING VOW // LOCAL DUEL FIELD', { color: '#44748a', fontFamily: 'Space Mono, monospace', fontSize: '11px' })
-    this.add.text(ARENA_WIDTH / 2, GROUND_Y - 18, '◈', { color: '#5bb9ce', fontSize: '16px' }).setOrigin(0.5)
+    const background = this.add.graphics(); background.fillStyle(0x050a13, 1); background.fillRect(0, 0, ARENA_WIDTH, ARENA_HEIGHT)
+    background.fillStyle(0x0b2031, 0.98); background.fillCircle(ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_RADIUS)
+    background.lineStyle(2, 0x15354d, 0.65)
+    for (let radius = 72; radius < ARENA_RADIUS; radius += 72) background.strokeCircle(ARENA_CENTER_X, ARENA_CENTER_Y, radius)
+    for (let index = 0; index < 16; index += 1) { const angle = index * Math.PI / 8; background.lineBetween(ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_CENTER_X + Math.cos(angle) * ARENA_RADIUS, ARENA_CENTER_Y + Math.sin(angle) * ARENA_RADIUS) }
+    background.lineStyle(5, 0x54c4d8, 0.82); background.strokeCircle(ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_RADIUS)
+    background.lineStyle(1, 0x8ceeff, 0.42); background.strokeCircle(ARENA_CENTER_X, ARENA_CENTER_Y, ARENA_RADIUS - 12)
+    background.lineStyle(2, 0x1e536c, 0.75); background.strokeCircle(ARENA_CENTER_X, ARENA_CENTER_Y, 64)
+    background.fillStyle(0x62d8e8, 0.12); background.fillCircle(ARENA_CENTER_X, ARENA_CENTER_Y, 44)
+    this.add.text(40, 38, 'BINDING VOW // CIRCULAR DUEL FIELD', { color: '#44748a', fontFamily: 'Space Mono, monospace', fontSize: '11px' })
+    this.add.text(ARENA_CENTER_X, ARENA_CENTER_Y, '◈', { color: '#5bb9ce', fontSize: '16px' }).setOrigin(0.5)
   }
 }

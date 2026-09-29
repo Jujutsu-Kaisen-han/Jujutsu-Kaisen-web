@@ -63,6 +63,13 @@
       "verification": "npm run lint --if-present && npm run build && npm test && harness check",
       "state": "passing",
       "evidence": "verified 2026-09-28 22:53 @ f5afca2"
+    },
+    {
+      "id": "F10",
+      "behavior": "전투 경기장이 원형으로 표시되고 WASD·방향키로 캐릭터가 원 안에서 8방향 이동하며 근접 판정과 AI가 세로 위치를 반영한다",
+      "verification": "npm run lint --if-present && npm run build && npm test && harness check",
+      "state": "passing",
+      "evidence": "verified 2026-09-29 11:02 @ 0287dc3"
     }
   ]
 }

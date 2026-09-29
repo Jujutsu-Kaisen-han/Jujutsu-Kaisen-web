@@ -35,6 +35,10 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   attackUntil = 0
   velocityX = 0
   velocityY = 0
+  private moveDirectionX = 1
+  private moveDirectionY = 0
+  private dashDirectionX = 0
+  private dashDirectionY = 0
   private readonly bodyGraphic: Phaser.GameObjects.Graphics
   private readonly auraGraphic: Phaser.GameObjects.Graphics
   private readonly signatureGraphic: Phaser.GameObjects.Graphics
@@ -46,7 +50,6 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
   private landingUntil = 0
   private recoilUntil = 0
   private recoilDirection = 0
-  private wasGrounded = true
   private attackStartedAt = 0
   private attackDuration = 0
 
@@ -61,23 +64,31 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     this.hurtbox.update(x, y)
   }
 
-  updateCharacter(input: InputSnapshot, now: number, delta: number, groundY: number, arenaWidth: number): void {
+  updateCharacter(input: InputSnapshot, now: number, delta: number, arenaCenterX: number, arenaCenterY: number, arenaRadius: number): void {
     const dt = delta / 1000
-    this.wasGrounded = this.isGrounded
-    this.isGuarding = input.guard && this.isGrounded && now >= this.hitstunUntil
+    this.isGrounded = true
+    this.isGuarding = input.guard && now >= this.hitstunUntil
+    const rawDirectionX = Number(input.right) - Number(input.left)
+    const rawDirectionY = Number(input.down) - Number(input.up)
+    const directionLength = Math.hypot(rawDirectionX, rawDirectionY)
+    const directionX = directionLength > 0 ? rawDirectionX / directionLength : 0
+    const directionY = directionLength > 0 ? rawDirectionY / directionLength : 0
+    if (directionLength > 0) { this.moveDirectionX = directionX; this.moveDirectionY = directionY }
     if (now >= this.hitstunUntil) {
-      const direction = Number(input.right) - Number(input.left)
-      if (direction !== 0) { this.facing = direction > 0 ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1) }
+      if (directionX !== 0) { this.facing = directionX > 0 ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1) }
       if (input.aimX !== null) { this.facing = input.aimX >= this.x ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1) }
-      if (input.jumpPressed && this.isGrounded && !this.isGuarding) { this.velocityY = -this.definition.stats.jumpPower; this.isGrounded = false }
-      if ((input.dashLeft || input.dashRight) && !this.isGuarding && now >= this.dashUntil) { this.facing = input.dashRight ? 1 : -1; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1); this.velocityX = this.facing * 620; this.dashStartedAt = now; this.dashUntil = now + 180; this.invulnerableUntil = now + 240 }
+      if ((input.dashLeft || input.dashRight) && !this.isGuarding && now >= this.dashUntil) { this.facing = input.dashRight ? 1 : -1; this.dashDirectionX = directionLength > 0 ? directionX : input.dashRight ? 1 : -1; this.dashDirectionY = directionLength > 0 ? directionY : 0; this.setScale(this.facing, 1); this.nameTag.setScale(this.facing, 1); this.velocityX = this.dashDirectionX * 620; this.velocityY = this.dashDirectionY * 620; this.dashStartedAt = now; this.dashUntil = now + 180; this.invulnerableUntil = now + 240 }
     }
-    const direction = Number(input.right) - Number(input.left)
-    const targetVelocityX = now < this.dashUntil ? this.facing * 620 : now < this.hitstunUntil ? 0 : direction * this.definition.stats.moveSpeed
-    if (now < this.immobilizedUntil) { this.velocityX = damp(this.velocityX, 0, 28, dt); this.velocityY = damp(this.velocityY, 0, 28, dt) } else { this.velocityX = damp(this.velocityX, targetVelocityX, direction === 0 || now < this.hitstunUntil ? 24 : 18, dt); this.velocityY += 1450 * dt; this.x += this.velocityX * dt; this.y += this.velocityY * dt }
-    if (this.y >= groundY) { this.y = groundY; this.velocityY = 0; this.isGrounded = true }
-    if (!this.wasGrounded && this.isGrounded) this.landingUntil = now + 180
-    this.x = Phaser.Math.Clamp(this.x, 45, arenaWidth - 45); this.setDepth(this.y); this.hurtbox.update(this.x, this.y)
+    const targetVelocityX = now < this.dashUntil ? this.dashDirectionX * 620 : now < this.hitstunUntil ? 0 : directionX * this.definition.stats.moveSpeed
+    const targetVelocityY = now < this.dashUntil ? this.dashDirectionY * 620 : now < this.hitstunUntil ? 0 : directionY * this.definition.stats.moveSpeed
+    if (now < this.immobilizedUntil) { this.velocityX = damp(this.velocityX, 0, 28, dt); this.velocityY = damp(this.velocityY, 0, 28, dt) } else { this.velocityX = damp(this.velocityX, targetVelocityX, directionLength === 0 || now < this.hitstunUntil ? 24 : 18, dt); this.velocityY = damp(this.velocityY, targetVelocityY, directionLength === 0 || now < this.hitstunUntil ? 24 : 18, dt); this.x += this.velocityX * dt; this.y += this.velocityY * dt }
+    const bodyY = this.y - 62
+    const offsetX = this.x - arenaCenterX
+    const offsetY = bodyY - arenaCenterY
+    const distance = Math.hypot(offsetX, offsetY)
+    const maxDistance = arenaRadius - 48
+    if (distance > maxDistance) { const scale = maxDistance / distance; this.x = arenaCenterX + offsetX * scale; this.y = arenaCenterY + offsetY * scale + 62; this.velocityX *= 0.35; this.velocityY *= 0.35; this.landingUntil = now + 120 }
+    this.setDepth(this.y); this.hurtbox.update(this.x, this.y)
     if (this.fullManifestActive(now)) { this.unlimitedEnergy = true; this.energy = this.definition.stats.maxEnergy } else this.unlimitedEnergy = false
     this.energy = Math.min(this.definition.stats.maxEnergy, this.energy + delta * 0.0028); this.ultimate = Math.min(100, this.ultimate + delta * 0.0035)
     this.updateVisuals(now)
@@ -92,7 +103,13 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
     const range = isStrong ? 98 : finalHit ? 84 : 70
     const domainPower = this.domainActive(now) ? 1.28 : 1; const manifestPower = this.fullManifestActive(now) ? 1.2 : 1
     const damage = (isStrong ? this.definition.stats.strongDamage : this.definition.stats.attackDamage * (finalHit ? 1.45 : comboIndex === 1 ? 1.08 : 1)) * domainPower * manifestPower
-    return new Hitbox({ owner: this.slot, x: this.x + this.facing * range / 2, y: this.y - 73, width: range, height: 48, damage, knockbackX: this.facing * (isStrong || finalHit ? 430 : 190), knockbackY: isStrong ? -80 : -25, activeUntil: now + 95 })
+    const attackDirectionX = this.moveDirectionX || this.facing
+    const attackDirectionY = this.moveDirectionY
+    const bodyY = this.y - 62
+    const attackCenterX = this.x + attackDirectionX * range * 0.42
+    const attackCenterY = bodyY + attackDirectionY * range * 0.42
+    const hitSize = isStrong || finalHit ? 78 : 66
+    return new Hitbox({ owner: this.slot, x: attackCenterX - hitSize / 2, y: attackCenterY - hitSize / 2, width: hitSize, height: hitSize, damage, knockbackX: attackDirectionX * (isStrong || finalHit ? 430 : 190), knockbackY: attackDirectionY * (isStrong || finalHit ? 430 : 190), activeUntil: now + 95 })
   }
 
   receiveDamage(damage: number, knockbackX: number, knockbackY: number, now: number, technique = 'basic', bypassInfinity = false): boolean {
@@ -132,8 +149,8 @@ export class BaseCharacter extends Phaser.GameObjects.Container {
 
   private energyCost(amount: number): number { return this.definition.id === 'gojo' ? 1 : Math.max(0.1, amount * this.energyCostMultiplier) }
 
-  resetForRound(x: number, facing: 1 | -1): void {
-    this.setPosition(x, 590); this.facing = facing; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.domainBlockedUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.fullManifestUsed = false; this.infinityUntil = 0; this.unlimitedEnergy = false; this.mahoragaSummoned = false; this.adaptedTechnique = null; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.wasGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.dashUntil = 0; this.dashStartedAt = 0; this.landingUntil = 0; this.recoilUntil = 0; this.attackUntil = 0; this.attackStartedAt = 0; this.attackDuration = 0; this.combo.reset()
+  resetForRound(x: number, y: number, facing: 1 | -1): void {
+    this.setPosition(x, y); this.facing = facing; this.moveDirectionX = facing; this.moveDirectionY = 0; this.dashDirectionX = facing; this.dashDirectionY = 0; this.setScale(facing, 1); this.nameTag.setScale(facing, 1); this.hp = this.definition.stats.maxHp; this.energy = this.definition.stats.maxEnergy; this.ultimate = 0; this.domainUntil = 0; this.domainBlockedUntil = 0; this.simpleDomainUntil = 0; this.fullManifestUntil = 0; this.fullManifestUsed = false; this.infinityUntil = 0; this.unlimitedEnergy = false; this.mahoragaSummoned = false; this.adaptedTechnique = null; this.immobilizedUntil = 0; this.velocityX = 0; this.velocityY = 0; this.isGrounded = true; this.hitstunUntil = 0; this.invulnerableUntil = 0; this.dashUntil = 0; this.dashStartedAt = 0; this.landingUntil = 0; this.recoilUntil = 0; this.attackUntil = 0; this.attackStartedAt = 0; this.attackDuration = 0; this.combo.reset()
   }
 
   private updateVisuals(now: number): void {

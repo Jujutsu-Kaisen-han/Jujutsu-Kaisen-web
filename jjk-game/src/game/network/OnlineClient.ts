@@ -10,7 +10,7 @@ export interface OnlineMatch {
 
 type StatusListener = (status: string) => void
 
-const emptyInput = (): InputSnapshot => ({ left: false, right: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, simpleDomainPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null })
+const emptyInput = (): InputSnapshot => ({ left: false, right: false, up: false, down: false, jumpPressed: false, guard: false, attackPressed: false, reversePressed: false, strongPressed: false, simpleDomainPressed: false, skill1Pressed: false, skill2Pressed: false, skill3Pressed: false, skill4Pressed: false, skill5Pressed: false, ultimatePressed: false, dashLeft: false, dashRight: false, aimX: null })
 const socketUrl = (): string => {
   if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
